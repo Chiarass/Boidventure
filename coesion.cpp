@@ -13,7 +13,10 @@ std::vector<Boid> Boid::create(int n) {
 double Boid::sumx(int n, int j) {
   double sum = 0;
   for (int i = 0; i <= n; ++i) {
-    double sum += sum + i;
+    double sum = sum + i;
+    if (j == i) {
+      double sum = sum - j;
+    }
   }
 
   double Swarm::masscenter(int n) { double xc = 1 / (n - 1)* }
