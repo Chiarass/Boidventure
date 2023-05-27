@@ -10,24 +10,26 @@
 int width = 800;
 int height = 600;
 int main() {
+  /* std::random_device rd;
+  std::default_random_engine engine(rd());
+  std::uniform_real_distribution<float> PositionDist(0.0f, width);*/
   std::cout << "Enter the number of boids" << std::endl;
   int n;
   std::cin >> n;
-  // Number of shitty bird
+  // Number of shitty birds
   sf::RenderWindow window(sf::VideoMode(width, height),
                           "Analisi del comportamento di uno stormo");
-  sf::CircleShape Bird;
-  Bird.setRadius(10.f);
-  Bird.setPosition()
+  sf::CircleShape bird(30);
+  bird.setPosition(100.f, 100.f);
+  bird.setFillColor(sf::Color::Cyan);
   while (window.isOpen()) {
     sf::Event event;
     while (window.pollEvent(event)) {
-      if (event.type == sf::Event::Closed) {
-        window.close();
-      }
+      if (event.type == sf::Event::Closed) window.close();
     }
   }
   window.clear();
+  window.draw(bird);
   window.display();
   // sf::Vector2f
 }
