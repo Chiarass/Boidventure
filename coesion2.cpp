@@ -16,7 +16,7 @@ int main() {
   std::cout << "Enter the number of boids" << std::endl;
   int n;
   std::cin >> n;
-  // Number of shitty birds
+  // Number of birds
   sf::RenderWindow window(sf::VideoMode(width, height),
                           "Analisi del comportamento di uno stormo");
   sf::CircleShape bird(30);
