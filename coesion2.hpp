@@ -10,6 +10,6 @@
 struct Boid {
   sf::Vector2f Position;
   sf::Vector2f Speed;
-}
+};
 
 #endif
