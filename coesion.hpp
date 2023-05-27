@@ -1,7 +1,9 @@
 #ifndef COESION_HPP
-#define COESIONE_HPP
+#define COESION_HPP
+#include <SFML/Graphics.hpp>
 #include <algorithm>
 #include <numeric>
+#include <random>
 #include <vector>
 
 class Swarm {
@@ -15,7 +17,7 @@ class Swarm {
  public:
   Swarm(double, double, double, double, double, double);
   double masscenter(int n);
-}
+};
 
 class Boid {
   double x{};
@@ -26,7 +28,7 @@ class Boid {
  public:
   std::vector<Boid> create();
   double sumx(int n);
-}
+};
 
 class Points {
  private:
@@ -36,8 +38,9 @@ class Points {
   double v_y{};
 
  public:
-  double operator+(std::vector<double>){
-      return s = std::accumulate(v.begin(), v.end(), 0)};
-}
+  double operator+(std::vector<double>) {
+    return s = std::accumulate(v.begin(), v.end(), 0);
+  };
+};
 
 #endif
