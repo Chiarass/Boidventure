@@ -27,9 +27,10 @@ int main() {
     while (window.pollEvent(event)) {
       if (event.type == sf::Event::Closed) window.close();
     }
-  }
-  window.clear();
+      window.clear();
   window.draw(bird);
   window.display();
   // sf::Vector2f
+
+  }
 }
