@@ -1,4 +1,4 @@
-#Final project: boids
+# Final project: boids
 Boid project for unibo's physics course. 
 to compile:
 ```
