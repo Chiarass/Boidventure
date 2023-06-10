@@ -4,7 +4,7 @@ to compile:
 ```
 cmake -S . -B build/debug -DCMAKE_BUILD_TYPE=Release
 ```
-you can also put Debug in place of Release.
+I will eventually change it to a debug configuration (once i understand how the launch.json file should be configured for cmake projects).
 
 then:
 
