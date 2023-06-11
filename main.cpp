@@ -7,14 +7,17 @@
 
 #include "swarm.hpp"
 
-//-----costanti-----
+//-----costants-----------------
 float initial_position = 750;
 float initial_velocity = 0;
 float position_variance = 300;  // variance of random distribution
 float velocity_variance = 10;
-float s = 30;                   // separation coefficent
+float d_coeff =
+    100;  // maximum distance for swarm effects to kick in (Elove method)
+float s_coeff = 30;       // separation coefficent
 int swarm_number = 100;
-float boid_size = 30;  // the size of the sfml object representing the boid
+float boid_size = 30;     // the size of the sfml object representing the boid
+float delta_time = 0.01;  // time increment. higher number, lower speeds.
 
 // random generator of values from gaussian distribution, for randomly
 // generating position of boids
@@ -41,21 +44,18 @@ int main() {
 
   for (int i = 0; i < swarm_number; ++i) {
     // initalizing random boid
-    bee_position.x = gaussian(initial_position, position_variance);
-    bee_position.y = gaussian(initial_position, position_variance);
-    bee_velocity.x = gaussian(initial_velocity, velocity_variance);
-    bee_velocity.y = gaussian(initial_velocity, velocity_variance);
-
+    bee_position = point(gaussian(initial_position, position_variance), gaussian(initial_position, position_variance));
+    bee_velocity = point(gaussian(initial_position, position_variance), gaussian(initial_position, position_variance));
     bee_vector.push_back(Boid(bee_position, bee_velocity));
 
     // add vertexes of boid. They form an equilateral triangle, boid is
     // positioned in the middle of the base.
     swarm_vertex[i * 3].position =
-        sf::Vector2f(bee_position.x + boid_size, bee_position.y);
+        sf::Vector2f(bee_position.x() + boid_size, bee_position.y());
     swarm_vertex[i * 3 + 1].position =
-        sf::Vector2f(bee_position.x - boid_size, bee_position.y);
+        sf::Vector2f(bee_position.x() - boid_size, bee_position.y());
     swarm_vertex[i * 3 + 2].position =
-        sf::Vector2f(bee_position.x, bee_position.y + sqrt(3) * boid_size);
+        sf::Vector2f(bee_position.x(), bee_position.y() + sqrt(3) * boid_size);
 
     // colors of triangles. Creates cool gradient. Probably temporary.
     swarm_vertex[i * 3].color = sf::Color::Red;
@@ -64,7 +64,7 @@ int main() {
   }
   Swarm bee_swarm = Swarm(bee_vector);
 
-  // SFML loop. Each loop the window is updated
+  // SFML loop. After each loop the window is updated
   while (window.isOpen()) {
     sf::Event event;
 
@@ -77,9 +77,10 @@ int main() {
     // here goes the code that updates the boids poisitions, once it will be
     // ready
 
-    //and here goes the code that updates the vertex positions
+    // and here goes the code that updates the vertex positions
 
-    //and here goes the code to align the vertex of a triangle with boid direction of motion
+    // and here goes the code to align the vertex of a triangle with boid
+    // direction of motion
 
     window.draw(swarm_vertex);
     window.display();

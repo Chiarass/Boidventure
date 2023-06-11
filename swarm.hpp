@@ -1,19 +1,28 @@
 #ifndef BOIDS_HPP
 #define BOIDS_HPP
 #include <vector>
+#include <cmath>
 
-struct point {
-  float x{};
-  float y{};
+class point {
+  float m_x{};
+  float m_y{};
+
+  public:
+  point(float = 0, float = 0);
+
+  float x() const;
+  float y() const;
+
+  float distance() const;
 };
 
-float operator+(point, point);
+point operator+(point &, point &);
+point operator-(point &, point&);
+point operator*(float, point&); //should float be passed by refence?
 
-class Boid {
-  point m_x;
-  point m_v;
-
- public:
+struct Boid {
+  point r; //position
+  point v; //velocity
   Boid(point, point);
 };
 
@@ -22,6 +31,7 @@ class Swarm {
 
  public:
   Swarm(std::vector<Boid>);
+  /* void Evolve(float, float, float, float, float); */
 };
 
 #endif

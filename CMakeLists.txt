@@ -18,7 +18,7 @@ string(APPEND CMAKE_EXE_LINKER_FLAGS_DEBUG " -fsanitize=address,undefined -fno-o
 # richiede SFML?
 find_package(SFML COMPONENTS graphics REQUIRED)
 
-add_executable(swarm swarm.cpp main.cpp)
+add_executable(swarm swarm.cpp main.cpp )
 
 #aggiunge sfml?
 target_link_libraries(swarm PRIVATE sfml-graphics)
