@@ -22,6 +22,3 @@ add_executable(swarm swarm.cpp main.cpp )
 
 #aggiunge sfml?
 target_link_libraries(swarm PRIVATE sfml-graphics)
-
-
-
