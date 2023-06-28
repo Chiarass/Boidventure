@@ -41,7 +41,7 @@ int main() {
                           gaussian(mean_position, position_std));
     boid_velocity = Point(gaussian(mean_velocity, velocity_std),
                           gaussian(mean_velocity, velocity_std));
-    boid_vector.push_back(Boid(boid_position, boid_velocity));
+    boid_vector.push_back(Boid{boid_position, boid_velocity});
   }
   Swarm boid_swarm = Swarm(boid_vector);
 

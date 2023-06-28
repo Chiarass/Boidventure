@@ -23,9 +23,9 @@ Point operator-(const Point &, const Point&);
 Point operator*(double,const Point&);
 
 struct Boid {
-  Point r; //position
-  Point v; //velocity
-  Boid(Point, Point);
+  Point r{}; //position
+  Point v{}; //velocity
+  //Boid(Point, Point);
 };
 
 class Swarm {
@@ -40,7 +40,7 @@ class Swarm {
   // boid's triangle. the size is three times that of the number of boids
   // because each boid is associated with a triangle (three vertexes)
 
-  Swarm(std::vector<Boid>);
+  Swarm(const std::vector<Boid>&);
   void update(double);
   
 // updates vertex position. They form an equilateral triangle,

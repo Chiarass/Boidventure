@@ -46,15 +46,17 @@ Point operator*(double c, const Point& a) {
 }
 
 // boid constructor
-Boid::Boid(Point a, Point b) : r{a}, v{b} {};
+//Boid::Boid(Point a, Point b) : r{a}, v{b} {};
 
 
 // swarm constructor.parameter gets assignet to m_boid. also:
-// initializes a vector of vertex arrays. They each store the vertexes of one
+// initializes a  vector of vertex arrays. They each store the vertexes of one
 // boid's triangle. the size is three times that of the number of boids
 // because each boid is associated with a triangle (three vertexes)
 
-Swarm::Swarm(std::vector<Boid> boids) : m_boids{boids} {
+Swarm::Swarm(const std::vector<Boid>& boids) : m_boids{boids} {
+  //passed by reference to save computation. is it right?
+
   sf::VertexArray swarm_vertex(sf::Triangles, 3 * m_boids.size());
   m_vertices = swarm_vertex;  // can't brace initialize, don't know why.
 
@@ -72,7 +74,7 @@ Swarm::Swarm(std::vector<Boid> boids) : m_boids{boids} {
 void Swarm::update(double delta_t) {
   for (auto it = m_boids.begin(); it < m_boids.end(); it++) {
     // for loop, change to algorithm?
-    (*it).r = delta_t * (*it).v + (*it).r;
+    it->r = delta_t * (it->v) + (it->r);
   }
   vertex_update();
 }
@@ -89,8 +91,8 @@ void Swarm::vertex_update() {
 
   for (auto it = m_boids.begin(); it < m_boids.end(); it++) {
     auto index = (it - m_boids.begin());
-    auto x = (*it).r.x();
-    auto y = (*it).r.y();
+    auto x = (it->r).x();
+    auto y = (it->r).y();
 
     m_vertices[3 * index].position =
         sf::Vector2f(x + static_cast<float>(boid_size), y);
