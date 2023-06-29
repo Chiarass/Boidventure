@@ -16,7 +16,14 @@ double Point::x() const { return m_x; }
 double Point::y() const { return m_y; }
 
 // distance of Point from origin
-double Point::distance() const { return sqrt(m_x * m_x + m_y * m_y); }
+double Point::distance() const { return std::sqrt(m_x * m_x + m_y * m_y); }
+
+void Point::rotate(double angle){
+  double temp{};
+  temp = m_x * std::cos(angle) - m_y * std::sin(angle);
+  m_y = m_x * std::sin(angle) + m_y * std::cos(angle);
+  m_x = temp;
+}
 
 
 
@@ -64,9 +71,9 @@ Swarm::Swarm(const std::vector<Boid>& boids) : m_boids{boids} {
   // because m_boids.size() is not an int
 
   for (int i = 0; i < static_cast<int>(m_boids.size()); ++i) {
-    // colors of triangles. Creates cool gradient. Probably temporary.
-    m_vertices[i * 3].color = sf::Color::Red;
-    m_vertices[i * 3 + 1].color = sf::Color::Blue;
+    //maybe make a constant for the color?
+    m_vertices[i * 3].color = sf::Color::Green;
+    m_vertices[i * 3 + 1].color = sf::Color::Green;
     m_vertices[i * 3 + 2].color = sf::Color::Green;
   }
 };
@@ -137,25 +144,33 @@ Point Swarm::turn_around(std::vector<Boid>::iterator iti){
 // boid is positioned in the middle of the base.
 // x and y parameters represent boid position
 
-void Swarm::vertex_update() {
+void Swarm::vertex_update(std::vector<Boid>::iterator it) {
   // considering not using iterators, to make
   // code more readable. Also, better to change
   // to an alogtirithm if possible.
+  // add comment explanation
 
-  for (auto it = m_boids.begin(); it < m_boids.end(); it++) {
-    auto index = (it - m_boids.begin());
-    auto x = (it->r).x();
-    auto y = (it->r).y();
+    //should convert implicitly to double anyway, so no
+    //need to static cast it i think.
+    Point forward_vertex{0.,0.};
+    if((it->v).distance() != 0)
+    forward_vertex = (constants::boid_size/it->v.distance())*(it->v);
 
-    m_vertices[3 * index].position =
-        sf::Vector2f(x + static_cast<float>(constants::boid_size), y);
+    m_vertices[3 *(it-m_boids.begin())].position =
+        //i have added the *2 so the front is longer,
+        //and we can distinguish it.
+        sf::Vector2f((it->r + 2*forward_vertex).x(), (it->r + 2*forward_vertex).y());
 
-    m_vertices[3 * index + 1].position =
-        sf::Vector2f(x - static_cast<float>(constants::boid_size), y);
+    //rotate by 120
+    forward_vertex.rotate(2./3*constants::pi);
 
-    m_vertices[3 * index + 2].position =
-        sf::Vector2f(x, y + static_cast<float>(sqrt(3) * constants::boid_size));
-  }
+    m_vertices[(3 * (it-m_boids.begin())) + 1].position =
+        sf::Vector2f((it->r + forward_vertex).x(), (it->r + forward_vertex).y());
+      
+    forward_vertex.rotate(2./3*constants::pi);
+
+    m_vertices[(3 * (it-m_boids.begin())) + 2].position =
+        sf::Vector2f((it->r + forward_vertex).x(), (it->r + forward_vertex).y());
 }
 
 void Swarm::update(double delta_t) {
@@ -169,8 +184,8 @@ void Swarm::update(double delta_t) {
       it->v = Point{constants::velocity_reduction_coefficent*(it->v.x()), constants::velocity_reduction_coefficent*(it->v.y())};
     }
     it->r = delta_t * (it->v)+ (it->r);
+    vertex_update(it);
   }
-  vertex_update();
 }
 
 sf::VertexArray Swarm::get_vertices() { return m_vertices; }

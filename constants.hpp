@@ -14,8 +14,8 @@ namespace constants{
     inline constexpr double margin_width{10}; 
     inline constexpr double min_rand_velocity{-30};  //minimum velocity component generated randomly
     inline constexpr double max_rand_velocity{30};  //maximum velocity component generated randomly
-    inline constexpr int swarm_number{100};
-    inline constexpr double boid_size{20};  // the size of the sfml object representing the boid
+    inline constexpr int swarm_number{200};
+    inline constexpr double boid_size{25};  // the size of the sfml object representing the boid
 
     inline constexpr double separation_coefficent{0.05};  // separation coefficent
     inline constexpr double cohesion_coefficent{0.005};
@@ -30,5 +30,8 @@ namespace constants{
     //when boid goes velocity exceeds maximum velocity,
     //the velocity vector gets scaled by this coefficent
     inline constexpr double velocity_reduction_coefficent{0.9};
+
+    inline constexpr double pi = 3.14159265358979;
+
 }
 #endif

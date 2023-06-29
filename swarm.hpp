@@ -17,6 +17,7 @@ class Point {
  double y() const; //is it necessary for const to go here?
 
  double distance() const;
+ void rotate(double);
  void operator=(const Point&);
  //aggiungere distruttore
 };
@@ -54,7 +55,7 @@ class Swarm {
   // updates vertex position. They form an equilateral triangle,
   // boid is positioned in the middle of the base.
   // x and y parameters represent boid position
-  void vertex_update();
+  void vertex_update(std::vector<Boid>::iterator);
   void update(double);
 
   sf::VertexArray get_vertices();
