@@ -10,12 +10,15 @@ class Point {
 
  public:
  Point(double = 0, double = 0);
+ Point(const Point&);
 
 //returns m_x, m_y
  double x() const; //is it necessary for const to go here?
  double y() const; //is it necessary for const to go here?
 
  double distance() const;
+ void operator=(const Point&);
+ //aggiungere distruttore
 };
 
 Point operator+(const Point &, const Point &);  //should they stay inside or outside?
@@ -35,18 +38,24 @@ class Swarm {
 
  public:
 
-  // swarm constructor.parameter gets assignet to m_boid. also:
+  // swarm constructor. Parameter gets assignet to m_boid. also:
   // initializes a vector of vertex arrays. They each store the vertexes of one
   // boid's triangle. the size is three times that of the number of boids
   // because each boid is associated with a triangle (three vertexes)
-
   Swarm(const std::vector<Boid>&);
-  void update(double);
+
+
+  Point separation(std::vector<Boid>::iterator);
+  Point alignment(std::vector<Boid>::iterator);
+  Point cohesion(std::vector<Boid>::iterator);
+  Point turn_around(std::vector<Boid>::iterator);
+
   
-// updates vertex position. They form an equilateral triangle,
-// boid is positioned in the middle of the base.
-// x and y parameters represent boid position
+  // updates vertex position. They form an equilateral triangle,
+  // boid is positioned in the middle of the base.
+  // x and y parameters represent boid position
   void vertex_update();
+  void update(double);
 
   sf::VertexArray get_vertices();
 };
