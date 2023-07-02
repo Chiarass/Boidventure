@@ -17,9 +17,9 @@ double uniform(double a, double b) {
 
 
 int main() {
-  std::vector<Boid> boid_vector; //maybe initialize size of vector?
-  Point boid_position;
-  Point boid_velocity;
+  std::vector<boids::Boid> boid_vector(constants::swarm_number);
+  boids::Point boid_position;
+  boids::Point boid_velocity;
 
   // for loop fills boid vector
   for (int i = 0; i < constants::swarm_number; ++i) {
@@ -30,13 +30,13 @@ int main() {
     // want the boid to be generated within that distance
     // from the edge of the window, and the upper left corner
     // of the window has position (0,0).
-    boid_position = Point {uniform(constants::margin_width, constants::window_width - constants::margin_width),
+    boid_position = boids::Point {uniform(constants::margin_width, constants::window_width - constants::margin_width),
                          uniform(constants::margin_width, constants::window_height - constants::margin_width)};
-    boid_velocity = Point {uniform(constants::min_rand_velocity, constants::max_rand_velocity),
+    boid_velocity = boids::Point {uniform(constants::min_rand_velocity, constants::max_rand_velocity),
                          uniform(constants::min_rand_velocity, constants::max_rand_velocity)};
-    boid_vector.push_back(Boid{boid_position, boid_velocity});
+    boid_vector[i] = boids::Boid{boid_position, boid_velocity};
   }
-  Swarm boid_swarm = Swarm(boid_vector);
+  boids::Swarm boid_swarm = boids::Swarm(boid_vector);
 
   // makes the window and specifies its size and title
   sf::RenderWindow window;

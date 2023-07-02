@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.16)
 project(swarm VERSION 0.1.0)
 
+# abilita il supporto per i test, tra cui l'opzione BUILD_TESTING usata sotto
+include(CTest)
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # richiedi l'uso di C++17, senza estensioni non-standard offerte dal compilatore usato 
@@ -18,7 +21,20 @@ string(APPEND CMAKE_EXE_LINKER_FLAGS_DEBUG " -fsanitize=address,undefined -fno-o
 # richiede SFML?
 find_package(SFML COMPONENTS graphics REQUIRED)
 
-add_executable(swarm swarm.cpp main.cpp point.cpp)
+add_executable(swarm main.cpp)
 
 #aggiunge sfml?
 target_link_libraries(swarm PRIVATE sfml-graphics)
+
+# se il testing e' abilitato...
+#   per disabilitare il testing, passare -DBUILD_TESTING=OFF a cmake durante la fase di configurazione
+#[[
+if (BUILD_TESTING)
+
+  # aggiungi l'eseguibile statistics.t
+  add_executable(statistics.t statistics.test.cpp statistics.cpp)
+  # aggiungi l'eseguibile statistics.t alla lista dei test
+  add_test(NAME statistics.t COMMAND statistics.t)
+
+endif()
+]]

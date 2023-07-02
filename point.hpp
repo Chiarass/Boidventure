@@ -1,27 +1,56 @@
 #ifndef POINT_HPP
 #define POINT_HPP
 
+#include <cmath>
+
+namespace boids {
 class Point {
- double m_x{};
- double m_y{};
+  double m_x{};
+  double m_y{};
 
  public:
- Point(double = 0, double = 0);
- Point(const Point&);
+  Point(double x = 0, double y = 0) : m_x{x}, m_y{y} {};
+  Point(const Point& a) : m_x{a.m_x}, m_y{a.m_y} {};
+  // aggiungere distruttore
 
-//returns m_x, m_y
- double x() const; //is it necessary for const to go here?
- double y() const; //is it necessary for const to go here?
+  // returns m_x, m_y
+  double x() const { return m_x; };
+  double y() const { return m_y; };
 
- double distance() const;
- void rotate(double);
- void operator=(const Point&);
- //aggiungere distruttore
+  // distance of Point from origin
+  double distance() const { return std::sqrt(m_x * m_x + m_y * m_y); }
+
+  // implementation of rotation trasoformation.
+  // parameter assumed to be in radians
+  void rotate(double angle) {
+    double temp{};
+    temp = m_x * std::cos(angle) - m_y * std::sin(angle);
+    m_y = m_x * std::sin(angle) + m_y * std::cos(angle);
+    m_x = temp;
+  }
+
+  Point& operator=(const Point& a) {
+    m_x = a.x();
+    m_y = a.y();
+    return *this;
+  }
 };
 
-Point operator+(const Point &, const Point &);  //should they stay inside or outside?
-Point operator-(const Point &, const Point&);
-Point operator*(double, const Point&);
+// defines Point (that is mathematical 2-vector) operations
+inline Point operator+(const Point& a, const Point& b) {
+  Point sum{a.x() + b.x(), a.y() + b.y()};
+  return sum;
+}
 
+inline Point operator-(const Point& a, const Point& b) {
+  Point diff{a.x() - b.x(), a.y() - b.y()};
+  return diff;
+}
+
+inline Point operator*(double c, const Point& a) {
+  Point res{c * a.x(), c * a.y()};
+  return res;
+}
+}  // namespace boids
 
 #endif

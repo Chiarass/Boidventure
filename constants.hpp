@@ -3,7 +3,7 @@
 //-----costants---------
 
 namespace constants{
-    inline constexpr double delta_t{0.05};  // time increment. higher number, lower speeds.
+    inline constexpr double delta_t{0.05};  //0.05 time increment. higher number, lower speeds.
     inline constexpr double window_height{1500};
     inline constexpr double window_width{2000};
 
@@ -26,7 +26,7 @@ namespace constants{
     inline constexpr double separation_distance{50};
 
     //maximum length of velocity vector
-    inline constexpr double max_velocity{300};
+    inline constexpr double max_velocity{100};
     //when boid goes velocity exceeds maximum velocity,
     //the velocity vector gets scaled by this coefficent
     inline constexpr double velocity_reduction_coefficent{0.9};
