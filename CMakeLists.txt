@@ -28,13 +28,14 @@ target_link_libraries(swarm PRIVATE sfml-graphics)
 
 # se il testing e' abilitato...
 #   per disabilitare il testing, passare -DBUILD_TESTING=OFF a cmake durante la fase di configurazione
-#[[
+
 if (BUILD_TESTING)
 
-  # aggiungi l'eseguibile statistics.t
-  add_executable(statistics.t statistics.test.cpp statistics.cpp)
-  # aggiungi l'eseguibile statistics.t alla lista dei test
-  add_test(NAME statistics.t COMMAND statistics.t)
+  # aggiungi l'eseguibile boids.t
+  add_executable(boids.t boids.test.cpp)
+  target_link_libraries(boids.t PRIVATE sfml-graphics)
+  # aggiungi l'eseguibile boids.t alla lista dei test
+  add_test(NAME boids.t COMMAND boids.t)
+
 
 endif()
-]]

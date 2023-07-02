@@ -56,15 +56,7 @@ int main() {
     // makes boids move in straight lines with
     // assigned velocities.
     boid_swarm.update(constants::delta_t);
-
-    // here goes the code that updates the boids poisitions, once it will be
-    // ready
-
-    // and here goes the code that updates the vertex positions
-
-    // and here goes the code to align the vertex of a triangle with boid
-    // direction of motion
-
+    
     window.draw(boid_swarm.get_vertices());
     window.display();
   }
