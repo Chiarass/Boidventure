@@ -1,7 +1,6 @@
 #ifndef SWARM_HPP
 #define SWARM_HPP
 
-
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <iterator>
@@ -15,32 +14,25 @@ namespace boids {
 struct Boid {
   boids::Point r{};  // position
   boids::Point v{};  // velocity
-  // Boid(boids::Point, boids::Point);
 };
 
 class Swarm {
   std::vector<Boid> m_boids;
+  // contains vertices of boid triangles
   sf::VertexArray m_vertices;
 
  public:
-  // swarm constructor. Parameter gets assignet to m_boid. also:
-  // initializes a vector of vertex arrays. They each store the vertexes of one
-  // boid's triangle. the size is three times that of the number of boids
-  // because each boid is associated with a triangle (three vertexes)
+  // the size of vertexArray is three times that of the number of boids
+  // because each boid is associated with a triangle (three vertices)
   Swarm(const std::vector<Boid>& boids) : m_boids{boids} {
-    // passed by reference to save computation. is it right?
-
-    sf::VertexArray swarm_vertex(sf::Triangles, 3 * m_boids.size());
+    sf::VertexArray swarm_vertex{sf::Triangles, 3 * m_boids.size()};
     m_vertices = swarm_vertex;  // can't brace initialize, don't know why.
-
-    // static_cast only serves the purpose of removing warning
-    // because m_boids.size() is not an int
 
     for (int i = 0; i < static_cast<int>(m_boids.size()); ++i) {
       // maybe make a constant for the color?
-      m_vertices[i * 3].color = sf::Color::Green;
-      m_vertices[i * 3 + 1].color = sf::Color::Green;
-      m_vertices[i * 3 + 2].color = sf::Color::Green;
+      m_vertices[i * 3].color = constants::boid_color;
+      m_vertices[i * 3 + 1].color = constants::boid_color;
+      m_vertices[i * 3 + 2].color = constants::boid_color;
     }
   };
 

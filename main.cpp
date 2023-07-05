@@ -53,8 +53,6 @@ int main() {
     // makes the window return black
     window.clear(sf::Color::Black);
     
-    // makes boids move in straight lines with
-    // assigned velocities.
     boid_swarm.update(constants::delta_t);
     
     window.draw(boid_swarm.get_vertices());

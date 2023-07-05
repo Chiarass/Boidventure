@@ -51,6 +51,7 @@ TEST_CASE("Testing the Point class") {
     p1.rotate(2 * constants::pi);
     CHECK(p1.x() == doctest::Approx(-0.435231));
     CHECK(p1.y() == doctest::Approx(-0.90031));
+    //0 vector will always rotate to itself
     boids::Point p0{0., 0.};
     p0.rotate(-3421.);
     CHECK(p0.x() == doctest::Approx(0.));
@@ -72,8 +73,12 @@ TEST_CASE("Testing the Point class") {
     auto p6 = 13./91.*(p3 - p4)+(p5 -p2 -p3) + p4 + p4 - 2*p4;
     CHECK(p6.x() == doctest::Approx(-4.10857));
     CHECK(p6.y() == doctest::Approx(-2.78857));
-    p6 = p5 = p4 = p3; //checking if concatenation of equalities works
+    p6 = p5 = p4 = p3; //checking if multiple assignments work
     CHECK(p6.x() == doctest::Approx(3.));
     CHECK(p6.y() == doctest::Approx(2.));
   }
+}
+
+TEST_CASE("Testing the Swarm class"){
+    
 }
