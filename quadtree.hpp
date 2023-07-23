@@ -5,8 +5,8 @@
 #include <iostream>
 #include <vector>
 
-#include "point.hpp"
 #include "boid.hpp"
+#include "point.hpp"
 
 namespace boids {
 struct Rectangle {
@@ -75,7 +75,6 @@ class Quad_tree {
       if ((static_cast<int>(boids.size()) < m_capacity && !m_divided)) {
         boids.push_back(boid_ptr);
       } else {
-
         if (!m_divided) {
           subdivide();
           for (auto& inserted_boids : boids) {
@@ -94,9 +93,45 @@ class Quad_tree {
     }
   }
 
+  bool square_collide(double range, const Boid& boid) const {
+    if (boid.pos().x() + range < m_boundary.x - m_boundary.w ||
+        boid.pos().x() - range > m_boundary.x + m_boundary.w ||
+        boid.pos().y() + range < m_boundary.y - m_boundary.h ||
+        boid.pos().y() - range > m_boundary.y + m_boundary.h) {
+      return false;
+    }
+    return true;
+  }
+
+  void query(double range, const Boid& boid,
+             std::vector<Boid*>& in_range) const {
+    // the 2 factor here is needed, because otherwise
+    // it might collide with a boid in another cell
+    // but the square would not collide with the cell.
+    if (!square_collide(2 * range, boid)) {
+      return;
+    }
+
+    // if i change to reference, remember & in front of auto.
+    for (auto other_boid : boids) {
+      if ((other_boid->pos() - boid.pos()).distance() < range * 2) {
+        if (&boid != other_boid) {
+          in_range.push_back(other_boid);
+        }
+      }
+    }
+
+    if (m_divided) {
+      northeast->query(range, boid, in_range);
+      northwest->query(range, boid, in_range);
+      southeast->query(range, boid, in_range);
+      southwest->query(range, boid, in_range);
+    }
+  }
+
   void display(sf::RenderWindow& window) {
     sf::RectangleShape rect;
-    //color/thikness should be constat
+    // color/thikness should be constat
     rect.setOutlineColor(sf::Color::Green);
     rect.setOutlineThickness(1);
     rect.setFillColor(sf::Color(0, 255, 0, 0));
@@ -115,9 +150,8 @@ class Quad_tree {
       return;
     }
   }
- 
 
- //to delete later
+  // to delete later
   void print_tree() {
     for (auto& boid_ptr : boids) {
       std::cout << (boid_ptr->pos()).x() << " , ";
@@ -131,7 +165,7 @@ class Quad_tree {
     }
   }
 
-  //to test for memory leaks.
+  // to test for memory leaks.
   void delete_tree() {
     if (m_divided) {
       northeast->delete_tree();

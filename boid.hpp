@@ -66,7 +66,7 @@ class Boid {
     for (auto other_boid : in_range) {
         added_velocity = added_velocity + (other_boid->vel());
       }
-    if (in_range.size() == 0) {
+    if (in_range.size() != 0) {
       added_velocity = constants::alignment_coefficent *
                        ((1. / (in_range.size())) * added_velocity - (m_vel));
     }

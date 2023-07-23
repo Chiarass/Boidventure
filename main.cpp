@@ -20,7 +20,8 @@ double uniform(double a, double b) {
   return unif(eng);
 }
 
-void vertex_update(sf::VertexArray& swarm_vertex, Boid& boid, int index) {
+
+void vertex_update(sf::VertexArray& swarm_vertex,const Boid& boid, int index) {
   // add comment explanation
 
   // should convert implicitly to double anyway, so no
@@ -47,6 +48,15 @@ void vertex_update(sf::VertexArray& swarm_vertex, Boid& boid, int index) {
   swarm_vertex[(3 * index) + 2].position = sf::Vector2f(
       (boid.pos() + forward_vertex).x(), (boid.pos() + forward_vertex).y());
 }
+/* 
+
+void vertex_update(sf::RenderWindow& window, const Boid& boid){
+  sf::CircleShape circle;
+  circle.setRadius(constants::boid_size);
+  circle.setPosition(boid.pos().x(), boid.pos().y());
+  circle.setFillColor(constants::boid_color);
+  window.draw(circle);
+} */
 
 //not optimal, because returning vector, expensive return
 std::vector<Boid*> get_in_range(Boid& boid, std::vector<Boid>& boid_vector){
@@ -65,13 +75,11 @@ int main() {
   std::vector<boids::Boid> boid_vector;
   boids::Point boid_position{};
   boids::Point boid_velocity{};
-  /*
   boids::Quad_tree tree{constants::cell_capacity,
                         boids::Rectangle{constants::window_width / 2.,
                                          constants::window_height / 2.,
                                          constants::window_width / 2.,
                                          constants::window_height / 2.}};
-  */
   sf::VertexArray swarm_vertex{sf::Triangles, 3 * constants::swarm_number};
 
   // for loop fills boid vector
@@ -115,21 +123,20 @@ int main() {
     // makes the window return black
     window.clear(sf::Color::Black);
 
-    for (int i = 0; i != static_cast<int>(boid_vector.size()); ++i) {
-      auto in_range =  get_in_range(boid_vector[i], boid_vector);
-      boid_vector[i].update(constants::delta_t, in_range);
-      vertex_update(swarm_vertex, boid_vector[i], i);
-    }
-
-    /*
-    tree.delete_tree();
-    for(auto& boid : boid_swarm.m_boids){
+    for(auto& boid : boid_vector){
+      //couldn't i do it with references?
       tree.insert(&boid);
     }
-    */
 
-    // tree.display(window);
-
+    for (int i = 0; i != static_cast<int>(boid_vector.size()); ++i) {
+      std::vector<boids::Boid *> in_range;
+      tree.query(constants::distance_coefficent, boid_vector[i], in_range);
+      boid_vector[i].update(constants::delta_t, in_range);
+      boids::vertex_update(swarm_vertex, boid_vector[i], i);
+    }
+  
+    tree.display(window);
+    tree.delete_tree();
     window.draw(swarm_vertex);
     window.display();
   }
