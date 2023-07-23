@@ -5,7 +5,7 @@
 
 namespace constants {
 inline constexpr double delta_t{
-    0.0035};  // time increment. higher number, higher speeds. added 1 zeros
+    0.035};  // time increment. higher number, higher speeds. added 1 zeros
 inline constexpr double window_height{1500};
 inline constexpr double window_width{2000};
 
@@ -25,7 +25,7 @@ inline constexpr double boid_size{
 inline constexpr double separation_coefficent{0.05};  // separation coefficent
 inline constexpr double cohesion_coefficent{0.005};
 inline constexpr double alignment_coefficent{0.01};
-inline constexpr double turn_coefficent{10};
+inline constexpr double turn_coefficent{10}; 
 // minimum distance for cohesion and alignmnent to have effect
 inline constexpr double distance_coefficent{200};
 // minimum distance for separation to have effect
