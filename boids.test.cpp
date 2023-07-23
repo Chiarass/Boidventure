@@ -3,7 +3,7 @@
 #include "constants.hpp"
 #include "doctest.h"
 #include "point.hpp"
-#include "swarm.hpp"
+#include "quadtree.hpp"
 
 TEST_CASE("Testing the Point class") {
   SUBCASE("checking if x() and y() return m_x, m_y") {
@@ -79,6 +79,18 @@ TEST_CASE("Testing the Point class") {
   }
 }
 
-TEST_CASE("Testing the Swarm class"){
-    
+TEST_CASE("Testing the quadtree class"){
+    SUBCASE("checking if contains method works"){
+      boids::Rectangle rect{0.,0.,10.,10.};
+      boids::Point p1{5., -4.};
+      boids::Point p2{11., 0,};
+      boids::Point p3 {0., 11.};
+      boids::Point p4{10., 10.};
+      CHECK(rect.contains(p1));
+      CHECK(!rect.contains(p2));
+      CHECK(!rect.contains(-1.*p2));
+      CHECK(!rect.contains(p3));
+      CHECK(!rect.contains(-1.*p3));
+      CHECK(rect.contains(p4));
+    }
 }

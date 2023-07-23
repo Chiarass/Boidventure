@@ -18,12 +18,10 @@ string(APPEND CMAKE_CXX_FLAGS " -Wall -Wextra")
 string(APPEND CMAKE_CXX_FLAGS_DEBUG " -fsanitize=address,undefined -fno-omit-frame-pointer")
 string(APPEND CMAKE_EXE_LINKER_FLAGS_DEBUG " -fsanitize=address,undefined -fno-omit-frame-pointer")
 
-# richiede SFML?
 find_package(SFML COMPONENTS graphics REQUIRED)
 
 add_executable(swarm main.cpp)
 
-#aggiunge sfml?
 target_link_libraries(swarm PRIVATE sfml-graphics)
 
 # se il testing e' abilitato...

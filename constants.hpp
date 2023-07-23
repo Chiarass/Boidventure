@@ -5,7 +5,7 @@
 
 namespace constants {
 inline constexpr double delta_t{
-    0.035};  // time increment. higher number, higher speeds.
+    0.0035};  // time increment. higher number, higher speeds. added 1 zeros
 inline constexpr double window_height{1500};
 inline constexpr double window_width{2000};
 
@@ -41,5 +41,8 @@ inline constexpr double pi = 3.14159265358979;
 
 inline const sf::Color boid_color{sf::Color::Green};
 
+// capacity of quad_tree cell
+// subdivides if excedeed
+inline constexpr int cell_capacity{5};
 }  // namespace constants
 #endif
