@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <vector>
+#include <cassert>
 
 #include "boid.hpp"
 #include "point.hpp"
@@ -105,16 +106,13 @@ class Quad_tree {
 
   void query(double range, const Boid& boid,
              std::vector<Boid*>& in_range) const {
-    // the 2 factor here is needed, because otherwise
-    // it might collide with a boid in another cell
-    // but the square would not collide with the cell.
-    if (!square_collide(2 * range, boid)) {
+    if (!square_collide(range, boid)) {
       return;
     }
 
     // if i change to reference, remember & in front of auto.
     for (auto other_boid : boids) {
-      if ((other_boid->pos() - boid.pos()).distance() < range * 2) {
+      if ((other_boid->pos() - boid.pos()).distance() < range) {
         if (&boid != other_boid) {
           in_range.push_back(other_boid);
         }
@@ -151,7 +149,7 @@ class Quad_tree {
     }
   }
 
-  // to delete later
+  //for debugging to delete later
   void print_tree() {
     for (auto& boid_ptr : boids) {
       std::cout << (boid_ptr->pos()).x() << " , ";

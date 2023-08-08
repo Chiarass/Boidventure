@@ -11,19 +11,22 @@
 // marsenne twister seems to reset
 // pseudo random number generator
 
+//to change
+inline std::mt19937 eng{};
+
 namespace boids {
 
 double uniform(double a, double b) {
-  std::random_device rd;
-  std::mt19937 eng(rd());
+  //commented out for debugging
+  //std::random_device rd;
   std::uniform_real_distribution<double> unif{a, b};
   return unif(eng);
 }
 
-
-void vertex_update(sf::VertexArray& swarm_vertex,const Boid& boid, int index) {
-  // add comment explanation
-
+// updates the triangle object associated with the passed boid. It
+// moves it to the same poistion on the screen as the boid
+// and rotates it toward the direction of motion
+void vertex_update(sf::VertexArray& swarm_vertex, const Boid& boid, int index) {
   // should convert implicitly to double anyway, so no
   // need to static cast it i think.
   Point forward_vertex{0., 0.};
@@ -47,27 +50,6 @@ void vertex_update(sf::VertexArray& swarm_vertex,const Boid& boid, int index) {
 
   swarm_vertex[(3 * index) + 2].position = sf::Vector2f(
       (boid.pos() + forward_vertex).x(), (boid.pos() + forward_vertex).y());
-}
-/* 
-
-void vertex_update(sf::RenderWindow& window, const Boid& boid){
-  sf::CircleShape circle;
-  circle.setRadius(constants::boid_size);
-  circle.setPosition(boid.pos().x(), boid.pos().y());
-  circle.setFillColor(constants::boid_color);
-  window.draw(circle);
-} */
-
-//not optimal, because returning vector, expensive return
-std::vector<Boid*> get_in_range(Boid& boid, std::vector<Boid>& boid_vector){
-  std::vector<Boid*> in_range;
-  for(auto& other_boid : boid_vector){
-    //not detecting itself as other boid
-    if((other_boid.pos() - boid.pos()).distance() != 0 && (other_boid.pos() - boid.pos()).distance() < constants::distance_coefficent){
-      in_range.push_back(&other_boid);
-    }
-  }
-  return in_range;
 }
 }  // namespace boids
 
@@ -106,6 +88,7 @@ int main() {
     swarm_vertex[i * 3 + 1].color = constants::boid_color;
     swarm_vertex[i * 3 + 2].color = constants::boid_color;
   }
+
   // makes the window and specifies its size and title
   sf::RenderWindow window;
   window.create(
@@ -123,18 +106,18 @@ int main() {
     // makes the window return black
     window.clear(sf::Color::Black);
 
-    for(auto& boid : boid_vector){
-      //couldn't i do it with references?
+    for (auto& boid : boid_vector) {
+      // couldn't i do it with references?
       tree.insert(&boid);
     }
 
     for (int i = 0; i != static_cast<int>(boid_vector.size()); ++i) {
-      std::vector<boids::Boid *> in_range;
-      tree.query(constants::distance_coefficent, boid_vector[i], in_range);
+      std::vector<boids::Boid*> in_range;
+      tree.query(constants::range, boid_vector[i], in_range);
       boid_vector[i].update(constants::delta_t, in_range);
       boids::vertex_update(swarm_vertex, boid_vector[i], i);
     }
-  
+
     tree.display(window);
     tree.delete_tree();
     window.draw(swarm_vertex);
