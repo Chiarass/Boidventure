@@ -18,7 +18,8 @@ string(APPEND CMAKE_CXX_FLAGS " -Wall -Wextra")
 string(APPEND CMAKE_CXX_FLAGS_DEBUG " -fsanitize=address,undefined -fno-omit-frame-pointer")
 string(APPEND CMAKE_EXE_LINKER_FLAGS_DEBUG " -fsanitize=address,undefined -fno-omit-frame-pointer")
 
-find_package(SFML COMPONENTS graphics REQUIRED)
+find_package(SFML 2.6 COMPONENTS graphics REQUIRED)
+find_package(TGUI)
 
 add_executable(swarm main.cpp)
 

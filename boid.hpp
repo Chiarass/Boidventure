@@ -24,17 +24,6 @@ class Boid {
 
   Boid(Point& pos, Point& vel) : m_pos{pos}, m_vel{vel} {};
 
-  /*     {
-      sf::VertexArray swarm_vertex{sf::Triangles, 3 * in_range.size()};
-      m_vertices = swarm_vertex;  // can't brace initialize, don't know why.
-
-      for (int i = 0; i < static_cast<int>(in_range.size()); ++i) {
-        // maybe make a constant for the color?
-        m_vertices[i * 3].color = constants::boid_color;
-        m_vertices[i * 3 + 1].color = constants::boid_color;
-        m_vertices[i * 3 + 2].color = constants::boid_color;
-      } */
-
   Point pos() const{ return m_pos; }
 
   Point vel() const{ return m_vel; }
