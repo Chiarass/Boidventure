@@ -1,7 +1,6 @@
 #ifndef SWARM_HPP
 #define SWARM_HPP
 
-#include <SFML/Graphics.hpp>
 #include <cmath>
 #include <iterator>
 #include <vector>
@@ -11,7 +10,6 @@
 
 namespace boids {
 class Boid {
-  // public or private?
  private:
   Point m_pos{};  // position
   Point m_vel{};  // velocity
@@ -40,7 +38,7 @@ class Boid {
 
   Point cohesion(const std::vector<Boid*>& in_range) {
     Point added_velocity{0, 0};
-    for (auto other_boid : in_range) {
+    for (auto& other_boid : in_range) {
         added_velocity = added_velocity + (other_boid->pos());
     }
     if (in_range.size() != 0) {
@@ -52,7 +50,7 @@ class Boid {
 
   Point alignment(const std::vector<Boid*>& in_range) {
     Point added_velocity{0, 0};
-    for (auto other_boid : in_range) {
+    for (auto& other_boid : in_range) {
         added_velocity = added_velocity + (other_boid->vel());
       }
     if (in_range.size() != 0) {
@@ -77,6 +75,12 @@ class Boid {
     if (m_pos.y() < constants::margin_width)
       return {0., constants::turn_coefficent};
     return {0., 0.};
+  }
+
+  void repel(const Point& click_position){
+    //normalized vector connecting point and boid
+    auto add_vel = (1/(m_pos - click_position).distance())*(m_pos - click_position);
+    m_vel = m_vel + constants::repel_coefficent*add_vel;
   }
   
   void update(double delta_t, const std::vector<Boid*>& in_range) {

@@ -22,13 +22,16 @@ inline constexpr int swarm_number{700};
 inline constexpr double boid_size{
     7};  // the size of the sfml object representing the boid
 
-inline constexpr double separation_coefficent{0.2};  // separation coefficent
-inline constexpr double cohesion_coefficent{0.01};
-inline constexpr double alignment_coefficent{0.05};
+inline double separation_coefficent{0.2};  // separation coefficent
+inline double cohesion_coefficent{0.01};
+inline double alignment_coefficent{0.05};
 inline constexpr double turn_coefficent{20};
 
+inline constexpr double repel_coefficent{30};
+inline constexpr double repel_range{100};
+
 inline constexpr double range{
-    50};  // minimum distance for cohesion and alignmnent
+    35};  // minimum distance for cohesion and alignmnent
 inline constexpr double separation_distance{20};
 
 // maximum length of velocity vector

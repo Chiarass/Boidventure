@@ -19,11 +19,13 @@ string(APPEND CMAKE_CXX_FLAGS_DEBUG " -fsanitize=address,undefined -fno-omit-fra
 string(APPEND CMAKE_EXE_LINKER_FLAGS_DEBUG " -fsanitize=address,undefined -fno-omit-frame-pointer")
 
 find_package(SFML 2.6 COMPONENTS graphics REQUIRED)
-find_package(TGUI)
+#vvvvvv da controllare se giusto vvvvvvv
+find_package(TGUI REQUIRED)
 
 add_executable(swarm main.cpp)
 
-target_link_libraries(swarm PRIVATE sfml-graphics)
+#vvvvvv da controllare se giusto vvvvvvv
+target_link_libraries(swarm PRIVATE sfml-graphics tgui)
 
 # se il testing e' abilitato...
 #   per disabilitare il testing, passare -DBUILD_TESTING=OFF a cmake durante la fase di configurazione

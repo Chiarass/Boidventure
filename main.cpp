@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <TGUI/TGUI.hpp>
 #include <random>
 
 #include "boid.hpp"
@@ -11,14 +12,14 @@
 // marsenne twister seems to reset
 // pseudo random number generator
 
-//to change
+// to change
 inline std::mt19937 eng{};
 
 namespace boids {
 
 double uniform(double a, double b) {
-  //commented out for debugging
-  //std::random_device rd;
+  // commented out for debugging
+  // std::random_device rd;
   std::uniform_real_distribution<double> unif{a, b};
   return unif(eng);
 }
@@ -53,10 +54,10 @@ void vertex_update(sf::VertexArray& swarm_vertex, const Boid& boid, int index) {
 }
 }  // namespace boids
 
+
+
 int main() {
   std::vector<boids::Boid> boid_vector;
-  boids::Point boid_position{};
-  boids::Point boid_velocity{};
   boids::Quad_tree tree{constants::cell_capacity,
                         boids::Rectangle{constants::window_width / 2.,
                                          constants::window_height / 2.,
@@ -73,15 +74,16 @@ int main() {
     // want the boid to be generated within that distance
     // from the edge of the window, and the upper left corner
     // of the window has position (0,0).
-    boid_position = boids::Point{
+    auto boid_position = boids::Point{
         boids::uniform(constants::margin_width,
                        constants::window_width - constants::margin_width),
         boids::uniform(constants::margin_width,
                        constants::window_height - constants::margin_width)};
-    boid_velocity = boids::Point{boids::uniform(constants::min_rand_velocity,
-                                                constants::max_rand_velocity),
-                                 boids::uniform(constants::min_rand_velocity,
-                                                constants::max_rand_velocity)};
+    auto boid_velocity =
+        boids::Point{boids::uniform(constants::min_rand_velocity,
+                                    constants::max_rand_velocity),
+                     boids::uniform(constants::min_rand_velocity,
+                                    constants::max_rand_velocity)};
     boid_vector.push_back(boids::Boid{boid_position, boid_velocity});
 
     swarm_vertex[i * 3].color = constants::boid_color;
@@ -95,12 +97,53 @@ int main() {
       sf::VideoMode(constants::window_width, constants::window_height),
       "boids!", sf::Style::Default);
 
+  tgui::GuiSFML gui{window};
+
+  bool display_tree{false};
+
+  // button for quad tree
+  tgui::Button::Ptr cell_button = tgui::Button::create();
+  cell_button->setPosition(10., 10.);
+  cell_button->setSize(70., 20.);
+  cell_button->setText("show cells");
+  cell_button->onPress([&display_tree] { display_tree = !display_tree; });
+  gui.add(cell_button);
+
+  //slider for cohesion
+  tgui::Slider::Ptr cohesion_slider = tgui::Slider::create();
+  cohesion_slider->setPosition(10., 40.);
+  cohesion_slider->setValue(1);
+  gui.add(cohesion_slider);
+
+  //slider for alignment
+  tgui::Slider::Ptr alignment_slider = tgui::Slider::create();
+  alignment_slider->setPosition(10., 60.);
+  alignment_slider->setValue(2);
+  gui.add(alignment_slider);
+
+  //slider for separation
+  tgui::Slider::Ptr separation_slider = tgui::Slider::create();
+  separation_slider->setPosition(10., 80.);
+  separation_slider->setValue(3);
+  gui.add(separation_slider);
+
+  bool lock_click{false};
+
   // SFML loop. After each loop the window is updated
   while (window.isOpen()) {
     sf::Event event;
 
     while (window.pollEvent(event)) {
+      gui.handleEvent(event);
       if (event.type == sf::Event::Closed) window.close();
+      //if gui.handleEvent(event) is true (ex. a button is pressed) no repulsion occours
+      if (event.type == sf::Event::MouseButtonPressed && !gui.handleEvent(event)) {
+        lock_click = true;
+      }
+
+      if (event.type == sf::Event::MouseButtonReleased) {
+        lock_click = false;
+      }
     }
 
     // makes the window return black
@@ -111,6 +154,15 @@ int main() {
       tree.insert(&boid);
     }
 
+    if (lock_click) {
+        boids::Point mouse_position(sf::Mouse::getPosition(window).x,
+                                    sf::Mouse::getPosition(window).y);
+        for (auto& boid : boid_vector) {
+          if ((boid.pos() - mouse_position).distance() < constants::repel_range)
+            boid.repel(mouse_position);
+        }
+      }
+
     for (int i = 0; i != static_cast<int>(boid_vector.size()); ++i) {
       std::vector<boids::Boid*> in_range;
       tree.query(constants::range, boid_vector[i], in_range);
@@ -118,9 +170,14 @@ int main() {
       boids::vertex_update(swarm_vertex, boid_vector[i], i);
     }
 
-    tree.display(window);
+    constants::cohesion_coefficent = 0.1*(cohesion_slider -> getValue());
+    constants::alignment_coefficent = 0.1*(alignment_slider -> getValue());
+    constants::separation_coefficent = 0.1*(separation_slider -> getValue());
+
+    if (display_tree) tree.display(window);
     tree.delete_tree();
     window.draw(swarm_vertex);
+    gui.draw();
     window.display();
   }
 }
