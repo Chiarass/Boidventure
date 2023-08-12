@@ -1,8 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(hook VERSION 0.1.0)
-
-# abilita il supporto per i test, tra cui l'opzione BUILD_TESTING usata sotto
-include(CTest)
+project(swarm VERSION 0.1.0)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -18,7 +15,14 @@ string(APPEND CMAKE_CXX_FLAGS " -Wall -Wextra")
 string(APPEND CMAKE_CXX_FLAGS_DEBUG " -fsanitize=address,undefined -fno-omit-frame-pointer")
 string(APPEND CMAKE_EXE_LINKER_FLAGS_DEBUG " -fsanitize=address,undefined -fno-omit-frame-pointer")
 
-add_executable(hooke hooke.hpp hooke.cpp)
+# richiede SFML?
+find_package(SFML COMPONENTS graphics REQUIRED)
+
+add_executable(swarm swarm.cpp main.cpp )
+
+#aggiunge sfml?
+target_link_libraries(swarm PRIVATE sfml-graphics)
+
 
 # se il testing e' abilitato...
 #   per disabilitare il testing, passare -DBUILD_TESTING=OFF a cmake durante la fase di configurazione
