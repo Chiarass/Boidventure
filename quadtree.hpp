@@ -32,7 +32,7 @@ class Quad_tree {
   Rectangle m_boundary{};
   bool m_divided = false;
 
-
+   //maybe use smart pointers?
    std::vector<Boid*> boids;
    // children of quad tree. Dynamically allocated.
    Quad_tree* northeast;
@@ -115,7 +115,6 @@ class Quad_tree {
       return;
     }
 
-    // if i change to reference, remember & in front of auto.
     for (auto other_boid : boids) {
       if ((other_boid->pos() - boid.pos()).distance() < range) {
         if (&boid != other_boid) {
