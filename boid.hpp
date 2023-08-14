@@ -14,13 +14,6 @@ class Boid {
   Point m_pos{};  // position
   Point m_vel{};  // velocity
 
- public:
-  Boid(Point& pos, Point& vel) : m_pos{pos}, m_vel{vel} {};
-
-  Point pos() const { return m_pos; }
-
-  Point vel() const { return m_vel; }
-
   Point separation(const std::vector<Boid*>& in_range) {
     Point added_velocity{0., 0.};
     for (auto other_boid : in_range) {
@@ -71,6 +64,14 @@ class Boid {
       return {0., constants::turn_coefficent};
     return {0., 0.};
   }
+  
+ public:
+  Boid(Point& pos, Point& vel) : m_pos{pos}, m_vel{vel} {};
+
+  Point pos() const { return m_pos; }
+
+  Point vel() const { return m_vel; }
+
 
   void repel(const Point& click_position) {
     // normalized vector connecting point and boid

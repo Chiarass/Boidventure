@@ -10,7 +10,7 @@ TEST_CASE("Testing the Point class") {
     boids::Point p1;  // also checks deafult is (0.,0.)
     boids::Point p2{3., 2.};
     CHECK(p1.x() == doctest::Approx(0.));
-    CHECK(p1.x() == doctest::Approx(0.));
+    CHECK(p1.y() == doctest::Approx(0.));
     CHECK(p2.x() == doctest::Approx(3.));
     CHECK(p2.y() == doctest::Approx(2.));
   }
@@ -80,7 +80,7 @@ TEST_CASE("Testing the Point class") {
 }
 
 TEST_CASE("Testing the quadtree class"){
-    SUBCASE("checking if contains method works"){
+    SUBCASE("checking if rectangle contains method works"){
       boids::Rectangle rect{0.,0.,10.,10.};
       boids::Point p1{5., -4.};
       boids::Point p2{11., 0,};

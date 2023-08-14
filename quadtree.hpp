@@ -27,22 +27,20 @@ struct Rectangle {
 };
 
 class Quad_tree {
+ private:
   const int m_capacity{};
   Rectangle m_boundary{};
   bool m_divided = false;
 
- public:
-  std::vector<Boid*> boids;
-  // children of quad tree. Dynamically allocated.
-  Quad_tree* northeast;
-  Quad_tree* northwest;
-  Quad_tree* southeast;
-  Quad_tree* southwest;
 
-  Quad_tree(int capacity, const Rectangle& boundary)
-      : m_capacity{capacity}, m_boundary{boundary} {};
+   std::vector<Boid*> boids;
+   // children of quad tree. Dynamically allocated.
+   Quad_tree* northeast;
+   Quad_tree* northwest;
+   Quad_tree* southeast;
+   Quad_tree* southwest;
 
-  void subdivide() {
+   void subdivide() {
     // ne stands for north east
     // the division by two happens because w and h represent half
     // of the width and height respectively. the center of child
@@ -70,6 +68,23 @@ class Quad_tree {
     m_divided = true;
   }
 
+
+  bool square_collide(double range, const Boid& boid) const {
+    if (boid.pos().x() + range < m_boundary.x - m_boundary.w ||
+        boid.pos().x() - range > m_boundary.x + m_boundary.w ||
+        boid.pos().y() + range < m_boundary.y - m_boundary.h ||
+        boid.pos().y() - range > m_boundary.y + m_boundary.h) {
+      return false;
+    }
+    return true;
+  }
+
+
+ public:
+
+  Quad_tree(int capacity, const Rectangle& boundary)
+      : m_capacity{capacity}, m_boundary{boundary} {};
+
   void insert(Boid* boid_ptr) {
     // what happens if passed null pointer?
     if (boid_ptr && m_boundary.contains(boid_ptr->pos())) {
@@ -92,16 +107,6 @@ class Quad_tree {
         southwest->insert(boid_ptr);
       }
     }
-  }
-
-  bool square_collide(double range, const Boid& boid) const {
-    if (boid.pos().x() + range < m_boundary.x - m_boundary.w ||
-        boid.pos().x() - range > m_boundary.x + m_boundary.w ||
-        boid.pos().y() + range < m_boundary.y - m_boundary.h ||
-        boid.pos().y() - range > m_boundary.y + m_boundary.h) {
-      return false;
-    }
-    return true;
   }
 
   void query(double range, const Boid& boid,
