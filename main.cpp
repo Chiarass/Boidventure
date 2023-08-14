@@ -54,42 +54,15 @@ void vertex_update(sf::VertexArray& swarm_vertex, const Boid& boid, int index) {
 }
 }  // namespace boids
 
-
-
 int main() {
+  
   std::vector<boids::Boid> boid_vector;
   boids::Quad_tree tree{constants::cell_capacity,
                         boids::Rectangle{constants::window_width / 2.,
                                          constants::window_height / 2.,
                                          constants::window_width / 2.,
                                          constants::window_height / 2.}};
-  sf::VertexArray swarm_vertex{sf::Triangles, 3 * constants::swarm_number};
-
-  // for loop fills boid vector
-  for (int i = 0; i < constants::swarm_number; ++i) {
-    // initalizing random boid
-    // the parameters in uniform set the maximum and minimum
-    // coordinates the position/velocity can be generated with
-    // the minimum in boid_position is margin_width because we
-    // want the boid to be generated within that distance
-    // from the edge of the window, and the upper left corner
-    // of the window has position (0,0).
-    auto boid_position = boids::Point{
-        boids::uniform(constants::margin_width,
-                       constants::window_width - constants::margin_width),
-        boids::uniform(constants::margin_width,
-                       constants::window_height - constants::margin_width)};
-    auto boid_velocity =
-        boids::Point{boids::uniform(constants::min_rand_velocity,
-                                    constants::max_rand_velocity),
-                     boids::uniform(constants::min_rand_velocity,
-                                    constants::max_rand_velocity)};
-    boid_vector.push_back(boids::Boid{boid_position, boid_velocity});
-
-    swarm_vertex[i * 3].color = constants::boid_color;
-    swarm_vertex[i * 3 + 1].color = constants::boid_color;
-    swarm_vertex[i * 3 + 2].color = constants::boid_color;
-  }
+  sf::VertexArray swarm_vertex{sf::Triangles, static_cast<size_t>(3 * constants::swarm_number)};
 
   // makes the window and specifies its size and title
   sf::RenderWindow window;
@@ -109,23 +82,32 @@ int main() {
   cell_button->onPress([&display_tree] { display_tree = !display_tree; });
   gui.add(cell_button);
 
-  //slider for cohesion
+  // slider for cohesion
   tgui::Slider::Ptr cohesion_slider = tgui::Slider::create();
   cohesion_slider->setPosition(10., 40.);
   cohesion_slider->setValue(1);
   gui.add(cohesion_slider);
 
-  //slider for alignment
+  // slider for alignment
   tgui::Slider::Ptr alignment_slider = tgui::Slider::create();
   alignment_slider->setPosition(10., 60.);
   alignment_slider->setValue(2);
   gui.add(alignment_slider);
 
-  //slider for separation
+  // slider for separation
   tgui::Slider::Ptr separation_slider = tgui::Slider::create();
   separation_slider->setPosition(10., 80.);
   separation_slider->setValue(3);
   gui.add(separation_slider);
+
+  // slider for number of boids
+  tgui::Slider::Ptr number_slider = tgui::Slider::create();
+  number_slider->setPosition(10., 100.);
+  number_slider->setMinimum(1);
+  //to replace with constant
+  number_slider->setMaximum(1500);
+  number_slider->setValue(constants::swarm_number);
+  gui.add(number_slider);
 
   bool lock_click{false};
 
@@ -136,25 +118,56 @@ int main() {
     while (window.pollEvent(event)) {
       gui.handleEvent(event);
       if (event.type == sf::Event::Closed) window.close();
-      //if gui.handleEvent(event) is true (ex. a button is pressed) no repulsion occours
-      if (event.type == sf::Event::MouseButtonPressed && !gui.handleEvent(event)) {
+      // if gui.handleEvent(event) is true (ex. a button is pressed) no
+      // repulsion occours
+      if (event.type == sf::Event::MouseButtonPressed &&
+          !gui.handleEvent(event)) {
         lock_click = true;
       }
 
       if (event.type == sf::Event::MouseButtonReleased) {
         lock_click = false;
       }
+      if (number_slider->getValue() != constants::swarm_number) {
+        constants::swarm_number = static_cast<int>(number_slider->getValue());
+        boid_vector.clear();
+        swarm_vertex.clear();
+        for (int i = 0; i < constants::swarm_number; ++i) {
+          auto boid_position = boids::Point{
+              boids::uniform(constants::margin_width,
+                             constants::window_width - constants::margin_width),
+              boids::uniform(
+                  constants::margin_width,
+                  constants::window_height - constants::margin_width)};
+          auto boid_velocity =
+              boids::Point{boids::uniform(constants::min_rand_velocity,
+                                          constants::max_rand_velocity),
+                           boids::uniform(constants::min_rand_velocity,
+                                          constants::max_rand_velocity)};
+          boid_vector.push_back(boids::Boid{boid_position, boid_velocity});
+
+          // Append each vertex to the swarm_vertex array
+          sf::Vertex v1(sf::Vector2f(boid_position.x(), boid_position.y()),
+                        constants::boid_color);
+          sf::Vertex v2(sf::Vector2f(boid_position.x(), boid_position.y()),
+                        constants::boid_color);
+          sf::Vertex v3(sf::Vector2f(boid_position.x(), boid_position.y()),
+                        constants::boid_color);
+          swarm_vertex.append(v1);
+          swarm_vertex.append(v2);
+          swarm_vertex.append(v3);
+        }
     }
-
-    // makes the window return black
-    window.clear(sf::Color::Black);
-
-    for (auto& boid : boid_vector) {
-      // couldn't i do it with references?
-      tree.insert(&boid);
     }
+      // makes the window return black
+      window.clear(sf::Color::Black);
 
-    if (lock_click) {
+      for (auto& boid : boid_vector) {
+        // couldn't i do it with references?
+        tree.insert(&boid);
+      }
+
+      if (lock_click) {
         boids::Point mouse_position(sf::Mouse::getPosition(window).x,
                                     sf::Mouse::getPosition(window).y);
         for (auto& boid : boid_vector) {
@@ -163,21 +176,21 @@ int main() {
         }
       }
 
-    for (int i = 0; i != static_cast<int>(boid_vector.size()); ++i) {
-      std::vector<boids::Boid*> in_range;
-      tree.query(constants::range, boid_vector[i], in_range);
-      boid_vector[i].update(constants::delta_t, in_range);
-      boids::vertex_update(swarm_vertex, boid_vector[i], i);
-    }
+      for (int i = 0; i != static_cast<int>(boid_vector.size()); ++i) {
+        std::vector<boids::Boid*> in_range;
+        tree.query(constants::range, boid_vector[i], in_range);
+        boid_vector[i].update(constants::delta_t, in_range);
+        boids::vertex_update(swarm_vertex, boid_vector[i], i);
+      }
 
-    constants::cohesion_coefficent = 0.1*(cohesion_slider -> getValue());
-    constants::alignment_coefficent = 0.1*(alignment_slider -> getValue());
-    constants::separation_coefficent = 0.1*(separation_slider -> getValue());
+      constants::cohesion_coefficent = 0.1 * (cohesion_slider->getValue());
+      constants::alignment_coefficent = 0.1 * (alignment_slider->getValue());
+      constants::separation_coefficent = 0.1 * (separation_slider->getValue());
 
-    if (display_tree) tree.display(window);
-    tree.delete_tree();
-    window.draw(swarm_vertex);
-    gui.draw();
-    window.display();
+      if (display_tree) tree.display(window);
+      tree.delete_tree();
+      window.draw(swarm_vertex);
+      gui.draw();
+      window.display();
   }
 }
