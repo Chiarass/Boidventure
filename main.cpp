@@ -64,32 +64,6 @@ int main() {
   sf::VertexArray swarm_vertex{
       sf::Triangles, static_cast<size_t>(3 * constants::swarm_number)};
 
-  // for loop fills boid vector
-  for (int i = 0; i < constants::swarm_number; ++i) {
-    // initalizing random boid
-    // the parameters in uniform set the maximum and minimum
-    // coordinates the position/velocity can be generated with
-    // the minimum in boid_position is margin_width because we
-    // want the boid to be generated within that distance
-    // from the edge of the window, and the upper left corner
-    // of the window has position (0,0).
-    auto boid_position = boids::Point{
-        boids::uniform(constants::margin_width,
-                       constants::window_width - constants::margin_width),
-        boids::uniform(constants::margin_width,
-                       constants::window_height - constants::margin_width)};
-    auto boid_velocity =
-        boids::Point{boids::uniform(constants::min_rand_velocity,
-                                    constants::max_rand_velocity),
-                     boids::uniform(constants::min_rand_velocity,
-                                    constants::max_rand_velocity)};
-    boid_vector.push_back(boids::Boid{boid_position, boid_velocity});
-
-    swarm_vertex[i * 3].color = constants::boid_color;
-    swarm_vertex[i * 3 + 1].color = constants::boid_color;
-    swarm_vertex[i * 3 + 2].color = constants::boid_color;
-  }
-
   // makes the window and specifies its size and title
   sf::RenderWindow window;
   window.create(
