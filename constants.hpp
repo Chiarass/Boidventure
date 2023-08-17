@@ -18,7 +18,7 @@ inline constexpr double min_rand_velocity{
     -30};  // minimum velocity component generated randomly
 inline constexpr double max_rand_velocity{
     30};   // maximum velocity component generated randomly
-inline int swarm_number{700};
+inline int swarm_number{1500};
 inline constexpr double boid_size{
     7};  // the size of the sfml object representing the boid
 
