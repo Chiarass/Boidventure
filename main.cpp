@@ -5,6 +5,7 @@
 #include "boid.hpp"
 #include "constants.hpp"
 #include "quadtree.hpp"
+#include "statistics.hpp"
 
 // random generator of values from uniform distribution, for randomly
 // generating position of boids
@@ -54,6 +55,18 @@ void vertex_update(sf::VertexArray& swarm_vertex, const Boid& boid, int index) {
 }
 }  // namespace boids
 
+// method to calculate standard deviation (to be moved elsewhere in a hpp)
+/*double calculate_standard_deviation(const std::vector<double>& data,
+                                    double average) {
+  double sum_squared_differences = 0.0;
+  for (double value : data) {
+    double difference = value - average;
+    sum_squared_differences += difference * difference;
+  }
+  double variance = sum_squared_differences / data.size();
+  return std::sqrt(variance);
+};*/
+
 int main() {
   std::vector<boids::Boid> boid_vector;
   boids::Quad_tree tree{constants::cell_capacity,
@@ -71,7 +84,6 @@ int main() {
       "boids!", sf::Style::Default);
 
   tgui::GuiSFML gui{window};
-
   bool display_tree{false};
 
   // button for quad tree
@@ -111,6 +123,13 @@ int main() {
 
   bool lock_click{false};
 
+  // create 4 vectors to store distances, velocity, average distances and
+  // velocities
+  std::vector<double> distances;
+  std::vector<double> velocities;
+  std::vector<double> average_distances;
+  std::vector<double> average_velocities;
+
   // SFML loop. After each loop the window is updated
   while (window.isOpen()) {
     sf::Event event;
@@ -128,8 +147,7 @@ int main() {
       if (event.type == sf::Event::MouseButtonReleased) {
         lock_click = false;
       }
-
-      if (constants::swarm_number != number_slider->getValue()) {
+      if (number_slider->getValue() != constants::swarm_number) {
         constants::swarm_number = static_cast<int>(number_slider->getValue());
         boid_vector.clear();
         swarm_vertex.clear();
@@ -160,6 +178,40 @@ int main() {
         }
       }
     }
+    distances.clear();
+    velocities.clear();
+    // Calculating stats about the flock
+    double total_distance = 0.0;
+    double total_velocity = 0.0;
+    for (const auto& boid : boid_vector) {
+      double boid_distance = 0.0;
+      for (const auto& other_boid : boid_vector) {
+        boid_distance += (boid.pos() - other_boid.pos()).distance();
+      }
+      total_distance += boid_distance;
+      total_velocity += boid.vel().distance();
+      // Aggiungi boidDistance e boidVelocity ai vettori distances e velocities
+      distances.push_back(boid_distance);
+      velocities.push_back(boid.vel().distance());
+    }
+
+    // Calculate average distances and velocities
+    total_distance = std::accumulate(distances.begin(), distances.end(), 0.0);
+    total_velocity = std::accumulate(velocities.begin(), velocities.end(), 0.0);
+
+    double average_distance =
+        total_distance / (boid_vector.size() * boid_vector.size());
+    double average_velocity = total_velocity / boid_vector.size();
+
+    // Calculate deviation distances and velocities
+    double deviation_distance =
+        calculate_standard_deviation(distances, average_distance);
+    double deviation_velocity =
+        calculate_standard_deviation(velocities, average_velocity);
+
+    // Adding data to the vectors
+    average_distances.push_back(average_distance);
+    average_velocities.push_back(average_velocity);
 
     // makes the window return black
     window.clear(sf::Color::Black);
@@ -188,11 +240,23 @@ int main() {
     constants::cohesion_coefficent = 0.1 * (cohesion_slider->getValue());
     constants::alignment_coefficent = 0.1 * (alignment_slider->getValue());
     constants::separation_coefficent = 0.1 * (separation_slider->getValue());
-
     if (display_tree) tree.display(window);
     tree.delete_tree();
     window.draw(swarm_vertex);
     gui.draw();
+    // displaying all the stats
+    sf::Font font;
+    font.loadFromFile("aAreaKilometer50.ttf");
+    sf::Text text;
+    text.setFont(font);
+    text.setFillColor(sf::Color::White);
+    text.setCharacterSize(10);
+    text.setPosition(constants::window_width - 150, 10);
+    text.setString("Avg Distance: " + std::to_string(average_distance) +
+                   "\nAvg Velocity: " + std::to_string(average_velocity) +
+                   "\nDeviation Dist: " + std::to_string(deviation_distance) +
+                   "\nDeviation Vel: " + std::to_string(deviation_velocity));
+    window.draw(text);
     window.display();
   }
 }

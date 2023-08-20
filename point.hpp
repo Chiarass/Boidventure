@@ -9,31 +9,22 @@ class Point {
   double m_y{};
 
  public:
-  Point(double x = 0, double y = 0) : m_x{x}, m_y{y} {};
-  Point(const Point& a) : m_x{a.m_x}, m_y{a.m_y} {};
+  Point(double x = 0, double y = 0);
+  Point(const Point&);
   // aggiungere distruttore
 
   // returns m_x, m_y
-  double x() const { return m_x; };
-  double y() const { return m_y; };
+  double x() const;
+  double y() const;
 
   // distance of Point from origin
-  double distance() const { return std::sqrt(m_x * m_x + m_y * m_y); }
+  double distance() const;
 
-  // implementation of rotation trasoformation.
+  // implementation of rotation trasformation.
   // parameter assumed to be in radians
-  void rotate(double angle) {
-    double temp{};
-    temp = m_x * std::cos(angle) - m_y * std::sin(angle);
-    m_y = m_x * std::sin(angle) + m_y * std::cos(angle);
-    m_x = temp;
-  }
+  void rotate(double);
 
-  Point& operator=(const Point& a) {
-    m_x = a.x();
-    m_y = a.y();
-    return *this;
-  }
+  Point& operator=(const Point&);
 };
 
 // defines Point (that is mathematical 2-vector) operations

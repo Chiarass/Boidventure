@@ -1,5 +1,7 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#include <vector>
 
+#include "boid.hpp"
 #include "constants.hpp"
 #include "doctest.h"
 #include "point.hpp"
@@ -10,7 +12,7 @@ TEST_CASE("Testing the Point class") {
     boids::Point p1;  // also checks deafult is (0.,0.)
     boids::Point p2{3., 2.};
     CHECK(p1.x() == doctest::Approx(0.));
-    CHECK(p1.y() == doctest::Approx(0.));
+    CHECK(p1.x() == doctest::Approx(0.));
     CHECK(p2.x() == doctest::Approx(3.));
     CHECK(p2.y() == doctest::Approx(2.));
   }
@@ -51,7 +53,7 @@ TEST_CASE("Testing the Point class") {
     p1.rotate(2 * constants::pi);
     CHECK(p1.x() == doctest::Approx(-0.435231));
     CHECK(p1.y() == doctest::Approx(-0.90031));
-    //0 vector will always rotate to itself
+    // 0 vector will always rotate to itself
     boids::Point p0{0., 0.};
     p0.rotate(-3421.);
     CHECK(p0.x() == doctest::Approx(0.));
@@ -67,30 +69,56 @@ TEST_CASE("Testing the Point class") {
     auto p4 = p1 - p2;
     CHECK(p4.x() == doctest::Approx(-1.));
     CHECK(p4.y() == doctest::Approx(-2.));
-    auto p5 = -0.32*p4;
-    CHECK(p5.x() == doctest::Approx(-1.*(-0.32)));
-    CHECK(p5.y() == doctest::Approx(-2.*(-0.32)));
-    auto p6 = 13./91.*(p3 - p4)+(p5 -p2 -p3) + p4 + p4 - 2*p4;
+    auto p5 = -0.32 * p4;
+    CHECK(p5.x() == doctest::Approx(-1. * (-0.32)));
+    CHECK(p5.y() == doctest::Approx(-2. * (-0.32)));
+    auto p6 = 13. / 91. * (p3 - p4) + (p5 - p2 - p3) + p4 + p4 - 2 * p4;
     CHECK(p6.x() == doctest::Approx(-4.10857));
     CHECK(p6.y() == doctest::Approx(-2.78857));
-    p6 = p5 = p4 = p3; //checking if multiple assignments work
+    p6 = p5 = p4 = p3;  // checking if multiple assignments work
     CHECK(p6.x() == doctest::Approx(3.));
     CHECK(p6.y() == doctest::Approx(2.));
   }
 }
 
-TEST_CASE("Testing the quadtree class"){
-    SUBCASE("checking if rectangle contains method works"){
-      boids::Rectangle rect{0.,0.,10.,10.};
-      boids::Point p1{5., -4.};
-      boids::Point p2{11., 0,};
-      boids::Point p3 {0., 11.};
-      boids::Point p4{10., 10.};
-      CHECK(rect.contains(p1));
-      CHECK(!rect.contains(p2));
-      CHECK(!rect.contains(-1.*p2));
-      CHECK(!rect.contains(p3));
-      CHECK(!rect.contains(-1.*p3));
-      CHECK(rect.contains(p4));
-    }
+TEST_CASE("Testing the quadtree class") {
+  SUBCASE("checking if contains method works") {
+    boids::Rectangle rect{0., 0., 10., 10.};
+    boids::Point p1{5., -4.};
+    boids::Point p2{
+        11.,
+        0,
+    };
+    boids::Point p3{0., 11.};
+    boids::Point p4{10., 10.};
+    CHECK(rect.contains(p1));
+    CHECK(!rect.contains(p2));
+    CHECK(!rect.contains(-1. * p2));
+    CHECK(!rect.contains(p3));
+    CHECK(!rect.contains(-1. * p3));
+    CHECK(rect.contains(p4));
+  }
 }
+
+/*TEST_CASE("Testing the boid class") {
+  SUBCASE("checking if separation method works") {
+    boids::Point p1{0., 0.};
+    boids::Point p2{1., 1.};
+
+    // Create temporary Point objects
+    boids::Point vel1{1., 0.};
+    boids::Point vel2{0., 1.};
+    boids::Point vel3{-1., -1.};
+    boids::Boid boid1{p1, vel1};
+    boids::Boid boid2{p2, vel2};
+    boids::Boid boid3{p2, vel3};
+
+    std::vector<boids::Boid*> boids_in_range = {&boid2, &boid3};
+    boid1.separation(boids_in_range);
+
+    boids::Point expected_velocity =
+        boid1.vel() - boids::Point{separation_x, separation_y};
+    CHECK(boid1.vel().x() == doctest::Approx(expected_velocity));
+    CHECK(boid1.vel().y() == doctest::Approx(expected_velocity));
+  }
+}*/

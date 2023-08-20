@@ -6,8 +6,8 @@
 namespace constants {
 inline constexpr double delta_t{
     0.2};  // time increment. higher number, lower speeds. //0.2
-inline constexpr double window_height{800};
-inline constexpr double window_width{1000};
+inline constexpr double window_height{500};
+inline constexpr double window_width{700};
 
 // distance between window extremes and margin.
 // boids will be generated inside of margin
@@ -18,14 +18,14 @@ inline constexpr double min_rand_velocity{
     -30};  // minimum velocity component generated randomly
 inline constexpr double max_rand_velocity{
     30};   // maximum velocity component generated randomly
-inline int swarm_number{1000};
+inline int swarm_number{700};
 inline constexpr double boid_size{
     7};  // the size of the sfml object representing the boid
 
 inline double separation_coefficent{0.2};  // separation coefficent
 inline double cohesion_coefficent{0.01};
 inline double alignment_coefficent{0.05};
-inline constexpr double turn_coefficent{20};
+inline constexpr double turn_coefficent{30};
 
 inline constexpr double repel_coefficent{30};
 inline constexpr double repel_range{100};
