@@ -15,23 +15,25 @@ string(APPEND CMAKE_CXX_FLAGS " -Wall -Wextra")
 string(APPEND CMAKE_CXX_FLAGS_DEBUG " -fsanitize=address,undefined -fno-omit-frame-pointer")
 string(APPEND CMAKE_EXE_LINKER_FLAGS_DEBUG " -fsanitize=address,undefined -fno-omit-frame-pointer")
 
-# richiede SFML?
 find_package(SFML COMPONENTS graphics REQUIRED)
+#vvvvvv da controllare se giusto vvvvvvv
+find_package(TGUI REQUIRED)
 
-add_executable(swarm swarm.cpp main.cpp )
+add_executable(swarm main.cpp)
 
-#aggiunge sfml?
-target_link_libraries(swarm PRIVATE sfml-graphics)
-
+#vvvvvv da controllare se giusto vvvvvvv
+target_link_libraries(swarm PRIVATE sfml-graphics tgui)
 
 # se il testing e' abilitato...
 #   per disabilitare il testing, passare -DBUILD_TESTING=OFF a cmake durante la fase di configurazione
+
 if (BUILD_TESTING)
 
-  # aggiungi l'eseguibile statistics.t
-  add_executable(hooke.hpp hooke.test.cpp hooke.cpp)
-  # aggiungi l'eseguibile statistics.t alla lista dei test
-  add_test(NAME hooke.hpp COMMAND hooke.hpp)
+  # aggiungi l'eseguibile boids.t
+  add_executable(boids.t boids.test.cpp)
+  target_link_libraries(boids.t PRIVATE sfml-graphics)
+  # aggiungi l'eseguibile boids.t alla lista dei test
+  add_test(NAME boids.t COMMAND boids.t)
+
 
 endif()
-
