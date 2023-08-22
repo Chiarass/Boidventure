@@ -12,9 +12,9 @@ class Boid {
   Point m_pos{};  // position
   Point m_vel{};  // velocity
 
-  Point separation(const std::vector<Boid*>& in_range);
-  Point cohesion(const std::vector<Boid*>& in_range);
-  Point alignment(const std::vector<Boid*>& in_range);
+  Point separation(const std::vector<Boid*>& in_range, double, double);
+  Point cohesion(const std::vector<Boid*>& in_range, double);
+  Point alignment(const std::vector<Boid*>& in_range, double);
   Point turn_around();
 
  public:
@@ -25,7 +25,7 @@ class Boid {
 
   void repel(const Point& click_position);
 
-  virtual void update(double delta_t, const std::vector<Boid*>& in_range);
+  virtual void update(double delta_t, const std::vector<Boid*>& in_range, double, double, double, double);
 };
 
 /*class Predator : public Boid {

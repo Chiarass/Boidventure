@@ -19,7 +19,7 @@ find_package(SFML COMPONENTS graphics REQUIRED)
 #vvvvvv da controllare se giusto vvvvvvv
 find_package(TGUI REQUIRED)
 
-add_executable(swarm point.cpp boid.cpp quadtree.cpp statistics.cpp main.cpp)
+add_executable(swarm point.cpp boid.cpp quadtree.cpp statistics.cpp sfml.cpp main.cpp)
 
 #vvvvvv da controllare se giusto vvvvvvv
 target_link_libraries(swarm PRIVATE sfml-graphics tgui)

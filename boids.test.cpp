@@ -6,6 +6,7 @@
 #include "doctest.h"
 #include "point.hpp"
 #include "quadtree.hpp"
+#include "statistics.hpp"
 
 TEST_CASE("Testing the Point class") {
   SUBCASE("checking if x() and y() return m_x, m_y") {
@@ -99,8 +100,8 @@ TEST_CASE("Testing the quadtree class") {
     CHECK(rect.contains(p4));
   }
 }
-
-/*TEST_CASE("Testing the boid class") {
+/*
+TEST_CASE("Testing the boid class") {
   SUBCASE("checking if separation method works") {
     boids::Point p1{0., 0.};
     boids::Point p2{1., 1.};
@@ -122,3 +123,64 @@ TEST_CASE("Testing the quadtree class") {
     CHECK(boid1.vel().y() == doctest::Approx(expected_velocity));
   }
 }*/
+
+TEST_CASE("Testing statistics.cpp") {
+  SUBCASE("Testing approx_distance") {
+    auto pos1 = boids::Point{10., 10.};
+    auto pos2 = boids::Point{5., 15.};
+    auto pos3 = boids::Point{-35., 17.};
+    auto def_vel = boids::Point{};
+    std::vector<boids::Boid> boids_vec = {boids::Boid{pos1, def_vel},
+                                          boids::Boid{pos2, def_vel},
+                                          boids::Boid{pos3, def_vel}};
+
+    double distance_avg{};
+    for(const auto& boid : boids_vec){
+      for(const auto& other_boid : boids_vec){
+        distance_avg += (other_boid.pos() - boid.pos()).distance();
+      }
+    }
+    distance_avg *= 1./(boids_vec.size()*boids_vec.size());
+
+    int sample_number = 100;
+
+    double app_dist{0.};
+
+    for (int j = 0; j < sample_number; ++j) {
+    // flattening to one dimension, on a random 2d vector
+      auto angle = boids::uniform(0., 2. * constants::pi);
+      std::cout << angle;
+      std::vector<double> flattened_positions;
+
+    for (const auto &boid : boids_vec) {
+      flattened_positions.push_back(cos(angle) * boid.pos().distance());
+    }
+
+    std::sort(flattened_positions.begin(), flattened_positions.end());
+
+    // finding one dimensional sum of distances from first point. (sect 1.1 in
+    // paper)
+    double distance_from_first{
+        std::accumulate(flattened_positions.begin(), flattened_positions.end(),
+                        0., [&flattened_positions](double a, double b) {
+                          return (a + (b - flattened_positions[0]));
+                        })};
+    app_dist += distance_from_first;
+
+    // finding average distance of flattened points. (implementing formula in
+    // section 1.1 of paper)
+    for (int i = 0; i < static_cast<int>(flattened_positions.size()) - 1; ++i) {
+      distance_from_first +=
+          (2. * (i + 1) - static_cast<double>(flattened_positions.size())) *
+          (flattened_positions[i + 1] - flattened_positions[i]);
+      app_dist += distance_from_first;
+    }
+  }
+  // taking mean to get expected value (eq 4. in paper) and multipling by
+  // constant p(d) (see appendix in paper)
+  app_dist *= (constants::pi) / (sample_number*boids_vec.size()*boids_vec.size());
+  //dividing by number of points(boids)
+  //todo: handle case in which size is 0
+    CHECK(distance_avg == doctest::Approx(app_dist));
+  }
+}
