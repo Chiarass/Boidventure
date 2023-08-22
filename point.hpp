@@ -28,20 +28,9 @@ class Point {
 };
 
 // defines Point (that is mathematical 2-vector) operations
-inline Point operator+(const Point& a, const Point& b) {
-  Point sum{a.x() + b.x(), a.y() + b.y()};
-  return sum;
-}
-
-inline Point operator-(const Point& a, const Point& b) {
-  Point diff{a.x() - b.x(), a.y() - b.y()};
-  return diff;
-}
-
-inline Point operator*(double c, const Point& a) {
-  Point res{c * a.x(), c * a.y()};
-  return res;
-}
+Point operator+(const Point&, const Point&);
+Point operator-(const Point&, const Point&);
+Point operator*(double, const Point&);
 }  // namespace boids
 
 #endif

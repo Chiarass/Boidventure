@@ -6,24 +6,7 @@
 #include "constants.hpp"
 #include "quadtree.hpp"
 #include "statistics.hpp"
-
-// random generator of values from uniform distribution, for randomly
-// generating position of boids
-// is it trully distributed as a uniform? redefining
-// marsenne twister seems to reset
-// pseudo random number generator
-
-// to change
-inline std::mt19937 eng{};
-
 namespace boids {
-
-double uniform(double a, double b) {
-  // commented out for debugging
-  // std::random_device rd;
-  std::uniform_real_distribution<double> unif{a, b};
-  return unif(eng);
-}
 
 // updates the triangle object associated with the passed boid. It
 // moves it to the same poistion on the screen as the boid
@@ -54,18 +37,6 @@ void vertex_update(sf::VertexArray& swarm_vertex, const Boid& boid, int index) {
       (boid.pos() + forward_vertex).x(), (boid.pos() + forward_vertex).y());
 }
 }  // namespace boids
-
-// method to calculate standard deviation (to be moved elsewhere in a hpp)
-/*double calculate_standard_deviation(const std::vector<double>& data,
-                                    double average) {
-  double sum_squared_differences = 0.0;
-  for (double value : data) {
-    double difference = value - average;
-    sum_squared_differences += difference * difference;
-  }
-  double variance = sum_squared_differences / data.size();
-  return std::sqrt(variance);
-};*/
 
 int main() {
   std::vector<boids::Boid> boid_vector;
@@ -183,6 +154,7 @@ int main() {
     // Calculating stats about the flock
     double total_distance = 0.0;
     double total_velocity = 0.0;
+
     /////////////todo: delete, too slow////////////////////////
     for (const auto& boid : boid_vector) {
       double boid_distance = 0.0;

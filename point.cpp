@@ -28,4 +28,19 @@ Point& Point::operator=(const Point& a) {
   m_y = a.y();
   return *this;
 }
+
+Point operator+(const Point& a, const Point& b) {
+  Point sum{a.x() + b.x(), a.y() + b.y()};
+  return sum;
+}
+
+Point operator-(const Point& a, const Point& b) {
+  Point diff{a.x() - b.x(), a.y() - b.y()};
+  return diff;
+}
+
+Point operator*(double c, const Point& a) {
+  Point res{c * a.x(), c * a.y()};
+  return res;
+}
 }  // namespace boids
