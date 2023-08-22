@@ -43,4 +43,8 @@ Point operator*(double c, const Point& a) {
   Point res{c * a.x(), c * a.y()};
   return res;
 }
+/* 
+double operator*(const Point& a, const Point& b) {
+  return (a.x()*b.x(), a.y()*b.y());
+} */
 }  // namespace boids

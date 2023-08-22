@@ -89,7 +89,7 @@ int main() {
   number_slider->setMinimum(1);
   // to replace with constant
   number_slider->setMaximum(1500);
-  number_slider->setValue(constants::swarm_number);
+  number_slider->setValue(3.);
   gui.add(number_slider);
 
   bool lock_click{false};
@@ -118,7 +118,9 @@ int main() {
       if (event.type == sf::Event::MouseButtonReleased) {
         lock_click = false;
       }
-      if (number_slider->getValue() != constants::swarm_number) {
+    }
+
+    if (number_slider->getValue() != constants::swarm_number) {
         constants::swarm_number = static_cast<int>(number_slider->getValue());
         boid_vector.clear();
         swarm_vertex.clear();
@@ -148,7 +150,7 @@ int main() {
           swarm_vertex.append(v3);
         }
       }
-    }
+      
     distances.clear();
     velocities.clear();
     // Calculating stats about the flock
@@ -163,12 +165,14 @@ int main() {
       }
       total_distance += boid_distance;
       total_velocity += boid.vel().distance();
-      // Aggiungi boidDistance e boidVelocity ai vettori distances e velocities
+      
       distances.push_back(boid_distance);
       velocities.push_back(boid.vel().distance());
     }
-    //////////////////////////////////////////////////////////7
-
+    ///////////////////////////////////////////////////////////
+    ////////////test///////////////////////////
+    double app_distance = boids::approx_distance(boid_vector, 100);
+    ///////////////////////////////////////////
     // Calculate average distances and velocities
     total_distance = std::accumulate(distances.begin(), distances.end(), 0.0);
     total_velocity = std::accumulate(velocities.begin(), velocities.end(), 0.0);
@@ -220,13 +224,15 @@ int main() {
     gui.draw();
     // displaying all the stats
     sf::Font font;
-    font.loadFromFile("aAreaKilometer50.ttf");
+    font.loadFromFile("../aAreaKilometer50.ttf");
     sf::Text text;
     text.setFont(font);
     text.setFillColor(sf::Color::White);
     text.setCharacterSize(10);
     text.setPosition(constants::window_width - 150, 10);
     text.setString("Avg Distance: " + std::to_string(average_distance) +
+                   "\nApp Distance: " + std::to_string(app_distance) +
+                   "\nError: " + std::to_string(average_distance - app_distance) +
                    "\nAvg Velocity: " + std::to_string(average_velocity) +
                    "\nDeviation Dist: " + std::to_string(deviation_distance) +
                    "\nDeviation Vel: " + std::to_string(deviation_velocity));
