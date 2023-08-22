@@ -136,7 +136,7 @@ void Quad_tree::delete_tree() {
     delete southwest;
     southwest = nullptr;
     m_divided = false;
-    boids.clear();
   }
+  boids.clear();
 }
 }  // namespace boids

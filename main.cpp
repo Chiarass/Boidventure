@@ -89,7 +89,7 @@ int main() {
   number_slider->setMinimum(1);
   // to replace with constant
   number_slider->setMaximum(1500);
-  number_slider->setValue(3.);
+  number_slider->setValue(300);
   gui.add(number_slider);
 
   bool lock_click{false};

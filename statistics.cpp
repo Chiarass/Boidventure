@@ -67,9 +67,9 @@ double approx_distance(const std::vector<boids::Boid> &boid_vector,
   }
   // taking mean to get expected value (eq 4. in paper) and multipling by
   // constant p(d) (see appendix in paper)
-  app_dist *= (constants::pi / 2.) / sample_number;
+  app_dist *= (constants::pi / 2.) / (sample_number*boid_vector.size()*boid_vector.size());
   //dividing by number of points(boids)
   //todo: handle case in which size is 0
-  return (app_dist)/(boid_vector.size()*boid_vector.size());
+  return (app_dist);
 }
 }  // namespace boids
