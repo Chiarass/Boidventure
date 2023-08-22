@@ -183,6 +183,7 @@ int main() {
     // Calculating stats about the flock
     double total_distance = 0.0;
     double total_velocity = 0.0;
+    /////////////todo: delete, too slow////////////////////////
     for (const auto& boid : boid_vector) {
       double boid_distance = 0.0;
       for (const auto& other_boid : boid_vector) {
@@ -194,6 +195,7 @@ int main() {
       distances.push_back(boid_distance);
       velocities.push_back(boid.vel().distance());
     }
+    //////////////////////////////////////////////////////////7
 
     // Calculate average distances and velocities
     total_distance = std::accumulate(distances.begin(), distances.end(), 0.0);
@@ -205,9 +207,9 @@ int main() {
 
     // Calculate deviation distances and velocities
     double deviation_distance =
-        calculate_standard_deviation(distances, average_distance);
+        boids::calculate_standard_deviation(distances, average_distance);
     double deviation_velocity =
-        calculate_standard_deviation(velocities, average_velocity);
+        boids::calculate_standard_deviation(velocities, average_velocity);
 
     // Adding data to the vectors
     average_distances.push_back(average_distance);
