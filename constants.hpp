@@ -17,15 +17,22 @@ inline constexpr double margin_width{10};
 inline constexpr double min_rand_velocity{
     -30};  // minimum velocity component generated randomly
 inline constexpr double max_rand_velocity{
-    30};   // maximum velocity component generated randomly
-inline constexpr int init_swarm_number{700};
+    30};  // maximum velocity component generated randomly
+inline constexpr int init_boid_number{700};
+inline constexpr int init_predator_number{0};
+
 inline constexpr double boid_size{
     5};  // the size of the sfml object representing the boid
+inline constexpr double predator_size{8};
+// the size of the sfml object representing the predator
 
 inline constexpr double init_separation_coeff{3};  // separation coefficent
 inline constexpr double init_cohesion_coeff{1};
 inline constexpr double init_alignment_coeff{2};
 inline constexpr double turn_coefficent{30};
+
+//todo: make slider
+inline constexpr double predator_avoidance_coeff{1};
 
 inline constexpr double repel_coefficent{30};
 inline constexpr double repel_range{100};
@@ -33,6 +40,7 @@ inline constexpr double repel_range{100};
 inline constexpr double range{
     20};  // minimum distance for cohesion and alignmnent
 inline constexpr double separation_distance{10};
+inline constexpr double init_predator_range{40};
 
 // maximum length of velocity vector
 inline constexpr double max_velocity{10};
@@ -42,6 +50,7 @@ inline constexpr double velocity_reduction_coefficent{0.9};
 
 inline constexpr double pi = 3.14159265358979;
 inline const sf::Color boid_color{sf::Color::Green};
+inline const sf::Color predator_color{sf::Color::Red};
 
 // capacity of quad_tree cell
 // subdivides if excedeed

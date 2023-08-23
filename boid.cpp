@@ -2,12 +2,31 @@
 
 namespace boids {
 
-Boid::Boid(Point& pos, Point& vel) : m_pos{pos}, m_vel{vel} {}
+//Bird methods
+Bird::Bird(Point& pos, Point& vel) : m_pos{pos}, m_vel{vel} {}
 
-Point Boid::pos() const { return m_pos; }
+Point Bird::pos() const { return m_pos; }
 
-Point Boid::vel() const { return m_vel; }
+Point Bird::vel() const { return m_vel; }
 
+Point Bird::turn_around() {
+  if (m_pos.x() > constants::window_width - constants::margin_width)
+    return {-constants::turn_coefficent, 0.};
+  if (m_pos.x() < constants::margin_width)
+    return {constants::turn_coefficent, 0.};
+  if (m_pos.y() > constants::window_height - constants::margin_width)
+    return {0., -constants::turn_coefficent};
+  if (m_pos.y() < constants::margin_width)
+    return {0., constants::turn_coefficent};
+  return {0., 0.};
+}
+void Bird::repel(const Point& click_position) {
+  auto add_vel =
+      (1. / (m_pos - click_position).distance()) * (m_pos - click_position);
+  m_vel = m_vel + constants::repel_coefficent * add_vel;
+}
+
+//Boid methods
 Point Boid::separation(const std::vector<Boid*>& in_range, double separation_distance, double separation_coeff) {
   Point added_velocity{0., 0.};
   for (auto other_boid : in_range) {
@@ -43,25 +62,7 @@ Point Boid::alignment(const std::vector<Boid*>& in_range, double alignment_coeff
   return added_velocity;
 }
 
-Point Boid::turn_around() {
-  if (m_pos.x() > constants::window_width - constants::margin_width)
-    return {-constants::turn_coefficent, 0.};
-  if (m_pos.x() < constants::margin_width)
-    return {constants::turn_coefficent, 0.};
-  if (m_pos.y() > constants::window_height - constants::margin_width)
-    return {0., -constants::turn_coefficent};
-  if (m_pos.y() < constants::margin_width)
-    return {0., constants::turn_coefficent};
-  return {0., 0.};
-}
-
-void Boid::repel(const Point& click_position) {
-  auto add_vel =
-      (1. / (m_pos - click_position).distance()) * (m_pos - click_position);
-  m_vel = m_vel + constants::repel_coefficent * add_vel;
-}
-
-void Boid::update(double delta_t, const std::vector<Boid*>& in_range, double separation_distance, double separation_coeff, double cohesion_coeff, double alignment_coeff) {
+void Boid::update_boid(double delta_t, const std::vector<Boid*>& in_range, double separation_distance, double separation_coeff, double cohesion_coeff, double alignment_coeff) {
   if (m_vel.distance() < constants::max_velocity) {
     m_vel = m_vel + separation(in_range, separation_distance, separation_coeff) + cohesion(in_range, cohesion_coeff) +
             alignment(in_range, alignment_coeff) + turn_around();
@@ -72,7 +73,25 @@ void Boid::update(double delta_t, const std::vector<Boid*>& in_range, double sep
   m_pos = delta_t * (m_vel) + (m_pos);
 }
 
-/*void Predator::update(double delta_t, const std::vector<Boid*>& in_range) {
+void Boid::escape_predator(const Predator& predator, double predator_range,double avoidance_coeff){
+  if((pos() - predator.pos()).distance() < predator_range){
+    m_vel = m_vel + avoidance_coeff * (pos() - predator.pos());
+  }
+}
+
+//predator methods
+//todo: fargli seguire i boid (come???)
+void Predator::update_predator(double delta_t){
+  if (m_vel.distance() < constants::max_velocity) {
+    m_vel = m_vel + turn_around();
+  } else {
+    m_vel = Point{constants::velocity_reduction_coefficent * (m_vel.x()),
+                  constants::velocity_reduction_coefficent * (m_vel.y())};
+  }
+  m_pos = delta_t * (m_vel) + (m_pos);
+}
+
+/*void Predator::update_predator(double delta_t, const std::vector<Boid*>& in_range) {
   if (m_vel.distance() < constants::max_velocity) {
     m_vel = m_vel + separation(in_range) + cohesion(in_range) +
             alignment(in_range) + turn_around();

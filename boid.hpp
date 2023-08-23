@@ -7,33 +7,39 @@
 #include "point.hpp"
 
 namespace boids {
-class Boid {
+class Bird {
  protected:
   Point m_pos{};  // position
   Point m_vel{};  // velocity
-
-  Point separation(const std::vector<Boid*>& in_range, double, double);
-  Point cohesion(const std::vector<Boid*>& in_range, double);
-  Point alignment(const std::vector<Boid*>& in_range, double);
   Point turn_around();
 
  public:
-  Boid(Point& pos, Point& vel);
+  Bird(Point& pos, Point& vel);
 
   Point pos() const;
   Point vel() const;
 
   void repel(const Point& click_position);
-
-  virtual void update(double delta_t, const std::vector<Boid*>& in_range, double, double, double, double);
 };
 
-/*class Predator : public Boid {
+class Predator : public Bird {
  public:
-  using Boid::Boid;
+  using Bird::Bird;
 
-  void update(double delta_t, const std::vector<Boid*>& in_range) override;
-};*/
+  void update_predator(double delta_t);
+};
+class Boid : public Bird {
+  protected:
+  Point separation(const std::vector<Boid*>& in_range, double, double);
+  Point cohesion(const std::vector<Boid*>& in_range, double);
+  Point alignment(const std::vector<Boid*>& in_range, double);
+
+  public:
+  using Bird::Bird;
+  void update_boid(double, const std::vector<Boid*>&, double, double, double, double);
+  void escape_predator(const Predator&, double, double);
+};
+
 
 }  // namespace boids
 #endif

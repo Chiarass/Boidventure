@@ -5,11 +5,13 @@
 #include "boid.hpp"
 #include "constants.hpp"
 #include "quadtree.hpp"
-#include "statistics.hpp"
 #include "sfml.hpp"
+#include "statistics.hpp"
 
-void initialize_boids(std::vector<boids::Boid>& boid_vec, sf::VertexArray& vertices, double swarm_n) {
-  boid_vec.clear();
+template<class Bird_type>
+void initialize_boids(std::vector<Bird_type>& bird_vec,
+                      sf::VertexArray& vertices, double swarm_n, sf::Color bird_color) {
+  bird_vec.clear();
   vertices.clear();
   for (int i = 0; i < swarm_n; ++i) {
     auto boid_position = boids::Point{
@@ -22,15 +24,15 @@ void initialize_boids(std::vector<boids::Boid>& boid_vec, sf::VertexArray& verti
                                     constants::max_rand_velocity),
                      boids::uniform(constants::min_rand_velocity,
                                     constants::max_rand_velocity)};
-    boid_vec.push_back(boids::Boid{boid_position, boid_velocity});
+    bird_vec.push_back(Bird_type{boid_position, boid_velocity});
 
-    // Append each vertex to the swarm_vertex array
+    // Append each vertex to the boid_vertex array
     sf::Vertex v1(sf::Vector2f(boid_position.x(), boid_position.y()),
-                  constants::boid_color);
+                  bird_color);
     sf::Vertex v2(sf::Vector2f(boid_position.x(), boid_position.y()),
-                  constants::boid_color);
+                  bird_color);
     sf::Vertex v3(sf::Vector2f(boid_position.x(), boid_position.y()),
-                  constants::boid_color);
+                  bird_color);
     vertices.append(v1);
     vertices.append(v2);
     vertices.append(v3);
@@ -39,12 +41,15 @@ void initialize_boids(std::vector<boids::Boid>& boid_vec, sf::VertexArray& verti
 
 int main() {
   std::vector<boids::Boid> boid_vector;
+  std::vector<boids::Predator> predator_vector;
+
   boids::Quad_tree tree{constants::cell_capacity,
                         boids::Rectangle{constants::window_width / 2.,
                                          constants::window_height / 2.,
                                          constants::window_width / 2.,
                                          constants::window_height / 2.}};
-  sf::VertexArray swarm_vertex{sf::Triangles};
+  sf::VertexArray boid_vertex{sf::Triangles};
+  sf::VertexArray predator_vertex{sf::Triangles};
 
   // makes the window and specifies its size and title
   sf::RenderWindow window;
@@ -82,13 +87,23 @@ int main() {
   gui.add(separation_slider);
 
   // slider for number of boids
-  tgui::Slider::Ptr number_slider = tgui::Slider::create();
-  number_slider->setPosition(10., 100.);
-  number_slider->setMinimum(1);
-  //todo: replace with constant
-  number_slider->setMaximum(1500);
-  number_slider->setValue(constants::init_swarm_number);
-  gui.add(number_slider);
+  tgui::Slider::Ptr boid_number_slider = tgui::Slider::create();
+  boid_number_slider->setPosition(10., 100.);
+  boid_number_slider->setMinimum(1);
+
+  // todo: replace with constant
+  boid_number_slider->setMaximum(1500);
+  boid_number_slider->setValue(constants::init_boid_number);
+  gui.add(boid_number_slider);
+
+  // slider for number of predators
+  tgui::Slider::Ptr predator_number_slider = tgui::Slider::create();
+  predator_number_slider->setPosition(10., 120.);
+  predator_number_slider->setMinimum(0);
+  //todo: add constant
+  predator_number_slider->setMaximum(5);
+  predator_number_slider->setValue(constants::init_predator_number);
+  gui.add(predator_number_slider);
 
   bool lock_click{false};
 
@@ -102,9 +117,9 @@ int main() {
   double separation_coefficent{constants::init_separation_coeff};
   double cohesion_coefficent{constants::init_cohesion_coeff};
   double alignment_coefficent{constants::init_alignment_coeff};
-  //initialize with absurd number so it automatically initializes boids
-  int swarm_number{1};
-
+  // initialize with absurd number so it automatically initializes boids
+  int boid_number{1};
+  int predator_number{0};
   // SFML loop. After each loop the window is updated
   while (window.isOpen()) {
     sf::Event event;
@@ -124,10 +139,16 @@ int main() {
       }
     }
 
-    if (static_cast<int>(number_slider->getValue()) != swarm_number) {
-      swarm_number = static_cast<int>(number_slider->getValue());
-      initialize_boids(boid_vector, swarm_vertex, swarm_number);
+    if (static_cast<int>(boid_number_slider->getValue()) != boid_number) {
+      boid_number = static_cast<int>(boid_number_slider->getValue());
+      initialize_boids(boid_vector, boid_vertex, boid_number, constants::boid_color);
     }
+
+    if (static_cast<int>(predator_number_slider->getValue()) != predator_number) {
+      predator_number = static_cast<int>(predator_number_slider->getValue());
+      initialize_boids(predator_vector, predator_vertex, predator_number, constants::predator_color);
+    }
+
 
     distances.clear();
     velocities.clear();
@@ -185,29 +206,44 @@ int main() {
         if ((boid.pos() - mouse_position).distance() < constants::repel_range)
           boid.repel(mouse_position);
       }
+
+      for (auto& predator : predator_vector) {
+        if ((predator.pos() - mouse_position).distance() < constants::repel_range)
+          predator.repel(mouse_position);
+      }
+    }
+
+    for (int i = 0; i != static_cast<int>(predator_vector.size()); ++i){
+      predator_vector[i].update_predator(constants::delta_t);
+      boids::vertex_update(predator_vertex, predator_vector[i], i, constants::predator_size);
     }
 
     for (int i = 0; i != static_cast<int>(boid_vector.size()); ++i) {
       std::vector<boids::Boid*> in_range;
       tree.query(constants::range, boid_vector[i], in_range);
-      boid_vector[i].update(
+      boid_vector[i].update_boid(
           constants::delta_t, in_range, constants::separation_distance,
-          separation_coefficent, cohesion_coefficent,
-          alignment_coefficent);
-      boids::vertex_update(swarm_vertex, boid_vector[i], i);
+          separation_coefficent, cohesion_coefficent, alignment_coefficent);
+      for(auto& predator : predator_vector){
+        boid_vector[i].escape_predator(predator, constants::init_predator_range, constants::predator_avoidance_coeff);
+      }
+      boids::vertex_update(boid_vertex, boid_vector[i], i, constants::boid_size);
     }
+
 
     cohesion_coefficent = 0.1 * (cohesion_slider->getValue());
     alignment_coefficent = 0.1 * (alignment_slider->getValue());
     separation_coefficent = 0.1 * (separation_slider->getValue());
     if (display_tree) tree.display(window);
     tree.delete_tree();
-    window.draw(swarm_vertex);
+    window.draw(boid_vertex);
+    window.draw(predator_vertex);
     gui.draw();
     // displaying all the stats
     sf::Font font;
-    //added ../ case for running from vscode
-    if(!font.loadFromFile("./aAreaKilometer50.ttf")) font.loadFromFile("../aAreaKilometer50.ttf");
+    // added ../ case for running from vscode
+    if (!font.loadFromFile("./aAreaKilometer50.ttf"))
+      font.loadFromFile("../aAreaKilometer50.ttf");
     sf::Text text;
     text.setFont(font);
     text.setFillColor(sf::Color::White);
