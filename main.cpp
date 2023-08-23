@@ -8,9 +8,10 @@
 #include "sfml.hpp"
 #include "statistics.hpp"
 
-template<class Bird_type>
+template <class Bird_type>
 void initialize_boids(std::vector<Bird_type>& bird_vec,
-                      sf::VertexArray& vertices, double swarm_n, sf::Color bird_color) {
+                      sf::VertexArray& vertices, double swarm_n,
+                      sf::Color bird_color) {
   bird_vec.clear();
   vertices.clear();
   for (int i = 0; i < swarm_n; ++i) {
@@ -92,7 +93,7 @@ int main() {
   boid_number_slider->setMinimum(1);
 
   // todo: replace with constant
-  boid_number_slider->setMaximum(1500);
+  boid_number_slider->setMaximum(2500);
   boid_number_slider->setValue(constants::init_boid_number);
   gui.add(boid_number_slider);
 
@@ -100,7 +101,7 @@ int main() {
   tgui::Slider::Ptr predator_number_slider = tgui::Slider::create();
   predator_number_slider->setPosition(10., 120.);
   predator_number_slider->setMinimum(0);
-  //todo: add constant
+  // todo: add constant
   predator_number_slider->setMaximum(5);
   predator_number_slider->setValue(constants::init_predator_number);
   gui.add(predator_number_slider);
@@ -141,38 +142,42 @@ int main() {
 
     if (static_cast<int>(boid_number_slider->getValue()) != boid_number) {
       boid_number = static_cast<int>(boid_number_slider->getValue());
-      initialize_boids(boid_vector, boid_vertex, boid_number, constants::boid_color);
+      initialize_boids(boid_vector, boid_vertex, boid_number,
+                       constants::boid_color);
     }
 
-    if (static_cast<int>(predator_number_slider->getValue()) != predator_number) {
+    if (static_cast<int>(predator_number_slider->getValue()) !=
+        predator_number) {
       predator_number = static_cast<int>(predator_number_slider->getValue());
-      initialize_boids(predator_vector, predator_vertex, predator_number, constants::predator_color);
+      initialize_boids(predator_vector, predator_vertex, predator_number,
+                       constants::predator_color);
     }
-
 
     distances.clear();
     velocities.clear();
     // Calculating stats about the flock
     double total_distance = 0.0;
     double total_velocity = 0.0;
-    /*
-    /////////////todo: delete, too slow////////////////////////
-    for (const auto& boid : boid_vector) {
-      double boid_distance = 0.0;
-      for (const auto& other_boid : boid_vector) {
-        boid_distance += (boid.pos() - other_boid.pos()).distance();
-      }
-      total_distance += boid_distance;
-      total_velocity += boid.vel().distance();
 
-      distances.push_back(boid_distance);
-      velocities.push_back(boid.vel().distance());
-    }
-    */
-    ///////////////////////////////////////////////////////////
-    ////////////test///////////////////////////
-    double app_distance = boids::approx_distance(boid_vector, 100);
-    ///////////////////////////////////////////
+    // todo: make it work at low number of boids. to implement after testing of
+    // apporx distance
+    //  for (const auto& boid : boid_vector) {
+    //    double boid_distance = 0.0;
+    //    for (const auto& other_boid : boid_vector) {
+    //      boid_distance += (boid.pos() - other_boid.pos()).distance();
+    //    }
+    //    total_distance += boid_distance;
+    //    total_velocity += boid.vel().distance();
+
+    //   distances.push_back(boid_distance);
+    //   velocities.push_back(boid.vel().distance());
+    // }
+
+    // todo: test approx distance
+    double app_distance = boids::approx_distance(
+        boid_vector,
+        constants::sample_size_coeff * static_cast<int>(boid_vector.size()));
+
     // Calculate average distances and velocities
     total_distance = std::accumulate(distances.begin(), distances.end(), 0.0);
     total_velocity = std::accumulate(velocities.begin(), velocities.end(), 0.0);
@@ -208,14 +213,16 @@ int main() {
       }
 
       for (auto& predator : predator_vector) {
-        if ((predator.pos() - mouse_position).distance() < constants::repel_range)
+        if ((predator.pos() - mouse_position).distance() <
+            constants::repel_range)
           predator.repel(mouse_position);
       }
     }
 
-    for (int i = 0; i != static_cast<int>(predator_vector.size()); ++i){
+    for (int i = 0; i != static_cast<int>(predator_vector.size()); ++i) {
       predator_vector[i].update_predator(constants::delta_t);
-      boids::vertex_update(predator_vertex, predator_vector[i], i, constants::predator_size);
+      boids::vertex_update(predator_vertex, predator_vector[i], i,
+                           constants::predator_size);
     }
 
     for (int i = 0; i != static_cast<int>(boid_vector.size()); ++i) {
@@ -224,12 +231,13 @@ int main() {
       boid_vector[i].update_boid(
           constants::delta_t, in_range, constants::separation_distance,
           separation_coefficent, cohesion_coefficent, alignment_coefficent);
-      for(auto& predator : predator_vector){
-        boid_vector[i].escape_predator(predator, constants::init_predator_range, constants::predator_avoidance_coeff);
+      for (auto& predator : predator_vector) {
+        boid_vector[i].escape_predator(predator, constants::init_predator_range,
+                                       constants::predator_avoidance_coeff);
       }
-      boids::vertex_update(boid_vertex, boid_vector[i], i, constants::boid_size);
+      boids::vertex_update(boid_vertex, boid_vector[i], i,
+                           constants::boid_size);
     }
-
 
     cohesion_coefficent = 0.1 * (cohesion_slider->getValue());
     alignment_coefficent = 0.1 * (alignment_slider->getValue());

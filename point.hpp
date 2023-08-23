@@ -31,7 +31,7 @@ class Point {
 Point operator+(const Point&, const Point&);
 Point operator-(const Point&, const Point&);
 Point operator*(double, const Point&);
-//double operator*(const Point&, const Point&);
+double operator*(const Point&, const Point&);
 }  // namespace boids
 
 #endif

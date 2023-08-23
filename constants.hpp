@@ -54,6 +54,9 @@ inline const sf::Color predator_color{sf::Color::Red};
 
 // capacity of quad_tree cell
 // subdivides if excedeed
-inline constexpr int cell_capacity{5};
+inline constexpr int cell_capacity{10};
+
+//coefficent for sample size in approx distance.
+inline constexpr int sample_size_coeff{5};
 }  // namespace constants
 #endif
