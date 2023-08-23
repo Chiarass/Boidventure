@@ -206,8 +206,8 @@ int main() {
     gui.draw();
     // displaying all the stats
     sf::Font font;
-    //todo: load font from ./ also if it fails
-    font.loadFromFile("./aAreaKilometer50.ttf");
+    //added ../ case for running from vscode
+    if(!font.loadFromFile("./aAreaKilometer50.ttf")) font.loadFromFile("../aAreaKilometer50.ttf");
     sf::Text text;
     text.setFont(font);
     text.setFillColor(sf::Color::White);

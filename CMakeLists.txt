@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(swarm VERSION 0.1.0)
+project(boid VERSION 0.1.0)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -19,10 +19,10 @@ find_package(SFML COMPONENTS graphics REQUIRED)
 #vvvvvv da controllare se giusto vvvvvvv
 find_package(TGUI REQUIRED)
 
-add_executable(swarm point.cpp boid.cpp quadtree.cpp statistics.cpp sfml.cpp main.cpp)
+add_executable(boid point.cpp boid.cpp quadtree.cpp statistics.cpp sfml.cpp main.cpp)
 
 #vvvvvv da controllare se giusto vvvvvvv
-target_link_libraries(swarm PRIVATE sfml-graphics tgui)
+target_link_libraries(boid PRIVATE sfml-graphics tgui)
 
 # se il testing e' abilitato...
 #   per disabilitare il testing, passare -DBUILD_TESTING=OFF a cmake durante la fase di configurazione

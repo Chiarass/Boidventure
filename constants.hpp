@@ -5,7 +5,7 @@
 
 namespace constants {
 inline constexpr double delta_t{
-    0.2};  // time increment. higher number, lower speeds. //0.2
+    0.2};  // time increment. higher number, lower speeds.
 inline constexpr double window_height{700};
 inline constexpr double window_width{900};
 
@@ -20,7 +20,7 @@ inline constexpr double max_rand_velocity{
     30};   // maximum velocity component generated randomly
 inline constexpr int init_swarm_number{700};
 inline constexpr double boid_size{
-    7};  // the size of the sfml object representing the boid
+    5};  // the size of the sfml object representing the boid
 
 inline constexpr double init_separation_coeff{3};  // separation coefficent
 inline constexpr double init_cohesion_coeff{1};
@@ -31,8 +31,8 @@ inline constexpr double repel_coefficent{30};
 inline constexpr double repel_range{100};
 
 inline constexpr double range{
-    35};  // minimum distance for cohesion and alignmnent
-inline constexpr double separation_distance{20};
+    20};  // minimum distance for cohesion and alignmnent
+inline constexpr double separation_distance{10};
 
 // maximum length of velocity vector
 inline constexpr double max_velocity{10};
