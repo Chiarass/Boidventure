@@ -10,13 +10,13 @@ Point Bird::pos() const { return m_pos; }
 Point Bird::vel() const { return m_vel; }
 
 Point Bird::turn_around() {
-  if (m_pos.x() > constants::window_width - constants::margin_width)
+  if (m_pos.x() > constants::window_width - constants::margin_size)
     return {-constants::turn_coefficent, 0.};
-  if (m_pos.x() < constants::margin_width)
+  if (m_pos.x() < constants::margin_size + constants::controls_width)
     return {constants::turn_coefficent, 0.};
-  if (m_pos.y() > constants::window_height - constants::margin_width)
+  if (m_pos.y() > constants::window_height - constants::margin_size)
     return {0., -constants::turn_coefficent};
-  if (m_pos.y() < constants::margin_width)
+  if (m_pos.y() < constants::margin_size)
     return {0., constants::turn_coefficent};
   return {0., 0.};
 }

@@ -4,16 +4,25 @@
 #include <SFML/Graphics.hpp>
 
 namespace constants {
-inline constexpr double delta_t{
+inline constexpr double delta_t_boid{
     0.2};  // time increment. higher number, lower speeds.
+inline constexpr double delta_t_predator{
+    0.2};  // time increment. higher number, lower speeds.
+
+// window constants ///////////////////////////////////////
 inline constexpr double window_height{700};
-inline constexpr double window_width{900};
+inline constexpr double window_width{1000};
 
 // distance between window extremes and margin.
 // boids will be generated inside of margin
 // and will be pushed back id they go beyond
 // margin.
-inline constexpr double margin_width{10};
+inline constexpr double margin_size{10};
+
+//width of the space dedicated to sliders and buttons
+inline constexpr double controls_width{300};
+///////////////////////////////////////////////////////////
+
 inline constexpr double min_rand_velocity{
     -30};  // minimum velocity component generated randomly
 inline constexpr double max_rand_velocity{
@@ -38,9 +47,9 @@ inline constexpr double predator_hunting_coeff{0.1};
 inline constexpr double repel_coefficent{30};
 inline constexpr double repel_range{100};
 
-inline constexpr double range{
+inline constexpr double init_range{
     20};  // minimum distance for cohesion and alignmnent
-inline constexpr double separation_distance{10};
+inline constexpr double init_separation_range{10};
 inline constexpr double init_prey_range{40};
 inline constexpr double init_predator_range{1.5*init_prey_range};
 

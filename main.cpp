@@ -16,10 +16,10 @@ void initialize_boids(std::vector<Bird_type>& bird_vec,
   vertices.clear();
   for (int i = 0; i < swarm_n; ++i) {
     auto boid_position = boids::Point{
-        boids::uniform(constants::margin_width,
-                       constants::window_width - constants::margin_width),
-        boids::uniform(constants::margin_width,
-                       constants::window_height - constants::margin_width)};
+        boids::uniform(constants::margin_size + constants::controls_width,
+                       constants::window_width - constants::margin_size),
+        boids::uniform(constants::margin_size,
+                       constants::window_height - constants::margin_size)};
     auto boid_velocity =
         boids::Point{boids::uniform(constants::min_rand_velocity,
                                     constants::max_rand_velocity),
@@ -45,9 +45,9 @@ int main() {
   std::vector<boids::Predator> predator_vector;
 
   boids::Quad_tree tree{constants::cell_capacity,
-                        boids::Rectangle{constants::window_width / 2.,
+                        boids::Rectangle{(constants::window_width+constants::controls_width) / 2.,
                                          constants::window_height / 2.,
-                                         constants::window_width / 2.,
+                                         (constants::window_width-constants::controls_width) / 2.,
                                          constants::window_height / 2.}};
   sf::VertexArray boid_vertex{sf::Triangles};
   sf::VertexArray predator_vertex{sf::Triangles};
@@ -59,7 +59,23 @@ int main() {
       "boids!", sf::Style::Default);
 
   tgui::GuiSFML gui{window};
+
+  
+  // displaying all the stats
+  sf::Font font;
+  // added ../ case for running from vscode
+  if (!font.loadFromFile("./aAreaKilometer50.ttf"))
+    font.loadFromFile("../aAreaKilometer50.ttf");
+  sf::Text text;
+  text.setFont(font);
+  text.setFillColor(sf::Color::White);
+  text.setCharacterSize(10);
+  text.setPosition(constants::window_width - 150, 10);
+
+  // buttons //////////////////////////////////////////////////
   bool display_tree{false};
+  bool display_range{false};
+  bool display_separation_range{false};
 
   // button for quad tree
   tgui::Button::Ptr cell_button = tgui::Button::create();
@@ -69,7 +85,27 @@ int main() {
   cell_button->onPress([&display_tree] { display_tree = !display_tree; });
   gui.add(cell_button);
 
-  // slider for cohesion
+  // button for range
+  tgui::Button::Ptr range_button = tgui::Button::create();
+  range_button->setPosition(80., 10.);
+  range_button->setSize(70., 20.);
+  range_button->setText("show cells");
+  range_button->onPress([&display_range] { display_range = !display_range; });
+  gui.add(range_button);
+
+  // button for separation_range
+  tgui::Button::Ptr separation_range_button = tgui::Button::create();
+  separation_range_button->setPosition(160., 10.);
+  separation_range_button->setSize(70., 20.);
+  separation_range_button->setText("show cells");
+  separation_range_button->onPress([&display_separation_range] {
+    display_separation_range = !display_separation_range;
+  });
+  gui.add(separation_range_button);
+  /////////////////////////////////////////////////////////////
+
+  // strength sliders ////////////////////////////////////////
+  //  slider for cohesion
   tgui::Slider::Ptr cohesion_slider = tgui::Slider::create();
   cohesion_slider->setPosition(10., 40.);
   cohesion_slider->setValue(constants::init_cohesion_coeff);
@@ -86,12 +122,33 @@ int main() {
   separation_slider->setPosition(10., 80.);
   separation_slider->setValue(constants::init_separation_coeff);
   gui.add(separation_slider);
+  /////////////////////////////////////////////////////////////
 
+  // distance sliders /////////////////////////////////////////
+  // range slider
+  tgui::Slider::Ptr range_slider = tgui::Slider::create();
+  range_slider->setPosition(10., 100.);
+  range_slider->setValue(constants::init_range);
+  gui.add(range_slider);
+
+  // slider for separation range
+  tgui::Slider::Ptr separation_range_slider = tgui::Slider::create();
+  separation_range_slider->setPosition(10., 120.);
+  separation_range_slider->setValue(constants::init_separation_range);
+  gui.add(separation_range_slider);
+
+  // slider for predator detection range
+  tgui::Slider::Ptr prey_range_slider = tgui::Slider::create();
+  prey_range_slider->setPosition(10., 140.);
+  prey_range_slider->setValue(constants::init_prey_range);
+  gui.add(prey_range_slider);
+  /////////////////////////////////////////////////////////////
+
+  // number sliders ////////////////////////////////////////////
   // slider for number of boids
   tgui::Slider::Ptr boid_number_slider = tgui::Slider::create();
   boid_number_slider->setPosition(10., 100.);
   boid_number_slider->setMinimum(1);
-
   // todo: replace with constant
   boid_number_slider->setMaximum(2500);
   boid_number_slider->setValue(constants::init_boid_number);
@@ -101,12 +158,29 @@ int main() {
   tgui::Slider::Ptr predator_number_slider = tgui::Slider::create();
   predator_number_slider->setPosition(10., 120.);
   predator_number_slider->setMinimum(0);
-  // todo: add constant
-  predator_number_slider->setMaximum(5);
+  // todo: replace with constant
+  predator_number_slider->setMaximum(10);
   predator_number_slider->setValue(constants::init_predator_number);
   gui.add(predator_number_slider);
+  /////////////////////////////////////////////////////////////
 
-  bool lock_click{false};
+  // speed sliders ////////////////////////////////////////////
+  //  slider for boid speed
+  tgui::Slider::Ptr boid_speed_slider = tgui::Slider::create();
+  boid_speed_slider->setPosition(10., 40.);
+  // todo: add time boid constants
+  boid_speed_slider->setValue(constants::init_cohesion_coeff);
+  gui.add(boid_speed_slider);
+
+  // slider for predator speed
+  tgui::Slider::Ptr predator_speed_slider = tgui::Slider::create();
+  predator_speed_slider->setPosition(10., 60.);
+  // todo: add time predator constants
+  predator_speed_slider->setValue(constants::init_alignment_coeff);
+  gui.add(predator_speed_slider);
+  /////////////////////////////////////////////////////////////
+
+  bool is_mouse_pressed{false};
 
   // create 4 vectors to store distances, velocity, average distances and
   // velocities
@@ -118,9 +192,11 @@ int main() {
   double separation_coefficent{constants::init_separation_coeff};
   double cohesion_coefficent{constants::init_cohesion_coeff};
   double alignment_coefficent{constants::init_alignment_coeff};
+
   // initialize with absurd number so it automatically initializes boids
   int boid_number{1};
   int predator_number{0};
+
   // SFML loop. After each loop the window is updated
   while (window.isOpen()) {
     sf::Event event;
@@ -132,11 +208,11 @@ int main() {
       // repulsion occours
       if (event.type == sf::Event::MouseButtonPressed &&
           !gui.handleEvent(event)) {
-        lock_click = true;
+        is_mouse_pressed = true;
       }
 
       if (event.type == sf::Event::MouseButtonReleased) {
-        lock_click = false;
+        is_mouse_pressed = false;
       }
     }
 
@@ -204,7 +280,7 @@ int main() {
       tree.insert(&boid);
     }
 
-    if (lock_click) {
+    if (is_mouse_pressed) {
       boids::Point mouse_position(sf::Mouse::getPosition(window).x,
                                   sf::Mouse::getPosition(window).y);
       for (auto& boid : boid_vector) {
@@ -220,16 +296,17 @@ int main() {
     }
 
     for (int i = 0; i != static_cast<int>(predator_vector.size()); ++i) {
-      predator_vector[i].update_predator(constants::delta_t, boid_vector);
+      predator_vector[i].update_predator(constants::delta_t_predator,
+                                         boid_vector);
       boids::vertex_update(predator_vertex, predator_vector[i], i,
                            constants::predator_size);
     }
 
     for (int i = 0; i != static_cast<int>(boid_vector.size()); ++i) {
       std::vector<boids::Boid*> in_range;
-      tree.query(constants::range, boid_vector[i], in_range);
+      tree.query(constants::init_range, boid_vector[i], in_range);
       boid_vector[i].update_boid(
-          constants::delta_t, in_range, constants::separation_distance,
+          constants::delta_t_boid, in_range, constants::init_separation_range,
           separation_coefficent, cohesion_coefficent, alignment_coefficent);
       for (auto& predator : predator_vector) {
         boid_vector[i].escape_predator(predator, constants::init_prey_range,
@@ -247,16 +324,6 @@ int main() {
     window.draw(boid_vertex);
     window.draw(predator_vertex);
     gui.draw();
-    // displaying all the stats
-    sf::Font font;
-    // added ../ case for running from vscode
-    if (!font.loadFromFile("./aAreaKilometer50.ttf"))
-      font.loadFromFile("../aAreaKilometer50.ttf");
-    sf::Text text;
-    text.setFont(font);
-    text.setFillColor(sf::Color::White);
-    text.setCharacterSize(10);
-    text.setPosition(constants::window_width - 150, 10);
     text.setString(
         "Avg Distance: " + std::to_string(average_distance) +
         "\nApp Distance: " + std::to_string(app_distance) +
