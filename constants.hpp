@@ -33,6 +33,7 @@ inline constexpr double turn_coefficent{30};
 
 //todo: make slider
 inline constexpr double predator_avoidance_coeff{1};
+inline constexpr double predator_hunting_coeff{0.1};
 
 inline constexpr double repel_coefficent{30};
 inline constexpr double repel_range{100};
@@ -40,7 +41,8 @@ inline constexpr double repel_range{100};
 inline constexpr double range{
     20};  // minimum distance for cohesion and alignmnent
 inline constexpr double separation_distance{10};
-inline constexpr double init_predator_range{40};
+inline constexpr double init_prey_range{40};
+inline constexpr double init_predator_range{1.5*init_prey_range};
 
 // maximum length of velocity vector
 inline constexpr double max_velocity{10};

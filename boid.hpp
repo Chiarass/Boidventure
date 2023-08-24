@@ -6,6 +6,7 @@
 #include "constants.hpp"
 #include "point.hpp"
 
+
 namespace boids {
 class Bird {
  protected:
@@ -22,11 +23,11 @@ class Bird {
   void repel(const Point& click_position);
 };
 
+class Boid;
 class Predator : public Bird {
  public:
   using Bird::Bird;
-
-  void update_predator(double delta_t);
+  void update_predator(double delta_t, const std::vector<Boid>&);
 };
 class Boid : public Bird {
   protected:

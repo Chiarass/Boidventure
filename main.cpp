@@ -220,7 +220,7 @@ int main() {
     }
 
     for (int i = 0; i != static_cast<int>(predator_vector.size()); ++i) {
-      predator_vector[i].update_predator(constants::delta_t);
+      predator_vector[i].update_predator(constants::delta_t, boid_vector);
       boids::vertex_update(predator_vertex, predator_vector[i], i,
                            constants::predator_size);
     }
@@ -232,7 +232,7 @@ int main() {
           constants::delta_t, in_range, constants::separation_distance,
           separation_coefficent, cohesion_coefficent, alignment_coefficent);
       for (auto& predator : predator_vector) {
-        boid_vector[i].escape_predator(predator, constants::init_predator_range,
+        boid_vector[i].escape_predator(predator, constants::init_prey_range,
                                        constants::predator_avoidance_coeff);
       }
       boids::vertex_update(boid_vertex, boid_vector[i], i,
