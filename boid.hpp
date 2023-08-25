@@ -29,6 +29,7 @@ class Predator : public Bird {
   using Bird::Bird;
   void update_predator(double delta_t, const std::vector<Boid>&);
 };
+
 class Boid : public Bird {
   protected:
   Point separation(const std::vector<Boid*>& in_range, double, double);

@@ -27,6 +27,8 @@ inline constexpr double controls_width{300};
 inline constexpr double slider_size{10};
 inline constexpr double button_width{10};
 inline constexpr double button_height{10};
+inline constexpr double first_element_position{10.};
+inline constexpr double gui_element_distance{40.};
 ///////////////////////////////////////////////////////////
 
 inline constexpr double min_rand_velocity{

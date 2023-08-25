@@ -60,7 +60,9 @@ void vertex_update(sf::VertexArray& swarm_vertex, const Bird_type& bird,
 //     double first_element_pos;
 
 //     //todo: move to sfml.cpp
-//     Panel(double slider_s,double text_s,double element_s, double f_element_p): slider_size{slider_s}, text_size{text_s}, element_spacing{element_s}, first_element_pos{f_element_p} {};
+//     Panel(double slider_s,double text_s,double element_s, double
+//     f_element_p): slider_size{slider_s}, text_size{text_s},
+//     element_spacing{element_s}, first_element_pos{f_element_p} {};
 
 //     //todo: is there a better way than passing by value?
 //     void insert_element(std::string key, Panel_element element){
@@ -69,32 +71,43 @@ void vertex_update(sf::VertexArray& swarm_vertex, const Bird_type& bird,
 //     }
 // };
 
-//todo: move to sfml.cpp
-void initialize_gui(tgui::GuiSFML& gui, tgui::Button::Ptr& cell_button, tgui::Button::Ptr& range_button, tgui::Button::Ptr& separation_range_button, tgui::Slider::Ptr& boid_number_slider, tgui::Slider::Ptr& boid_number_text){
-  
-  bool display_tree{false};
-  bool display_range{false};
-  bool display_separation_range{false};
+// todo: move to sfml.cpp
+void initialize_gui(
+    tgui::GuiSFML& gui, sf::Font& font, 
+    tgui::Button::Ptr& cell_button, 
+    bool& display_tree,
+    tgui::Button::Ptr& range_button,
+    bool& display_range,
+    tgui::Button::Ptr& separation_range_button,
+    bool& display_separation_range,
+    tgui::Slider::Ptr& boid_number_slider, sf::Text& boid_number_text,
+    tgui::Slider::Ptr& cohesion_slider, sf::Text& cohesion_strength_text,
+    tgui::Slider ::Ptr& alignment_slider, sf::Text& alignment_strength_text,
+    tgui::Slider::Ptr& range_slider, sf::Text& range_text,
+    tgui::Slider::Ptr& predator_number_slider,
+    tgui::Slider::Ptr& separation_slider, sf::Text& separation_text,
+    tgui::Slider::Ptr& separation_range_slider,
+    tgui::Slider::Ptr& prey_range_slider) {
 
   // button for quad tree
-  tgui::Button::Ptr cell_button = tgui::Button::create();
-  cell_button->setPosition(10., 10.);
+  cell_button = tgui::Button::create();
+  cell_button->setPosition(10., constants::first_element_position);
   cell_button->setSize(70., 20.);
   cell_button->setText("show cells");
   cell_button->onPress([&display_tree] { display_tree = !display_tree; });
   gui.add(cell_button);
 
   // button for range
-  tgui::Button::Ptr range_button = tgui::Button::create();
-  range_button->setPosition(80., 10.);
+  range_button = tgui::Button::create();
+  range_button->setPosition(10., constants::first_element_position + constants::gui_element_distance);
   range_button->setSize(70., 20.);
   range_button->setText("show cells");
   range_button->onPress([&display_range] { display_range = !display_range; });
   gui.add(range_button);
 
   // button for separation_range
-  tgui::Button::Ptr separation_range_button = tgui::Button::create();
-  separation_range_button->setPosition(160., 10.);
+  separation_range_button = tgui::Button::create();
+  separation_range_button->setPosition(10., constants::first_element_position + 2*constants::gui_element_distance);
   separation_range_button->setSize(70., 20.);
   separation_range_button->setText("show cells");
   separation_range_button->onPress([&display_separation_range] {
@@ -103,15 +116,14 @@ void initialize_gui(tgui::GuiSFML& gui, tgui::Button::Ptr& cell_button, tgui::Bu
   gui.add(separation_range_button);
 
   // boid number //////////////////////////////////////////////
-  tgui::Slider::Ptr boid_number_slider = tgui::Slider::create();
-  boid_number_slider->setPosition(10., 100.);
+  boid_number_slider = tgui::Slider::create();
+  boid_number_slider->setPosition(10., constants::first_element_position + 3*constants::gui_element_distance);
   boid_number_slider->setMinimum(1);
   // todo: replace with constant
   boid_number_slider->setMaximum(2500);
   boid_number_slider->setValue(constants::init_boid_number);
   gui.add(boid_number_slider);
 
-  sf::Text boid_number_text;
   boid_number_text.setFont(font);
   boid_number_text.setFillColor(sf::Color::White);
   boid_number_text.setCharacterSize(20);
@@ -119,12 +131,12 @@ void initialize_gui(tgui::GuiSFML& gui, tgui::Button::Ptr& cell_button, tgui::Bu
   /////////////////////////////////////////////////////////////
 
   // cohesion /////////////////////////////////////////////////
-  tgui::Slider::Ptr cohesion_slider = tgui::Slider::create();
-  cohesion_slider->setPosition(10., 40.);
+  cohesion_slider = tgui::Slider::create();
+  cohesion_slider->setPosition(10., constants::first_element_position + 4*constants::gui_element_distance);
   cohesion_slider->setValue(constants::init_cohesion_coeff);
   gui.add(cohesion_slider);
 
-  sf::Text cohesion_strength_text;
+  cohesion_strength_text;
   cohesion_strength_text.setFont(font);
   cohesion_strength_text.setFillColor(sf::Color::White);
   cohesion_strength_text.setCharacterSize(20);
@@ -132,12 +144,11 @@ void initialize_gui(tgui::GuiSFML& gui, tgui::Button::Ptr& cell_button, tgui::Bu
   /////////////////////////////////////////////////////////////
 
   // alignment ////////////////////////////////////////////////
-  tgui::Slider::Ptr alignment_slider = tgui::Slider::create();
-  alignment_slider->setPosition(10., 60.);
+  alignment_slider = tgui::Slider::create();
+  alignment_slider->setPosition(10., constants::first_element_position + 5*constants::gui_element_distance);
   alignment_slider->setValue(constants::init_alignment_coeff);
   gui.add(alignment_slider);
 
-  sf::Text alignment_strength_text;
   alignment_strength_text.setFont(font);
   alignment_strength_text.setFillColor(sf::Color::White);
   alignment_strength_text.setCharacterSize(20);
@@ -145,12 +156,11 @@ void initialize_gui(tgui::GuiSFML& gui, tgui::Button::Ptr& cell_button, tgui::Bu
   /////////////////////////////////////////////////////////////
 
   // range ////////////////////////////////////////////////////
-  tgui::Slider::Ptr range_slider = tgui::Slider::create();
-  range_slider->setPosition(10., 100.);
+  range_slider = tgui::Slider::create();
+  range_slider->setPosition(10., constants::first_element_position + 6*constants::gui_element_distance);
   range_slider->setValue(constants::init_range);
   gui.add(range_slider);
 
-  sf::Text range_text;
   range_text.setFont(font);
   range_text.setFillColor(sf::Color::White);
   range_text.setCharacterSize(20);
@@ -158,8 +168,8 @@ void initialize_gui(tgui::GuiSFML& gui, tgui::Button::Ptr& cell_button, tgui::Bu
   /////////////////////////////////////////////////////////////
 
   // predator number //////////////////////////////////////////
-  tgui::Slider::Ptr predator_number_slider = tgui::Slider::create();
-  predator_number_slider->setPosition(10., 120.);
+  predator_number_slider = tgui::Slider::create();
+  predator_number_slider->setPosition(10., constants::first_element_position + 7*constants::gui_element_distance);
   predator_number_slider->setMinimum(0);
   // todo: replace with constant
   predator_number_slider->setMaximum(10);
@@ -168,51 +178,50 @@ void initialize_gui(tgui::GuiSFML& gui, tgui::Button::Ptr& cell_button, tgui::Bu
   /////////////////////////////////////////////////////////////
 
   // separation ///////////////////////////////////////////////
-  tgui::Slider::Ptr separation_slider = tgui::Slider::create();
-  separation_slider->setPosition(10., 80.);
+  separation_slider = tgui::Slider::create();
+  separation_slider->setPosition(10., constants::first_element_position + 8*constants::gui_element_distance);
   separation_slider->setValue(constants::init_separation_coeff);
   gui.add(separation_slider);
 
-
-  sf::Text separation_text;
+  separation_text;
   separation_text.setFont(font);
   separation_text.setFillColor(sf::Color::White);
   separation_text.setCharacterSize(20);
-  separation_text.setPosition(10., 90.);
+  separation_text.setPosition(10., constants::first_element_position + 9*constants::gui_element_distance);
   /////////////////////////////////////////////////////////////
 
   // distance sliders /////////////////////////////////////////
   // range slider
 
   // slider for separation range
-  tgui::Slider::Ptr separation_range_slider = tgui::Slider::create();
-  separation_range_slider->setPosition(10., 120.);
+  separation_range_slider = tgui::Slider::create();
+  separation_range_slider->setPosition(10., constants::first_element_position + 10*constants::gui_element_distance);
   separation_range_slider->setValue(constants::init_separation_range);
   gui.add(separation_range_slider);
 
   // slider for predator detection range
   // pray range ///////////////////////////////////////////////
-  tgui::Slider::Ptr prey_range_slider = tgui::Slider::create();
-  prey_range_slider->setPosition(10., 140.);
+  prey_range_slider = tgui::Slider::create();
+  prey_range_slider->setPosition(10., constants::first_element_position + 11*constants::gui_element_distance);
   prey_range_slider->setValue(constants::init_prey_range);
   gui.add(prey_range_slider);
   /////////////////////////////////////////////////////////////
 
-  // speed sliders ////////////////////////////////////////////
-  //  slider for boid speed
-  tgui::Slider::Ptr boid_speed_slider = tgui::Slider::create();
-  boid_speed_slider->setPosition(10., 40.);
-  // todo: add time boid constants
-  boid_speed_slider->setValue(constants::init_cohesion_coeff);
-  gui.add(boid_speed_slider);
+  // // speed sliders ////////////////////////////////////////////
+  // //  slider for boid speed
+  // tgui::Slider::Ptr boid_speed_slider = tgui::Slider::create();
+  // boid_speed_slider->setPosition(10., 40.);
+  // // todo: add time boid constants
+  // boid_speed_slider->setValue(constants::init_cohesion_coeff);
+  // gui.add(boid_speed_slider);
 
-  // slider for predator speed
-  tgui::Slider::Ptr predator_speed_slider = tgui::Slider::create();
-  predator_speed_slider->setPosition(10., 60.);
-  // todo: add time predator constants
-  predator_speed_slider->setValue(constants::init_alignment_coeff);
-  gui.add(predator_speed_slider);
-  /////////////////////////////////////////////////////////////
+  // // slider for predator speed
+  // tgui::Slider::Ptr predator_speed_slider = tgui::Slider::create();
+  // predator_speed_slider->setPosition(10., 60.);
+  // // todo: add time predator constants
+  // predator_speed_slider->setValue(constants::init_alignment_coeff);
+  // gui.add(predator_speed_slider);
+  // /////////////////////////////////////////////////////////////
 }
 
 }  // namespace boids
