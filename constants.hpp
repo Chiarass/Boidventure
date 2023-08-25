@@ -5,9 +5,9 @@
 
 namespace constants {
 inline constexpr double delta_t_boid{
-    0.2};  // time increment. higher number, lower speeds.
+    0.05};  // time increment. higher number, lower speeds.
 inline constexpr double delta_t_predator{
-    0.2};  // time increment. higher number, lower speeds.
+    0.05};  // time increment. higher number, lower speeds.
 
 // window constants ///////////////////////////////////////
 inline constexpr double window_height{700};
@@ -27,6 +27,8 @@ inline constexpr double controls_width{300};
 inline constexpr double slider_size{10};
 inline constexpr double button_width{10};
 inline constexpr double button_height{10};
+inline constexpr double first_element_position{10.};
+inline constexpr double gui_element_distance{40.};
 ///////////////////////////////////////////////////////////
 
 inline constexpr double min_rand_velocity{
@@ -41,7 +43,7 @@ inline constexpr double boid_size{
 inline constexpr double predator_size{8};
 // the size of the sfml object representing the predator
 
-inline constexpr double init_separation_coeff{3};  // separation coefficent
+inline constexpr double init_separation_coeff{100};  // separation coefficent
 inline constexpr double init_cohesion_coeff{1};
 inline constexpr double init_alignment_coeff{2};
 inline constexpr double turn_coefficent{30};

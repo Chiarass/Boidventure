@@ -7,6 +7,7 @@
 #include "quadtree.hpp"
 #include "sfml.hpp"
 #include "statistics.hpp"
+#include "gui.hpp"
 
 template <class Bird_type>
 void initialize_boids(std::vector<Bird_type>& bird_vec,
@@ -62,6 +63,15 @@ int main() {
 
   tgui::GuiSFML gui{window};
 
+
+  //todo: delete
+   tgui::Label::Ptr label = tgui::Label::create();
+    label->setText("Hello, World!"); // Set the text to display
+    label->setPosition(100, 100);   // Set the position of the label
+      label->getRenderer()->setTextColor(sf::Color::White);
+
+    gui.add(label);
+
   sf::Font font;
   // added ../ case for running from vscode
   if (!font.loadFromFile("./aAreaKilometer50.ttf"))
@@ -74,6 +84,41 @@ int main() {
   data_text.setCharacterSize(10);
   data_text.setPosition(constants::window_width - 150, 10);
   ////////////////////////////////////////////////////////////
+
+  bool display_tree{false};
+  bool display_range{false};
+  bool display_separation_range{false};
+
+  //todo: replace with constants
+  
+  boids::Panel panel(10., 10., 10., 10., 10.);
+  tgui::Button::Ptr cell_button = tgui::Button::create();
+  gui.add(cell_button);
+  panel.insert(cell_button);
+
+  // tgui::Button::Ptr range_button{};
+  // tgui::Button::Ptr separation_range_button{};
+  // tgui::Slider::Ptr boid_number_slider{};
+  // sf::Text boid_number_text;
+  // tgui::Slider::Ptr cohesion_slider{};
+  // sf::Text cohesion_strength_text;
+  // tgui::Slider ::Ptr alignment_slider{};
+  // sf::Text alignment_strength_text;
+  // tgui::Slider::Ptr range_slider{};
+  // sf::Text range_text;
+  // tgui::Slider::Ptr predator_number_slider{};
+  // tgui::Slider::Ptr separation_slider{};
+  // sf::Text separation_text;
+  // tgui::Slider::Ptr separation_range_slider{};
+  // tgui::Slider::Ptr prey_range_slider{};
+
+  // boids::initialize_gui(
+  //     gui, font, cell_button, display_tree, range_button, display_range,
+  //     separation_range_button, display_separation_range, boid_number_slider,
+  //     boid_number_text, cohesion_slider, cohesion_strength_text,
+  //     alignment_slider, alignment_strength_text, range_slider, range_text,
+  //     predator_number_slider, separation_slider, separation_text,
+  //     separation_range_slider, prey_range_slider);
 
   bool is_mouse_pressed{false};
 
@@ -110,19 +155,18 @@ int main() {
         is_mouse_pressed = false;
       }
     }
-/* 
-    if (static_cast<int>(gui.boid_number_slider->getValue()) != boid_number) {
-      boid_number = static_cast<int>(boid_number_slider->getValue());
-      initialize_boids(boid_vector, boid_vertex, boid_number,
-                       constants::boid_color);
-    } */
+    // if (static_cast<int>(boid_number_slider->getValue()) != boid_number) {
+    //   boid_number = static_cast<int>(boid_number_slider->getValue());
+    //   initialize_boids(boid_vector, boid_vertex, boid_number,
+    //                    constants::boid_color);
+    // }
 
-/*     if (static_cast<int>(predator_number_slider->getValue()) !=
-        predator_number) {
-      predator_number = static_cast<int>(predator_number_slider->getValue());
-      initialize_boids(predator_vector, predator_vertex, predator_number,
-                       constants::predator_color);
-    } */
+    // if (static_cast<int>(predator_number_slider->getValue()) !=
+    //     predator_number) {
+    //   predator_number = static_cast<int>(predator_number_slider->getValue());
+    //   initialize_boids(predator_vector, predator_vertex, predator_number,
+    //                    constants::predator_color);
+    // }
 
     distances.clear();
     velocities.clear();
@@ -210,16 +254,16 @@ int main() {
       boids::vertex_update(boid_vertex, boid_vector[i], i,
                            constants::boid_size);
     }
-/* 
-    cohesion_coefficent = 0.1 * (cohesion_slider->getValue());
-    alignment_coefficent = 0.1 * (alignment_slider->getValue());
-    separation_coefficent = 0.1 * (separation_slider->getValue()); 
-    */
+
+    // cohesion_coefficent = 0.1 * (cohesion_slider->getValue());
+    // alignment_coefficent = 0.1 * (alignment_slider->getValue());
+    // separation_coefficent = 0.1 * (separation_slider->getValue());
+
     if (display_tree) tree.display(window);
     tree.delete_tree();
     window.draw(boid_vertex);
     window.draw(predator_vertex);
-    gui.draw();l
+    gui.draw();
     window.display();
   }
 }
