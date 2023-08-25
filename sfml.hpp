@@ -70,7 +70,7 @@ void vertex_update(sf::VertexArray& swarm_vertex, const Bird_type& bird,
 //         elements[key] = element;
 //     }
 // };
-
+/* 
 // todo: move to sfml.cpp
 void initialize_gui(
     tgui::GuiSFML& gui, sf::Font& font, 
@@ -221,8 +221,9 @@ void initialize_gui(
   // // todo: add time predator constants
   // predator_speed_slider->setValue(constants::init_alignment_coeff);
   // gui.add(predator_speed_slider);
-  // /////////////////////////////////////////////////////////////
-}
+  // /////////////*/
+  ////////////////////////////////////////////////
+// }
 
 }  // namespace boids
 #endif
