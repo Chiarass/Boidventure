@@ -23,6 +23,12 @@ inline constexpr double margin_size{10};
 inline constexpr double controls_width{300};
 ///////////////////////////////////////////////////////////
 
+// gui constants //////////////////////////////////////////
+inline constexpr double slider_size{10};
+inline constexpr double button_width{10};
+inline constexpr double button_height{10};
+///////////////////////////////////////////////////////////
+
 inline constexpr double min_rand_velocity{
     -30};  // minimum velocity component generated randomly
 inline constexpr double max_rand_velocity{

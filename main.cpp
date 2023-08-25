@@ -44,11 +44,13 @@ int main() {
   std::vector<boids::Boid> boid_vector;
   std::vector<boids::Predator> predator_vector;
 
-  boids::Quad_tree tree{constants::cell_capacity,
-                        boids::Rectangle{(constants::window_width+constants::controls_width) / 2.,
-                                         constants::window_height / 2.,
-                                         (constants::window_width-constants::controls_width) / 2.,
-                                         constants::window_height / 2.}};
+  boids::Quad_tree tree{
+      constants::cell_capacity,
+      boids::Rectangle{
+          (constants::window_width + constants::controls_width) / 2.,
+          constants::window_height / 2.,
+          (constants::window_width - constants::controls_width) / 2.,
+          constants::window_height / 2.}};
   sf::VertexArray boid_vertex{sf::Triangles};
   sf::VertexArray predator_vertex{sf::Triangles};
 
@@ -60,125 +62,18 @@ int main() {
 
   tgui::GuiSFML gui{window};
 
-  
-  // displaying all the stats
   sf::Font font;
   // added ../ case for running from vscode
   if (!font.loadFromFile("./aAreaKilometer50.ttf"))
     font.loadFromFile("../aAreaKilometer50.ttf");
-  sf::Text text;
-  text.setFont(font);
-  text.setFillColor(sf::Color::White);
-  text.setCharacterSize(10);
-  text.setPosition(constants::window_width - 150, 10);
 
-  // buttons //////////////////////////////////////////////////
-  bool display_tree{false};
-  bool display_range{false};
-  bool display_separation_range{false};
-
-  // button for quad tree
-  tgui::Button::Ptr cell_button = tgui::Button::create();
-  cell_button->setPosition(10., 10.);
-  cell_button->setSize(70., 20.);
-  cell_button->setText("show cells");
-  cell_button->onPress([&display_tree] { display_tree = !display_tree; });
-  gui.add(cell_button);
-
-  // button for range
-  tgui::Button::Ptr range_button = tgui::Button::create();
-  range_button->setPosition(80., 10.);
-  range_button->setSize(70., 20.);
-  range_button->setText("show cells");
-  range_button->onPress([&display_range] { display_range = !display_range; });
-  gui.add(range_button);
-
-  // button for separation_range
-  tgui::Button::Ptr separation_range_button = tgui::Button::create();
-  separation_range_button->setPosition(160., 10.);
-  separation_range_button->setSize(70., 20.);
-  separation_range_button->setText("show cells");
-  separation_range_button->onPress([&display_separation_range] {
-    display_separation_range = !display_separation_range;
-  });
-  gui.add(separation_range_button);
-  /////////////////////////////////////////////////////////////
-
-  // strength sliders ////////////////////////////////////////
-  //  slider for cohesion
-  tgui::Slider::Ptr cohesion_slider = tgui::Slider::create();
-  cohesion_slider->setPosition(10., 40.);
-  cohesion_slider->setValue(constants::init_cohesion_coeff);
-  gui.add(cohesion_slider);
-
-  // slider for alignment
-  tgui::Slider::Ptr alignment_slider = tgui::Slider::create();
-  alignment_slider->setPosition(10., 60.);
-  alignment_slider->setValue(constants::init_alignment_coeff);
-  gui.add(alignment_slider);
-
-  // slider for separation
-  tgui::Slider::Ptr separation_slider = tgui::Slider::create();
-  separation_slider->setPosition(10., 80.);
-  separation_slider->setValue(constants::init_separation_coeff);
-  gui.add(separation_slider);
-  /////////////////////////////////////////////////////////////
-
-  // distance sliders /////////////////////////////////////////
-  // range slider
-  tgui::Slider::Ptr range_slider = tgui::Slider::create();
-  range_slider->setPosition(10., 100.);
-  range_slider->setValue(constants::init_range);
-  gui.add(range_slider);
-
-  // slider for separation range
-  tgui::Slider::Ptr separation_range_slider = tgui::Slider::create();
-  separation_range_slider->setPosition(10., 120.);
-  separation_range_slider->setValue(constants::init_separation_range);
-  gui.add(separation_range_slider);
-
-  // slider for predator detection range
-  tgui::Slider::Ptr prey_range_slider = tgui::Slider::create();
-  prey_range_slider->setPosition(10., 140.);
-  prey_range_slider->setValue(constants::init_prey_range);
-  gui.add(prey_range_slider);
-  /////////////////////////////////////////////////////////////
-
-  // number sliders ////////////////////////////////////////////
-  // slider for number of boids
-  tgui::Slider::Ptr boid_number_slider = tgui::Slider::create();
-  boid_number_slider->setPosition(10., 100.);
-  boid_number_slider->setMinimum(1);
-  // todo: replace with constant
-  boid_number_slider->setMaximum(2500);
-  boid_number_slider->setValue(constants::init_boid_number);
-  gui.add(boid_number_slider);
-
-  // slider for number of predators
-  tgui::Slider::Ptr predator_number_slider = tgui::Slider::create();
-  predator_number_slider->setPosition(10., 120.);
-  predator_number_slider->setMinimum(0);
-  // todo: replace with constant
-  predator_number_slider->setMaximum(10);
-  predator_number_slider->setValue(constants::init_predator_number);
-  gui.add(predator_number_slider);
-  /////////////////////////////////////////////////////////////
-
-  // speed sliders ////////////////////////////////////////////
-  //  slider for boid speed
-  tgui::Slider::Ptr boid_speed_slider = tgui::Slider::create();
-  boid_speed_slider->setPosition(10., 40.);
-  // todo: add time boid constants
-  boid_speed_slider->setValue(constants::init_cohesion_coeff);
-  gui.add(boid_speed_slider);
-
-  // slider for predator speed
-  tgui::Slider::Ptr predator_speed_slider = tgui::Slider::create();
-  predator_speed_slider->setPosition(10., 60.);
-  // todo: add time predator constants
-  predator_speed_slider->setValue(constants::init_alignment_coeff);
-  gui.add(predator_speed_slider);
-  /////////////////////////////////////////////////////////////
+  // statistics text //////////////////////////////////////////
+  sf::Text data_text;
+  data_text.setFont(font);
+  data_text.setFillColor(sf::Color::White);
+  data_text.setCharacterSize(10);
+  data_text.setPosition(constants::window_width - 150, 10);
+  ////////////////////////////////////////////////////////////
 
   bool is_mouse_pressed{false};
 
@@ -215,19 +110,19 @@ int main() {
         is_mouse_pressed = false;
       }
     }
-
-    if (static_cast<int>(boid_number_slider->getValue()) != boid_number) {
+/* 
+    if (static_cast<int>(gui.boid_number_slider->getValue()) != boid_number) {
       boid_number = static_cast<int>(boid_number_slider->getValue());
       initialize_boids(boid_vector, boid_vertex, boid_number,
                        constants::boid_color);
-    }
+    } */
 
-    if (static_cast<int>(predator_number_slider->getValue()) !=
+/*     if (static_cast<int>(predator_number_slider->getValue()) !=
         predator_number) {
       predator_number = static_cast<int>(predator_number_slider->getValue());
       initialize_boids(predator_vector, predator_vertex, predator_number,
                        constants::predator_color);
-    }
+    } */
 
     distances.clear();
     velocities.clear();
@@ -315,23 +210,16 @@ int main() {
       boids::vertex_update(boid_vertex, boid_vector[i], i,
                            constants::boid_size);
     }
-
+/* 
     cohesion_coefficent = 0.1 * (cohesion_slider->getValue());
     alignment_coefficent = 0.1 * (alignment_slider->getValue());
-    separation_coefficent = 0.1 * (separation_slider->getValue());
+    separation_coefficent = 0.1 * (separation_slider->getValue()); 
+    */
     if (display_tree) tree.display(window);
     tree.delete_tree();
     window.draw(boid_vertex);
     window.draw(predator_vertex);
-    gui.draw();
-    text.setString(
-        "Avg Distance: " + std::to_string(average_distance) +
-        "\nApp Distance: " + std::to_string(app_distance) +
-        "\nError: " + std::to_string(average_distance - app_distance) +
-        "\nAvg Velocity: " + std::to_string(average_velocity) +
-        "\nDeviation Dist: " + std::to_string(deviation_distance) +
-        "\nDeviation Vel: " + std::to_string(deviation_velocity));
-    window.draw(text);
+    gui.draw();l
     window.display();
   }
 }
