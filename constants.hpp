@@ -5,9 +5,9 @@
 
 namespace constants {
 inline constexpr double delta_t_boid{
-    0.05};  // time increment. higher number, lower speeds.
+    0.01};  // time increment. higher number, lower speeds.
 inline constexpr double delta_t_predator{
-    0.05};  // time increment. higher number, lower speeds.
+    0.01};  // time increment. higher number, lower speeds.
 
 // window constants ///////////////////////////////////////
 inline constexpr double window_height{700};
@@ -24,11 +24,17 @@ inline constexpr double controls_width{300};
 ///////////////////////////////////////////////////////////
 
 // gui constants //////////////////////////////////////////
-inline constexpr double slider_size{10};
-inline constexpr double button_width{10};
+inline constexpr double slider_size{5};
+inline constexpr double button_width{5};
 inline constexpr double button_height{10};
 inline constexpr double first_element_position{10.};
-inline constexpr double gui_element_distance{40.};
+inline constexpr double gui_element_distance{30.};
+inline constexpr int max_boid_number{2500};
+
+inline constexpr double max_cohesion_strength{0.1};
+inline constexpr double max_separation_strength{0.5};
+inline constexpr double max_alignment_strength{0.5};
+inline constexpr double max_range{2};
 ///////////////////////////////////////////////////////////
 
 inline constexpr double min_rand_velocity{
@@ -45,8 +51,8 @@ inline constexpr double predator_size{8};
 
 inline constexpr double init_separation_coeff{100};  // separation coefficent
 inline constexpr double init_cohesion_coeff{1};
-inline constexpr double init_alignment_coeff{2};
-inline constexpr double turn_coefficent{30};
+inline constexpr double init_alignment_coeff{1};
+inline constexpr double turn_coefficent{50};
 
 //todo: make slider
 inline constexpr double predator_avoidance_coeff{1};
@@ -62,7 +68,7 @@ inline constexpr double init_prey_range{40};
 inline constexpr double init_predator_range{1.5*init_prey_range};
 
 // maximum length of velocity vector
-inline constexpr double max_velocity{10};
+inline constexpr double max_velocity{1};
 // when boid goes velocity exceeds maximum velocity,
 // the velocity vector gets scaled by this coefficent
 inline constexpr double velocity_reduction_coefficent{0.9};

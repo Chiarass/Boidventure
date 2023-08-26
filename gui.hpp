@@ -6,6 +6,21 @@
 #include <map>
 #include <string>
 
+enum class Element_key{
+  cell_button,
+  boid_number_text,
+  boid_number_slider,
+  cohesion_strength_text,
+  cohesion_strength_slider,
+  alignment_strength_text,
+  alignment_strength_slider,
+  separation_strength_text,
+  separation_strength_slider,
+  range_label,
+  range_slider,
+  
+};
+
 namespace boids {
 class gui_element {
  private:
@@ -24,6 +39,7 @@ class gui_element {
 
   void set_size(tgui::Widget::Ptr element);
 };
+
 class slider_element : public gui_element {
  public:
   slider_element(double x, double y);
@@ -43,7 +59,7 @@ struct Panel {
   // todo: is such a pointer implementation safe? does it work?
   // todo: replace std::string with enum class?
   // todo: maybe make a class?
-  std::map<std::string, tgui::Widget::Ptr> elements;
+  std::map<Element_key, tgui::Widget::Ptr> elements;
   double slider_size{};
   double button_size{};
   double widget_distance{};
@@ -52,8 +68,10 @@ struct Panel {
 
   Panel(double, double, double, double, double);
 
-  void insert(tgui::Widget::Ptr, gui_element&);
+  void insert(tgui::Widget::Ptr, gui_element&, Element_key);
 };
+
+void initialize_panel(tgui::GuiSFML& , Panel&, bool&);
 
 }  // namespace boids
 
