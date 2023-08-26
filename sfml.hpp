@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "boid.hpp"
+#include "gui.hpp"
 #include "point.hpp"
 
 // todo: check if implementation of template is correct
@@ -38,6 +39,8 @@ void vertex_update(sf::VertexArray& swarm_vertex, const Bird_type& bird,
   swarm_vertex[(3 * index) + 2].position = sf::Vector2f(
       (bird.pos() + forward_vertex).x(), (bird.pos() + forward_vertex).y());
 }
+
+//void widget_create() {}
 
 // struct Panel_element{
 // tgui::Slider* slider;
@@ -70,11 +73,11 @@ void vertex_update(sf::VertexArray& swarm_vertex, const Bird_type& bird,
 //         elements[key] = element;
 //     }
 // };
-/* 
+/*
 // todo: move to sfml.cpp
 void initialize_gui(
-    tgui::GuiSFML& gui, sf::Font& font, 
-    tgui::Button::Ptr& cell_button, 
+    tgui::GuiSFML& gui, sf::Font& font,
+    tgui::Button::Ptr& cell_button,
     bool& display_tree,
     tgui::Button::Ptr& range_button,
     bool& display_range,
@@ -99,16 +102,16 @@ void initialize_gui(
 
   // button for range
   range_button = tgui::Button::create();
-  range_button->setPosition(10., constants::first_element_position + constants::gui_element_distance);
-  range_button->setSize(70., 20.);
+  range_button->setPosition(10., constants::first_element_position +
+constants::gui_element_distance); range_button->setSize(70., 20.);
   range_button->setText("show cells");
   range_button->onPress([&display_range] { display_range = !display_range; });
   gui.add(range_button);
 
   // button for separation_range
   separation_range_button = tgui::Button::create();
-  separation_range_button->setPosition(10., constants::first_element_position + 2*constants::gui_element_distance);
-  separation_range_button->setSize(70., 20.);
+  separation_range_button->setPosition(10., constants::first_element_position +
+2*constants::gui_element_distance); separation_range_button->setSize(70., 20.);
   separation_range_button->setText("show cells");
   separation_range_button->onPress([&display_separation_range] {
     display_separation_range = !display_separation_range;
@@ -117,8 +120,8 @@ void initialize_gui(
 
   // boid number //////////////////////////////////////////////
   boid_number_slider = tgui::Slider::create();
-  boid_number_slider->setPosition(10., constants::first_element_position + 3*constants::gui_element_distance);
-  boid_number_slider->setMinimum(1);
+  boid_number_slider->setPosition(10., constants::first_element_position +
+3*constants::gui_element_distance); boid_number_slider->setMinimum(1);
   // todo: replace with constant
   boid_number_slider->setMaximum(2500);
   boid_number_slider->setValue(constants::init_boid_number);
@@ -132,7 +135,8 @@ void initialize_gui(
 
   // cohesion /////////////////////////////////////////////////
   cohesion_slider = tgui::Slider::create();
-  cohesion_slider->setPosition(10., constants::first_element_position + 4*constants::gui_element_distance);
+  cohesion_slider->setPosition(10., constants::first_element_position +
+4*constants::gui_element_distance);
   cohesion_slider->setValue(constants::init_cohesion_coeff);
   gui.add(cohesion_slider);
 
@@ -145,7 +149,8 @@ void initialize_gui(
 
   // alignment ////////////////////////////////////////////////
   alignment_slider = tgui::Slider::create();
-  alignment_slider->setPosition(10., constants::first_element_position + 5*constants::gui_element_distance);
+  alignment_slider->setPosition(10., constants::first_element_position +
+5*constants::gui_element_distance);
   alignment_slider->setValue(constants::init_alignment_coeff);
   gui.add(alignment_slider);
 
@@ -157,7 +162,8 @@ void initialize_gui(
 
   // range ////////////////////////////////////////////////////
   range_slider = tgui::Slider::create();
-  range_slider->setPosition(10., constants::first_element_position + 6*constants::gui_element_distance);
+  range_slider->setPosition(10., constants::first_element_position +
+6*constants::gui_element_distance);
   range_slider->setValue(constants::init_range);
   gui.add(range_slider);
 
@@ -169,8 +175,8 @@ void initialize_gui(
 
   // predator number //////////////////////////////////////////
   predator_number_slider = tgui::Slider::create();
-  predator_number_slider->setPosition(10., constants::first_element_position + 7*constants::gui_element_distance);
-  predator_number_slider->setMinimum(0);
+  predator_number_slider->setPosition(10., constants::first_element_position +
+7*constants::gui_element_distance); predator_number_slider->setMinimum(0);
   // todo: replace with constant
   predator_number_slider->setMaximum(10);
   predator_number_slider->setValue(constants::init_predator_number);
@@ -179,7 +185,8 @@ void initialize_gui(
 
   // separation ///////////////////////////////////////////////
   separation_slider = tgui::Slider::create();
-  separation_slider->setPosition(10., constants::first_element_position + 8*constants::gui_element_distance);
+  separation_slider->setPosition(10., constants::first_element_position +
+8*constants::gui_element_distance);
   separation_slider->setValue(constants::init_separation_coeff);
   gui.add(separation_slider);
 
@@ -187,7 +194,8 @@ void initialize_gui(
   separation_text.setFont(font);
   separation_text.setFillColor(sf::Color::White);
   separation_text.setCharacterSize(20);
-  separation_text.setPosition(10., constants::first_element_position + 9*constants::gui_element_distance);
+  separation_text.setPosition(10., constants::first_element_position +
+9*constants::gui_element_distance);
   /////////////////////////////////////////////////////////////
 
   // distance sliders /////////////////////////////////////////
@@ -195,14 +203,16 @@ void initialize_gui(
 
   // slider for separation range
   separation_range_slider = tgui::Slider::create();
-  separation_range_slider->setPosition(10., constants::first_element_position + 10*constants::gui_element_distance);
+  separation_range_slider->setPosition(10., constants::first_element_position +
+10*constants::gui_element_distance);
   separation_range_slider->setValue(constants::init_separation_range);
   gui.add(separation_range_slider);
 
   // slider for predator detection range
   // pray range ///////////////////////////////////////////////
   prey_range_slider = tgui::Slider::create();
-  prey_range_slider->setPosition(10., constants::first_element_position + 11*constants::gui_element_distance);
+  prey_range_slider->setPosition(10., constants::first_element_position +
+11*constants::gui_element_distance);
   prey_range_slider->setValue(constants::init_prey_range);
   gui.add(prey_range_slider);
   /////////////////////////////////////////////////////////////
@@ -222,7 +232,7 @@ void initialize_gui(
   // predator_speed_slider->setValue(constants::init_alignment_coeff);
   // gui.add(predator_speed_slider);
   // /////////////*/
-  ////////////////////////////////////////////////
+////////////////////////////////////////////////
 // }
 
 }  // namespace boids

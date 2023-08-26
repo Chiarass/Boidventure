@@ -4,10 +4,10 @@
 
 #include "boid.hpp"
 #include "constants.hpp"
+#include "gui.hpp"
 #include "quadtree.hpp"
 #include "sfml.hpp"
 #include "statistics.hpp"
-#include "gui.hpp"
 
 template <class Bird_type>
 void initialize_boids(std::vector<Bird_type>& bird_vec,
@@ -63,14 +63,13 @@ int main() {
 
   tgui::GuiSFML gui{window};
 
+  // todo: delete
+  tgui::Label::Ptr label = tgui::Label::create();
+  label->setText("Hello, World!");  // Set the text to display
+  label->setPosition(100, 100);     // Set the position of the label
+  label->getRenderer()->setTextColor(sf::Color::White);
 
-  //todo: delete
-   tgui::Label::Ptr label = tgui::Label::create();
-    label->setText("Hello, World!"); // Set the text to display
-    label->setPosition(100, 100);   // Set the position of the label
-      label->getRenderer()->setTextColor(sf::Color::White);
-
-    gui.add(label);
+  gui.add(label);
 
   sf::Font font;
   // added ../ case for running from vscode
@@ -89,13 +88,106 @@ int main() {
   bool display_range{false};
   bool display_separation_range{false};
 
-  //todo: replace with constants
-  
-  boids::Panel panel(10., 10., 10., 10., 10.);
+  // todo: replace with constants
+  // creation of sliders and buttons
+  // maybe it's better to create all widgets in sfml.hpp?
+  boids::Panel panel(100., 40., 40., 10., 10.);
+  boids::button_element button1(10., 20.);
   tgui::Button::Ptr cell_button = tgui::Button::create();
+  cell_button->setText("Show Cells");
+  cell_button->onPress([&display_tree] { display_tree = !display_tree; });
   gui.add(cell_button);
-  panel.insert(cell_button);
+  panel.insert(cell_button, button1);
 
+  boids::button_element button2(10., 20.);
+  tgui::Button::Ptr range_button = tgui::Button::create();
+  range_button->setText("Display Range");
+  gui.add(range_button);
+  panel.insert(range_button, button2);
+
+  boids::button_element button3(10., 20.);
+  tgui::Button::Ptr separation_range_button = tgui::Button::create();
+  separation_range_button->setText("Display Separation Range");
+  gui.add(separation_range_button);
+  panel.insert(separation_range_button, button3);
+
+  boids::label_element label1(20., 40.);
+  tgui::Label::Ptr cohesion_strenght_text = tgui::Label::create();
+  cohesion_strenght_text->setText(
+      "Cohesion parameter");  // Set the text to display
+  cohesion_strenght_text->getRenderer()->setTextColor(sf::Color::White);
+  gui.add(cohesion_strenght_text);
+  panel.insert(cohesion_strenght_text, label1);
+
+  boids::slider_element slider1(20., 40.);
+  tgui::Slider::Ptr cohesion_slider = tgui::Slider::create();
+  gui.add(cohesion_slider);
+  panel.insert(cohesion_slider, slider1);
+
+  boids::label_element label2(20., 40.);
+  tgui::Label::Ptr alignment_strenght_text = tgui::Label::create();
+  alignment_strenght_text->setText(
+      "Alignment parameter");  // Set the text to display
+  alignment_strenght_text->getRenderer()->setTextColor(sf::Color::White);
+  gui.add(alignment_strenght_text);
+  panel.insert(alignment_strenght_text, label2);
+
+  boids::slider_element slider2(20., 40.);
+  tgui::Slider::Ptr aligment_slider = tgui::Slider::create();
+  gui.add(aligment_slider);
+  panel.insert(aligment_slider, slider2);
+
+  boids::label_element label3(20., 40.);
+  tgui::Label::Ptr separation_strenght_text = tgui::Label::create();
+  separation_strenght_text->setText(
+      "Separation parameter");  // Set the text to display
+  separation_strenght_text->getRenderer()->setTextColor(sf::Color::White);
+  gui.add(separation_strenght_text);
+  panel.insert(separation_strenght_text, label3);
+
+  boids::slider_element slider3(20., 40.);
+  tgui::Slider::Ptr separation_slider = tgui::Slider::create();
+  gui.add(separation_slider);
+  panel.insert(separation_slider, slider3);
+
+  boids::label_element label4(20., 40.);
+  tgui::Label::Ptr boid_number_text = tgui::Label::create();
+  boid_number_text->setText("Number of boids");  // Set the text to display
+  boid_number_text->getRenderer()->setTextColor(sf::Color::White);
+  gui.add(boid_number_text);
+  panel.insert(boid_number_text, label4);
+
+  boids::slider_element slider4(20., 40.);
+  tgui::Slider::Ptr boid_number_slider = tgui::Slider::create();
+  gui.add(boid_number_slider);
+  panel.insert(boid_number_slider, slider4);
+
+  boids::label_element label5(20., 40.);
+  tgui::Label::Ptr range_text = tgui::Label::create();
+  range_text->setText("Range");  // Set the text to display
+  range_text->getRenderer()->setTextColor(sf::Color::White);
+  gui.add(range_text);
+  panel.insert(range_text, label5);
+
+  boids::slider_element slider5(20., 40.);
+  tgui::Slider::Ptr range_slider = tgui::Slider::create();
+  gui.add(range_slider);
+  panel.insert(range_slider, slider5);
+
+  boids::slider_element slider6(20., 40.);
+  tgui::Slider::Ptr predator_number_slider = tgui::Slider::create();
+  gui.add(predator_number_slider);
+  panel.insert(predator_number_slider, slider6);
+
+  boids::slider_element slider7(20., 40.);
+  tgui::Slider::Ptr separation_range_slider = tgui::Slider::create();
+  gui.add(separation_range_slider);
+  panel.insert(separation_range_slider, slider7);
+
+  boids::slider_element slider8(20., 40.);
+  tgui::Slider::Ptr prey_range_slider = tgui::Slider::create();
+  gui.add(prey_range_slider);
+  panel.insert(prey_range_slider, slider8);
   // tgui::Button::Ptr range_button{};
   // tgui::Button::Ptr separation_range_button{};
   // tgui::Slider::Ptr boid_number_slider{};
@@ -114,11 +206,12 @@ int main() {
 
   // boids::initialize_gui(
   //     gui, font, cell_button, display_tree, range_button, display_range,
-  //     separation_range_button, display_separation_range, boid_number_slider,
-  //     boid_number_text, cohesion_slider, cohesion_strength_text,
-  //     alignment_slider, alignment_strength_text, range_slider, range_text,
-  //     predator_number_slider, separation_slider, separation_text,
-  //     separation_range_slider, prey_range_slider);
+  //     separation_range_button, display_separation_range,
+  //     boid_number_slider, boid_number_text, cohesion_slider,
+  //     cohesion_strength_text, alignment_slider, alignment_strength_text,
+  //     range_slider, range_text, predator_number_slider,
+  //     separation_slider, separation_text, separation_range_slider,
+  //     prey_range_slider);
 
   bool is_mouse_pressed{false};
 
