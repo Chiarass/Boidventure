@@ -6,19 +6,34 @@
 #include <map>
 #include <string>
 
-enum class Element_key{
+enum class Element_key {
   cell_button,
+
   boid_number_text,
   boid_number_slider,
+
   cohesion_strength_text,
   cohesion_strength_slider,
+
   alignment_strength_text,
   alignment_strength_slider,
+
   separation_strength_text,
   separation_strength_slider,
+
   range_label,
   range_slider,
-  
+  range_button,
+
+  predator_number_text,
+  predator_number_slider,
+
+  separation_range_text,
+  separation_range_slider,
+  separation_range_button,
+
+  prey_range_text,
+  prey_range_slider,
 };
 
 namespace boids {
@@ -71,7 +86,7 @@ struct Panel {
   void insert(tgui::Widget::Ptr, gui_element&, Element_key);
 };
 
-void initialize_panel(tgui::GuiSFML& , Panel&, bool&);
+void initialize_panel(tgui::GuiSFML&, Panel&, bool&, bool&, bool&, bool&);
 
 }  // namespace boids
 

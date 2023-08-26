@@ -80,9 +80,10 @@ int main() {
   bool display_tree{false};
   bool display_range{false};
   bool display_separation_range{false};
+  bool display_prey_range{false};
 
   boids::Panel panel(100., 40., constants::gui_element_distance, 10., 10.);
-  initialize_panel(gui, panel, display_tree);
+  initialize_panel(gui, panel, display_tree, display_range, display_separation_range, display_prey_range);
 
   bool is_mouse_pressed{false};
 
@@ -97,6 +98,8 @@ int main() {
   double cohesion_coefficent{constants::init_cohesion_coeff};
   double alignment_coefficent{constants::init_alignment_coeff};
   double range{constants::init_range};
+  double separation_range{constants::init_separation_range};
+  double prey_range{constants::init_prey_range};
 
   // initialize with absurd number so it automatically initializes boids
   int boid_number{-1};
@@ -127,12 +130,12 @@ int main() {
                        constants::boid_color);
     }
 
-    // if (static_cast<int>(predator_number_slider->getValue()) !=
-    //     predator_number) {
-    //   predator_number = static_cast<int>(predator_number_slider->getValue());
-    //   initialize_boids(predator_vector, predator_vertex, predator_number,
-    //                    constants::predator_color);
-    // }
+    if (static_cast<int>(std::dynamic_pointer_cast<tgui::Slider>(panel.elements[Element_key::predator_number_slider])->getValue()) !=
+        predator_number) {
+      predator_number = static_cast<int>(std::dynamic_pointer_cast<tgui::Slider>(panel.elements[Element_key::predator_number_slider])->getValue());
+      initialize_boids(predator_vector, predator_vertex, predator_number,
+                       constants::predator_color);
+    }
 
     distances.clear();
     velocities.clear();
@@ -211,21 +214,31 @@ int main() {
       std::vector<boids::Boid*> in_range;
       tree.query(range, boid_vector[i], in_range);
       boid_vector[i].update_boid(
-          constants::delta_t_boid, in_range, constants::init_separation_range,
+          constants::delta_t_boid, in_range, separation_range,
           separation_coefficent, cohesion_coefficent, alignment_coefficent);
       for (auto& predator : predator_vector) {
-        boid_vector[i].escape_predator(predator, constants::init_prey_range,
+        boid_vector[i].escape_predator(predator, prey_range,
                                        constants::predator_avoidance_coeff);
       }
       boids::vertex_update(boid_vertex, boid_vector[i], i,
                            constants::boid_size);
     }
 
-    //todo: add constant for 0.1
+    //todo: move in gui.cpp function
+    //todo: is it really the max value?
     cohesion_coefficent = constants::max_cohesion_strength*(std::dynamic_pointer_cast<tgui::Slider>(panel.elements[Element_key::cohesion_strength_slider])->getValue());
     alignment_coefficent = constants::max_alignment_strength*(std::dynamic_pointer_cast<tgui::Slider>(panel.elements[Element_key::alignment_strength_slider])->getValue());
     separation_coefficent = constants::max_separation_strength*(std::dynamic_pointer_cast<tgui::Slider>(panel.elements[Element_key::separation_strength_slider])->getValue());
     range = constants::max_range*(std::dynamic_pointer_cast<tgui::Slider>(panel.elements[Element_key::range_slider])->getValue());
+    separation_range = constants::max_separation_range*(std::dynamic_pointer_cast<tgui::Slider>(panel.elements[Element_key::separation_range_slider])->getValue());
+    prey_range = constants::max_prey_range*(std::dynamic_pointer_cast<tgui::Slider>(panel.elements[Element_key::prey_range_slider])->getValue());
+
+    //todo: add color constants
+    if(!boid_vector.empty()){
+    if(display_range) boids::display_circle(window, range, boid_vector[0], sf::Color::Yellow);
+    if(display_separation_range) boids::display_circle(window, separation_range, boid_vector[0], sf::Color::Green);
+    if(display_prey_range) boids::display_circle(window, prey_range, boid_vector[0], sf::Color::Red);
+    }
 
     if (display_tree) tree.display(window);
     tree.delete_tree();

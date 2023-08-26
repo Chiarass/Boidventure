@@ -24,7 +24,7 @@ inline constexpr double controls_width{300};
 ///////////////////////////////////////////////////////////
 
 // gui constants //////////////////////////////////////////
-inline constexpr double slider_size{5};
+inline constexpr double slider_size{4};
 inline constexpr double button_width{5};
 inline constexpr double button_height{10};
 inline constexpr double first_element_position{10.};
@@ -33,8 +33,11 @@ inline constexpr int max_boid_number{2500};
 
 inline constexpr double max_cohesion_strength{0.1};
 inline constexpr double max_separation_strength{0.5};
-inline constexpr double max_alignment_strength{0.5};
+inline constexpr double max_alignment_strength{2};
 inline constexpr double max_range{2};
+inline constexpr double max_separation_range{1};
+inline constexpr double max_prey_range{5};
+
 ///////////////////////////////////////////////////////////
 
 inline constexpr double min_rand_velocity{
