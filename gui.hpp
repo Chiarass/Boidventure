@@ -7,6 +7,8 @@
 #include <string>
 
 enum class Element_key {
+  fps_text,
+
   cell_button,
 
   boid_number_text,

@@ -39,6 +39,13 @@ void Panel::insert(tgui::Widget::Ptr element, gui_element& gui_element,
 void initialize_panel(tgui::GuiSFML& gui, Panel& panel, bool& display_tree,
                       bool& display_range, bool& display_separation_range,
                       bool& display_prey_range) {
+  boids::label_element label0(0., 0.);
+  tgui::Label::Ptr fps_text = tgui::Label::create(); // Set the text to display
+  fps_text->getRenderer()->setTextColor(sf::Color::White);
+  gui.add(fps_text);
+  panel.insert(fps_text, label0,
+               Element_key::fps_text);
+
   boids::button_element button1(10., 20.);
   tgui::Button::Ptr cell_button = tgui::Button::create();
   cell_button->setText("Show Cells");
@@ -175,9 +182,8 @@ void initialize_panel(tgui::GuiSFML& gui, Panel& panel, bool& display_tree,
   boids::button_element button4(10., 20.);
   tgui::Button::Ptr separation_prey_button = tgui::Button::create();
   separation_prey_button->setText("Display Prey Range");
-  separation_prey_button->onPress([&display_prey_range] {
-    display_prey_range = !display_prey_range;
-  });
+  separation_prey_button->onPress(
+      [&display_prey_range] { display_prey_range = !display_prey_range; });
   gui.add(separation_prey_button);
   panel.insert(separation_prey_button, button4,
                Element_key::separation_range_button);

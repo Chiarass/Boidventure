@@ -62,8 +62,13 @@ int main() {
       sf::VideoMode(constants::window_width, constants::window_height),
       "boids!", sf::Style::Default);
 
+  window.setFramerateLimit(60); 
+
   tgui::GuiSFML gui{window};
 
+  sf::Clock clock;
+
+  //todo: delete
   sf::Font font;
   // added ../ case for running from vscode
   if (!font.loadFromFile("./aAreaKilometer50.ttf"))
@@ -107,7 +112,10 @@ int main() {
 
   // SFML loop. After each loop the window is updated
   while (window.isOpen()) {
+    auto current_time = clock.restart().asSeconds();
     sf::Event event;
+    double fps = 1./(current_time);
+
 
     while (window.pollEvent(event)) {
       gui.handleEvent(event);
@@ -226,6 +234,8 @@ int main() {
 
     //todo: move in gui.cpp function
     //todo: is it really the max value?
+    std::dynamic_pointer_cast<tgui::Label>(panel.elements[Element_key::fps_text]) -> setText ("fps: " + std::to_string(fps));
+
     cohesion_coefficent = constants::max_cohesion_strength*(std::dynamic_pointer_cast<tgui::Slider>(panel.elements[Element_key::cohesion_strength_slider])->getValue());
     alignment_coefficent = constants::max_alignment_strength*(std::dynamic_pointer_cast<tgui::Slider>(panel.elements[Element_key::alignment_strength_slider])->getValue());
     separation_coefficent = constants::max_separation_strength*(std::dynamic_pointer_cast<tgui::Slider>(panel.elements[Element_key::separation_strength_slider])->getValue());
@@ -236,7 +246,7 @@ int main() {
     //todo: add color constants
     if(!boid_vector.empty()){
     if(display_range) boids::display_circle(window, range, boid_vector[0], sf::Color::Yellow);
-    if(display_separation_range) boids::display_circle(window, separation_range, boid_vector[0], sf::Color::Green);
+    if(display_separation_range) boids::display_circle(window, separation_range, boid_vector[0], sf::Color::Blue);
     if(display_prey_range) boids::display_circle(window, prey_range, boid_vector[0], sf::Color::Red);
     }
 
