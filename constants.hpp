@@ -17,10 +17,10 @@ inline constexpr double window_width{1000};
 // boids will be generated inside of margin
 // and will be pushed back id they go beyond
 // margin.
-inline constexpr double margin_size{10};
+inline constexpr double margin_size{20};
 
 //width of the space dedicated to sliders and buttons
-inline constexpr double controls_width{300};
+inline constexpr double controls_width{230};
 ///////////////////////////////////////////////////////////
 
 // gui constants //////////////////////////////////////////
@@ -34,9 +34,9 @@ inline constexpr int max_boid_number{2500};
 inline constexpr double max_cohesion_strength{0.0005};
 inline constexpr double max_separation_strength{0.05};
 inline constexpr double max_alignment_strength{0.05};
-inline constexpr double max_range{2};
-inline constexpr double max_separation_range{1};
-inline constexpr double max_prey_range{5};
+inline constexpr double max_range{4};
+inline constexpr double max_separation_range{2};
+inline constexpr double max_prey_range{4};
 
 ///////////////////////////////////////////////////////////
 
@@ -54,8 +54,8 @@ inline constexpr double predator_size{8};
 
 inline constexpr double init_separation_coeff{0.05};  // separation coefficent
 inline constexpr double init_cohesion_coeff{0.0005};
-inline constexpr double init_alignment_coeff{0.05};
-inline constexpr double turn_coefficent{0.2};
+inline constexpr double init_alignment_coeff{0.1};
+inline constexpr double turn_coefficent{0.4};
 
 //todo: make slider
 inline constexpr double predator_avoidance_coeff{0.2};

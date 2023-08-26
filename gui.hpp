@@ -39,39 +39,6 @@ enum class Element_key {
 };
 
 namespace boids {
-class gui_element {
- private:
-  struct {
-    double x;
-    double y;
-  } position;
-
-  struct {
-    double x;
-    double y;
-  } size;
-
- public:
-  gui_element(double x, double y, double width, double height);
-
-  void set_size(tgui::Widget::Ptr element);
-};
-
-class slider_element : public gui_element {
- public:
-  slider_element(double x, double y);
-};
-
-class button_element : public gui_element {
- public:
-  button_element(double x, double y);
-};
-
-class label_element : public gui_element {
- public:
-  label_element(double x, double y);
-};
-
 struct Panel {
   // todo: is such a pointer implementation safe? does it work?
   // todo: replace std::string with enum class?
@@ -85,7 +52,7 @@ struct Panel {
 
   Panel(double, double, double, double, double);
 
-  void insert(tgui::Widget::Ptr, gui_element&, Element_key);
+  void insert(tgui::Widget::Ptr, Element_key);
 };
 
 void initialize_panel(tgui::GuiSFML&, Panel&, bool&, bool&, bool&, bool&);

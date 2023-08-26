@@ -3,8 +3,6 @@
 #include <SFML/Graphics.hpp>
 
 namespace boids {
-// todo: is it better to keep the circle alive? how much does it cost in terms
-// of performance
 void display_circle(sf::RenderWindow& window, double radius, Boid& boid, sf::Color color) {
   sf::CircleShape circle(radius);
   circle.setOutlineColor(color);
