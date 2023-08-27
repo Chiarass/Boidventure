@@ -6,10 +6,10 @@
 #include <iostream>
 #include <vector>
 
-#include "boid.hpp"
 #include "point.hpp"
+#include "boid.hpp"
 
-namespace boids {
+namespace boids{
 struct Rectangle {
   // position of center of rectangle
   double x{};
@@ -29,7 +29,7 @@ class Quad_tree {
   bool m_divided = false;
 
  public:
-  std::vector<Boid*> boids;
+  std::vector<Boid*> boids_ptr;
   // children of quad tree. Dynamically allocated.
   Quad_tree* northeast;
   Quad_tree* northwest;

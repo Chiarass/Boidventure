@@ -24,9 +24,8 @@ inline constexpr double controls_width{230};
 ///////////////////////////////////////////////////////////
 
 // gui constants //////////////////////////////////////////
-inline constexpr double slider_size{4};
-inline constexpr double button_width{5};
-inline constexpr double button_height{10};
+inline constexpr double widget_width{200.};
+inline constexpr double widget_height{25.};
 inline constexpr double first_element_position{10.};
 inline constexpr double gui_element_distance{30.};
 inline constexpr int max_boid_number{2500};

@@ -4,11 +4,11 @@
 
 #include "constants.hpp"
 namespace boids {
-Panel::Panel(double p_slider_size, double p_button_size,
+Panel::Panel(double p_widget_width, double p_widget_height,
              double p_widget_distance, double p_element_x_position,
              double p_element_y_position)
-    : slider_size{p_slider_size},
-      button_size{p_button_size},
+    : widget_width{p_widget_width},
+      widget_height{p_widget_height},
       widget_distance{p_widget_distance},
       element_x_position{p_element_x_position},
       element_y_position{p_element_y_position} {};
@@ -16,7 +16,8 @@ Panel::Panel(double p_slider_size, double p_button_size,
 void Panel::insert(tgui::Widget::Ptr element, Element_key key) {
   assert(element);
   element->setPosition(element_x_position, element_y_position);
-  element->setSize(200., 25.);
+  // todo: replace with constants
+  element->setSize(widget_width, widget_height);
   element_y_position += widget_distance;
   elements[key] = element;
 }

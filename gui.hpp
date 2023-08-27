@@ -39,16 +39,17 @@ enum class Element_key {
 };
 
 namespace boids {
-struct Panel {
-  // todo: is such a pointer implementation safe? does it work?
-  // todo: replace std::string with enum class?
-  // todo: maybe make a class?
-  std::map<Element_key, tgui::Widget::Ptr> elements;
-  double slider_size{};
-  double button_size{};
+class Panel {
+ private:
+  double widget_width{};
+  double widget_height{};
   double widget_distance{};
   double element_x_position{};
   double element_y_position{};
+
+ public:
+  // todo: is such a pointer implementation safe? when does it get deleted?
+  std::map<Element_key, tgui::Widget::Ptr> elements;
 
   Panel(double, double, double, double, double);
 
@@ -57,9 +58,8 @@ struct Panel {
 
 void initialize_panel(tgui::GuiSFML&, Panel&, bool&, bool&, bool&, bool&);
 
-void update_from_panel(Panel&, double&, double&,
-                  double&, double&,
-                  double&, double&, double&);
+void update_from_panel(Panel&, double&, double&, double&, double&, double&,
+                       double&, double&);
 
 }  // namespace boids
 

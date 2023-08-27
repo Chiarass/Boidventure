@@ -20,7 +20,7 @@ void Quad_tree::subdivide() {
   // the division by two happens because w and h represent half
   // of the width and height respectively. the center of child
   // quad tree is displace  one fourth of the width and height
-  // from the mother.
+  // from the parent cell.
   Rectangle ne = Rectangle{m_boundary.x + m_boundary.w / 2.,
                            m_boundary.y + m_boundary.h / 2., m_boundary.w / 2.,
                            m_boundary.h / 2.};
@@ -44,20 +44,19 @@ void Quad_tree::subdivide() {
 }
 
 void Quad_tree::insert(Boid* boid_ptr) {
-  // what happens if passed null pointer?
   if (boid_ptr && m_boundary.contains(boid_ptr->pos())) {
-    if ((static_cast<int>(boids.size()) < m_capacity && !m_divided)) {
-      boids.push_back(boid_ptr);
+    if ((static_cast<int>(boids_ptr.size()) < m_capacity && !m_divided)) {
+      boids_ptr.push_back(boid_ptr);
     } else {
       if (!m_divided) {
         subdivide();
-        for (auto& inserted_boids : boids) {
-          northeast->insert(inserted_boids);
-          northwest->insert(inserted_boids);
-          southeast->insert(inserted_boids);
-          southwest->insert(inserted_boids);
+        for (auto& inserted_boids_ptr : boids_ptr) {
+          northeast->insert(inserted_boids_ptr);
+          northwest->insert(inserted_boids_ptr);
+          southeast->insert(inserted_boids_ptr);
+          southwest->insert(inserted_boids_ptr);
         }
-        boids.clear();
+        boids_ptr.clear();
       }
       northeast->insert(boid_ptr);
       northwest->insert(boid_ptr);
@@ -83,8 +82,7 @@ void Quad_tree::query(double range, const Boid& boid,
     return;
   }
 
-  // if i change to reference, remember & in front of auto.
-  for (auto other_boid : boids) {
+  for (auto other_boid : boids_ptr) {
     if ((other_boid->pos() - boid.pos()).distance() < range) {
       if (&boid != other_boid) {
         in_range.push_back(other_boid);
@@ -137,6 +135,6 @@ void Quad_tree::delete_tree() {
     southwest = nullptr;
     m_divided = false;
   }
-  boids.clear();
+  boids_ptr.clear();
 }
 }  // namespace boids
