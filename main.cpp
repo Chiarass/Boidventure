@@ -68,20 +68,21 @@ int main() {
 
   sf::Clock clock;
 
-  //todo: delete
-  sf::Font font;
-  // added ../ case for running from vscode
-  if (!font.loadFromFile("./aAreaKilometer50.ttf"))
-    font.loadFromFile("../aAreaKilometer50.ttf");
+  // //todo: delete
+  // sf::Font font;
+  // // added ../ case for running from vscode
+  // if (!font.loadFromFile("./aAreaKilometer50.ttf"))
+  //   font.loadFromFile("../aAreaKilometer50.ttf");
 
-  // statistics text //////////////////////////////////////////
-  sf::Text data_text;
-  data_text.setFont(font);
-  data_text.setFillColor(sf::Color::White);
-  data_text.setCharacterSize(10);
-  data_text.setPosition(constants::window_width - 150, 10);
-  ////////////////////////////////////////////////////////////
+  // // statistics text //////////////////////////////////////////
+  // sf::Text data_text;
+  // data_text.setFont(font);
+  // data_text.setFillColor(sf::Color::White);
+  // data_text.setCharacterSize(10);
+  // data_text.setPosition(constants::window_width - 150, 10);
+  // ////////////////////////////////////////////////////////////
 
+  //booleans for gui buttons
   bool display_tree{false};
   bool display_range{false};
   bool display_separation_range{false};
@@ -92,13 +93,14 @@ int main() {
 
   bool is_mouse_pressed{false};
 
-  // create 4 vectors to store distances, velocity, average distances and
-  // velocities
-  std::vector<double> distances;
-  std::vector<double> velocities;
-  std::vector<double> average_distances;
-  std::vector<double> average_velocities;
+  // // create 4 vectors to store distances, velocity, average distances and
+  // // velocities
+  // std::vector<double> distances;
+  // std::vector<double> velocities;
+  // std::vector<double> average_distances;
+  // std::vector<double> average_velocities;
 
+  //initialization of boid parameters
   double separation_coefficent{constants::init_separation_coeff};
   double cohesion_coefficent{constants::init_cohesion_coeff};
   double alignment_coefficent{constants::init_alignment_coeff};
@@ -145,11 +147,11 @@ int main() {
                        constants::predator_color);
     }
 
-    distances.clear();
-    velocities.clear();
-    // Calculating stats about the flock
-    double total_distance = 0.0;
-    double total_velocity = 0.0;
+    // distances.clear();
+    // velocities.clear();
+    // // Calculating stats about the flock
+    // double total_distance = 0.0;
+    // double total_velocity = 0.0;
 
     // todo: make it work at low number of boids. to implement after testing of
     // apporx distance
@@ -165,28 +167,28 @@ int main() {
     //   velocities.push_back(boid.vel().distance());
     // }
 
-    // todo: test approx distance
-    double app_distance = boids::approx_distance(
-        boid_vector,
-        constants::sample_size_coeff * static_cast<int>(boid_vector.size()));
+    // // todo: test approx distance
+    // double app_distance = boids::approx_distance(
+    //     boid_vector,
+    // //     constants::sample_size_coeff * static_cast<int>(boid_vector.size()));
 
-    // Calculate average distances and velocities
-    total_distance = std::accumulate(distances.begin(), distances.end(), 0.0);
-    total_velocity = std::accumulate(velocities.begin(), velocities.end(), 0.0);
+    // // Calculate average distances and velocities
+    // total_distance = std::accumulate(distances.begin(), distances.end(), 0.0);
+    // // total_velocity = std::accumulate(velocities.begin(), velocities.end(), 0.0);
 
-    double average_distance =
-        total_distance / (boid_vector.size() * boid_vector.size());
-    double average_velocity = total_velocity / boid_vector.size();
+    // double average_distance =
+    //     total_distance / (boid_vector.size() * boid_vector.size());
+    // double average_velocity = total_velocity / boid_vector.size();
 
-    // Calculate deviation distances and velocities
-    double deviation_distance =
-        boids::calculate_standard_deviation(distances, average_distance);
-    double deviation_velocity =
-        boids::calculate_standard_deviation(velocities, average_velocity);
+    // // Calculate deviation distances and velocities
+    // double deviation_distance =
+    //     boids::calculate_standard_deviation(distances, average_distance);
+    // double deviation_velocity =
+    // //     boids::calculate_standard_deviation(velocities, average_velocity);
 
-    // Adding data to the vectors
-    average_distances.push_back(average_distance);
-    average_velocities.push_back(average_velocity);
+    // // Adding data to the vectors
+    // average_distances.push_back(average_distance);
+    // average_velocities.push_back(average_velocity);
 
     // makes the window return black
     window.clear(sf::Color::Black);
@@ -232,16 +234,11 @@ int main() {
                            constants::boid_size);
     }
 
-    //todo: move in gui.cpp function
-    //todo: is it really the max value?
-    std::dynamic_pointer_cast<tgui::Label>(panel.elements[Element_key::fps_text]) -> setText ("fps: " + std::to_string(fps));
-
-    cohesion_coefficent = constants::max_cohesion_strength*(std::dynamic_pointer_cast<tgui::Slider>(panel.elements[Element_key::cohesion_strength_slider])->getValue());
-    alignment_coefficent = constants::max_alignment_strength*(std::dynamic_pointer_cast<tgui::Slider>(panel.elements[Element_key::alignment_strength_slider])->getValue());
-    separation_coefficent = constants::max_separation_strength*(std::dynamic_pointer_cast<tgui::Slider>(panel.elements[Element_key::separation_strength_slider])->getValue());
-    range = constants::max_range*(std::dynamic_pointer_cast<tgui::Slider>(panel.elements[Element_key::range_slider])->getValue());
-    separation_range = constants::max_separation_range*(std::dynamic_pointer_cast<tgui::Slider>(panel.elements[Element_key::separation_range_slider])->getValue());
-    prey_range = constants::max_prey_range*(std::dynamic_pointer_cast<tgui::Slider>(panel.elements[Element_key::prey_range_slider])->getValue());
+   //update the value of boid parameters based on the slider values
+   boids::update_from_panel(panel,  fps,  cohesion_coefficent,
+                        alignment_coefficent,
+                        separation_coefficent,  range,
+                        separation_range,  prey_range); 
 
     //todo: add color constants
     if(!boid_vector.empty()){
@@ -251,6 +248,7 @@ int main() {
     }
 
     if (display_tree) tree.display(window);
+    //deletes the dinamically allocated objects in quadtree
     tree.delete_tree();
     window.draw(boid_vertex);
     window.draw(predator_vertex);
