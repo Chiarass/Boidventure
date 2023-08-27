@@ -102,6 +102,7 @@ int main() {
   double range{};
   double separation_range{};
   double prey_range{};
+  double predator_range{};
 
   // initialize with absurd number so it automatically initializes boids
   int boid_number{-1};
@@ -184,7 +185,7 @@ int main() {
     // todo: replace with algorithm?
     // updates the predator positions
     for (int i = 0; i != static_cast<int>(predator_vector.size()); ++i) {
-      predator_vector[i].update_predator(constants::delta_t_predator,
+      predator_vector[i].update_predator(constants::delta_t_predator, predator_range,
                                          boid_vector);
       boids::vertex_update(predator_vertex, predator_vector[i], i,
                            constants::predator_size);
@@ -209,6 +210,7 @@ int main() {
     boids::update_from_panel(panel, fps, cohesion_coefficent,
                              alignment_coefficent, separation_coefficent, range,
                              separation_range, prey_range);
+    predator_range = constants::prey_to_predator_coeff*prey_range;
 
     // if corresponding button is pressed, displays the ranges of the first boid
     // in the vector

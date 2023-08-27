@@ -54,11 +54,12 @@ inline constexpr double predator_size{8};
 inline constexpr double init_separation_coeff{3};  // separation coefficent
 inline constexpr double init_cohesion_coeff{3};
 inline constexpr double init_alignment_coeff{7};
-inline constexpr double turn_coefficent{0.4};
+//todo: solve predators push boids out of bounds problem
+inline constexpr double turn_coefficent{0.5};
 
 //todo: make slider
 inline constexpr double predator_avoidance_coeff{0.2};
-inline constexpr double predator_hunting_coeff{0.1};
+inline constexpr double predator_hunting_coeff{0.05};
 
 inline constexpr double repel_coefficent{2};
 inline constexpr double repel_range{100};
@@ -67,7 +68,10 @@ inline constexpr double init_range{
     6};  // minimum distance for cohesion and alignmnent
 inline constexpr double init_separation_range{6};
 inline constexpr double init_prey_range{5};
-inline constexpr double init_predator_range{1.5*init_prey_range};
+
+//the range for the predator objects is the prey range multiplied
+//by this coefficent
+inline constexpr double prey_to_predator_coeff{1.5};
 
 // maximum length of velocity vector
 inline constexpr double max_velocity{3};

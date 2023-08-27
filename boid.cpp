@@ -1,9 +1,13 @@
 #include "boid.hpp"
 
+#include <algorithm>  //for for_each
+#include <cassert>
+#include <cmath>  //for isnan
+
 namespace boids {
 
 // Bird methods
-Bird::Bird(Point& pos, Point& vel) : m_pos{pos}, m_vel{vel} {}
+Bird::Bird(const Point& pos, const Point& vel) : m_pos{pos}, m_vel{vel} {}
 
 Point Bird::pos() const { return m_pos; }
 
@@ -20,21 +24,34 @@ Point Bird::turn_around() {
     return {0., constants::turn_coefficent};
   return {0., 0.};
 }
+
 void Bird::repel(const Point& click_position) {
-  auto add_vel =
-      (1. / (m_pos - click_position).distance()) * (m_pos - click_position);
-  m_vel = m_vel + constants::repel_coefficent * add_vel;
+  // if handels division by zero (click position = bird position)
+  if (m_pos.x() != click_position.x() || m_pos.y() != click_position.y()) {
+    auto add_vel =
+        (1. / (m_pos - click_position).distance()) * (m_pos - click_position);
+    m_vel = m_vel + constants::repel_coefficent * add_vel;
+  }
+
+  assert(!std::isnan(m_vel.x()));
+  assert(!std::isnan(m_vel.y()));
 }
 
 // Boid methods
 Point Boid::separation(const std::vector<Boid*>& in_range,
                        double separation_distance, double separation_coeff) {
+  assert(separation_distance >= 0.);
+  assert(separation_coeff >= 0.);
+
   Point added_velocity{0., 0.};
-  for (auto other_boid : in_range) {
-    if ((m_pos - other_boid->pos()).distance() < separation_distance) {
-      added_velocity = added_velocity + (m_pos - other_boid->pos());
-    }
-  }
+  
+  std::for_each(
+      in_range.begin(), in_range.end(),
+      [&added_velocity, this, separation_distance](Boid* other_boid_ptr) {
+        if ((m_pos - other_boid_ptr->pos()).distance() < separation_distance) {
+          added_velocity = added_velocity + (m_pos - other_boid_ptr->pos());
+        }
+      });
   return (separation_coeff)*added_velocity;
 }
 
@@ -87,30 +104,40 @@ void Boid::escape_predator(const Predator& predator, double predator_range,
 }
 
 // predator methods
-// todo: fargli seguire i boid (come???)
-void Predator::update_predator(double delta_t,
+
+void Predator::update_predator(double delta_t, double predator_range,
                                const std::vector<Boid>& boid_vec) {
+  assert(predator_range >= 0.);
+  assert(delta_t >= 0.);
+
   if (m_vel.distance() < constants::max_velocity) {
     // todo: check if boids remain const
     std::vector<Point> in_range_vector{};
 
+    // finding boids in range
     for (const auto& boid : boid_vec) {
-      if ((m_pos - boid.pos()).distance() < constants::init_predator_range) {
+      if ((m_pos - boid.pos()).distance() < predator_range) {
         in_range_vector.push_back(boid.pos());
       }
-
-      // follow closest boid
-      std::sort(in_range_vector.begin(), in_range_vector.end(),
-                [this](const Point& a, const Point& b) {
-                  return ((m_pos - a).distance() < (m_pos - b).distance());
-                });
     }
 
-    if (in_range_vector.size() != 0)
+    // sort to get closest boid
+    std::sort(in_range_vector.begin(), in_range_vector.end(),
+              [this](const Point& a, const Point& b) {
+                return ((m_pos - a).distance() < (m_pos - b).distance());
+              });
+
+    // add velocity to move towards closest boid
+    if (in_range_vector.size() != 0) {
       m_vel = m_vel +
               constants::predator_hunting_coeff * (in_range_vector[0] - m_pos);
+    }
+
     m_vel = m_vel + turn_around();
-  } else {
+
+  }
+
+  else {
     m_vel = Point{constants::velocity_reduction_coefficent * (m_vel.x()),
                   constants::velocity_reduction_coefficent * (m_vel.y())};
   }

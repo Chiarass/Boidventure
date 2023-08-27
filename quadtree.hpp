@@ -38,6 +38,8 @@ class Quad_tree {
 
   Quad_tree(int, const Rectangle&);
 
+  ~Quad_tree();
+
   void subdivide();
 
   void insert(Boid*);

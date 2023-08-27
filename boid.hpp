@@ -1,47 +1,82 @@
-#ifndef SWARM_HPP
-#define SWARM_HPP
+#ifndef BOID_HPP
+#define BOID_HPP
 
 #include <vector>
 
 #include "constants.hpp"
 #include "point.hpp"
 
-
 namespace boids {
+// parent class, containes all methods shared by boids and predators
 class Bird {
  protected:
   Point m_pos{};  // position
   Point m_vel{};  // velocity
+
+  // adds a velocity vector to the boids, if they exit the boundary.
+  // the boundary is defined by the window, margin and control panel
+  // constants in constants.hpp. the size of the vector is determined
+  // by constants::turn_coefficent
   Point turn_around();
 
  public:
-  Bird(Point& pos, Point& vel);
+  Bird(const Point& pos, const Point& vel);
 
+  // returns m_pos
   Point pos() const;
+  // returns m_vel
   Point vel() const;
 
-  void repel(const Point& click_position);
+  // adds a velocity vector to the boids, pointing radially outward from a
+  // specified point. param: the point from which the vectors emanate.
+  // the size of the vector is determined by constants::repel_coefficent
+  void repel(const Point&);
 };
 
 class Boid;
 class Predator : public Bird {
  public:
   using Bird::Bird;
-  void update_predator(double delta_t, const std::vector<Boid>&);
+
+  // updates the position of a predator object. a velocity vector is added to
+  // the object's speed, pointing towards the nearest boid within the provided
+  // boid vector and the specified range.
+  // param 1: delta_t, time step in the equation of motion, affecting the speed
+  // of the object.
+  // param 2: the range of the predator's vision.
+  // param 3: vector of boids.
+  void update_predator(double, double, const std::vector<Boid>&);
 };
 
 class Boid : public Bird {
-  protected:
-  Point separation(const std::vector<Boid*>& in_range, double, double);
-  Point cohesion(const std::vector<Boid*>& in_range, double);
-  Point alignment(const std::vector<Boid*>& in_range, double);
+ protected:
+  // implements separation force on boid. see https://www.red3d.com/cwr/boids/
+  // for more
+  // param 1: vector containing the boids in a range > than the separation
+  // range.
+  // param 2: the separation range
+  // param 3: a coefficent that determines the strength of the force
 
-  public:
+  Point separation(const std::vector<Boid*>&, double, double);
+
+  // implements cohesion force on boid. see https://www.red3d.com/cwr/boids/ for
+  // more
+  // param 1: vector containing the boids in the cohesion range.
+  // param 2: a coefficent that determines the strength of the force;
+  Point cohesion(const std::vector<Boid*>&, double);
+
+  // implements alignment force on boid. see https://www.red3d.com/cwr/boids/
+  // for more
+  // param 1: vector containing the boids in the alignment range.
+  // param 2: a coefficent that determines the strength of the force;
+  Point alignment(const std::vector<Boid*>&, double);
+
+ public:
   using Bird::Bird;
-  void update_boid(double, const std::vector<Boid*>&, double, double, double, double);
+  void update_boid(double, const std::vector<Boid*>&, double, double, double,
+                   double);
   void escape_predator(const Predator&, double, double);
 };
-
 
 }  // namespace boids
 #endif

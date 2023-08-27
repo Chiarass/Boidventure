@@ -15,6 +15,10 @@ bool Rectangle::contains(const Point& p) {
 Quad_tree::Quad_tree(int capacity, const Rectangle& boundary)
     : m_capacity{capacity}, m_boundary{boundary} {}
 
+Quad_tree::~Quad_tree(){
+  this->delete_tree();
+}
+
 void Quad_tree::subdivide() {
   // ne stands for north east
   // the division by two happens because w and h represent half
@@ -118,7 +122,7 @@ void Quad_tree::display(sf::RenderWindow& window) {
   }
 }
 
-// to test for memory leaks.
+// todo: test for memory leaks.
 void Quad_tree::delete_tree() {
   if (m_divided) {
     northeast->delete_tree();
