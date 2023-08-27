@@ -1,5 +1,7 @@
 #include "gui.hpp"
 
+#include <memory>
+
 #include "constants.hpp"
 namespace boids {
 Panel::Panel(double p_slider_size, double p_button_size,
@@ -139,4 +141,40 @@ void initialize_panel(tgui::GuiSFML& gui, Panel& panel, bool& display_tree,
   gui.add(separation_prey_button);
   panel.insert(separation_prey_button, Element_key::separation_range_button);
 };
+
+void update_from_panel(Panel& panel, double& fps, double& cohesion_coefficent,
+                       double& alignment_coefficent,
+                       double& separation_coefficent, double& range,
+                       double& separation_range, double& prey_range) {
+  std::dynamic_pointer_cast<tgui::Label>(panel.elements[Element_key::fps_text])
+      ->setText("fps: " + std::to_string(fps));
+
+  // todo: is it really the max value?
+  cohesion_coefficent =
+      constants::max_cohesion_strength *
+      (std::dynamic_pointer_cast<tgui::Slider>(
+           panel.elements[Element_key::cohesion_strength_slider])
+           ->getValue());
+  alignment_coefficent =
+      constants::max_alignment_strength *
+      (std::dynamic_pointer_cast<tgui::Slider>(
+           panel.elements[Element_key::alignment_strength_slider])
+           ->getValue());
+  separation_coefficent =
+      constants::max_separation_strength *
+      (std::dynamic_pointer_cast<tgui::Slider>(
+           panel.elements[Element_key::separation_strength_slider])
+           ->getValue());
+  range = constants::max_range * (std::dynamic_pointer_cast<tgui::Slider>(
+                                      panel.elements[Element_key::range_slider])
+                                      ->getValue());
+  separation_range = constants::max_separation_range *
+                     (std::dynamic_pointer_cast<tgui::Slider>(
+                          panel.elements[Element_key::separation_range_slider])
+                          ->getValue());
+  prey_range = constants::max_prey_range *
+               (std::dynamic_pointer_cast<tgui::Slider>(
+                    panel.elements[Element_key::prey_range_slider])
+                    ->getValue());
+}
 }  // namespace boids

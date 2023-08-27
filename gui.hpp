@@ -57,6 +57,10 @@ struct Panel {
 
 void initialize_panel(tgui::GuiSFML&, Panel&, bool&, bool&, bool&, bool&);
 
+void update_from_panel(Panel&, double&, double&,
+                  double&, double&,
+                  double&, double&, double&);
+
 }  // namespace boids
 
 #endif
