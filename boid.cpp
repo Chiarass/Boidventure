@@ -44,7 +44,7 @@ Point Boid::separation(const std::vector<Boid*>& in_range,
   assert(separation_coeff >= 0.);
 
   Point added_velocity{0., 0.};
-  
+
   std::for_each(
       in_range.begin(), in_range.end(),
       [&added_velocity, this, separation_distance](Boid* other_boid_ptr) {
@@ -52,38 +52,56 @@ Point Boid::separation(const std::vector<Boid*>& in_range,
           added_velocity = added_velocity + (m_pos - other_boid_ptr->pos());
         }
       });
+
   return (separation_coeff)*added_velocity;
 }
 
 Point Boid::cohesion(const std::vector<Boid*>& in_range,
                      double cohesion_coeff) {
+  assert(cohesion_coeff >= 0.);
+
   Point added_velocity{0., 0.};
-  for (auto other_boid : in_range) {
-    added_velocity = added_velocity + (other_boid->pos());
+
+  if (in_range.empty()) {
+    return added_velocity;
   }
-  if (!in_range.empty()) {
-    added_velocity =
-        cohesion_coeff * ((1. / in_range.size()) * added_velocity - m_pos);
-  }
+
+  std::for_each(in_range.begin(), in_range.end(),
+                [&added_velocity](Boid* other_boid_ptr) {
+                  added_velocity = added_velocity + (other_boid_ptr->pos());
+                });
+
+  added_velocity =
+      cohesion_coeff * ((1. / in_range.size()) * added_velocity - m_pos);
   return added_velocity;
 }
 
 Point Boid::alignment(const std::vector<Boid*>& in_range,
                       double alignment_coeff) {
+  assert(alignment_coeff >= 0.);
+
   Point added_velocity{0., 0.};
-  for (auto other_boid : in_range) {
-    added_velocity = added_velocity + (other_boid->vel());
+
+  if (in_range.empty()) {
+    return added_velocity;
   }
-  if (!in_range.empty()) {
-    added_velocity =
-        alignment_coeff * ((1. / in_range.size()) * added_velocity - m_vel);
-  }
+
+  std::for_each(in_range.begin(), in_range.end(),
+                [&added_velocity](Boid* other_boid_ptr) {
+                  added_velocity = added_velocity + (other_boid_ptr->vel());
+                });
+
+  added_velocity =
+      alignment_coeff * ((1. / in_range.size()) * added_velocity - m_vel);
   return added_velocity;
 }
 
 void Boid::update_boid(double delta_t, const std::vector<Boid*>& in_range,
                        double separation_distance, double separation_coeff,
                        double cohesion_coeff, double alignment_coeff) {
+  
+  assert(delta_t >= 0.);
+
   if (m_vel.distance() < constants::max_velocity) {
     m_vel = m_vel +
             separation(in_range, separation_distance, separation_coeff) +
@@ -96,9 +114,9 @@ void Boid::update_boid(double delta_t, const std::vector<Boid*>& in_range,
   m_pos = delta_t * (m_vel) + (m_pos);
 }
 
-void Boid::escape_predator(const Predator& predator, double predator_range,
+void Boid::escape_predator(const Predator& predator, double prey_range,
                            double avoidance_coeff) {
-  if ((pos() - predator.pos()).distance() < predator_range) {
+  if ((pos() - predator.pos()).distance() < prey_range) {
     m_vel = m_vel + avoidance_coeff * (pos() - predator.pos());
   }
 }
