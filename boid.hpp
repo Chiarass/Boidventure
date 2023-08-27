@@ -28,7 +28,7 @@ class Bird {
   Point vel() const;
 
   // adds a velocity vector to the boids, pointing radially outward from a
-  // specified point. param: the point from which the vectors emanate.
+  // specified point. Param: the point from which the vectors emanate.
   // the size of the vector is determined by constants::repel_coefficent
   void repel(const Point&);
 };
@@ -40,11 +40,11 @@ class Predator : public Bird {
 
   // updates the position of a predator object. a velocity vector is added to
   // the object's speed, pointing towards the nearest boid within the provided
-  // boid vector and the specified range.
-  // param 1: delta_t, time step in the equation of motion, affecting the speed
+  // boid vector and the specified range. if predator exceeds
+  // constants::max_velocity it slows down the predator.
+  // Param 1: delta_t, time step in the equation of motion, affecting the speed
   // of the object.
-  // param 2: the range of the predator's vision.
-  // param 3: vector of boids.
+  // Param 2: the range of the predator's vision. Param 3: vector of boids.
   void update_predator(double, double, const std::vector<Boid>&);
 };
 
@@ -52,29 +52,47 @@ class Boid : public Bird {
  protected:
   // implements separation force on boid. see https://www.red3d.com/cwr/boids/
   // for more
-  // param 1: vector containing the boids in a range > than the separation
-  // range.
-  // param 2: the separation range
-  // param 3: a coefficent that determines the strength of the force
-
+  // Param 1: vector containing the boids in a range > than the separation
+  // range (itself excluded).
+  // Param 2: the separation range
+  // Param 3: a coefficent that determines the strength of the force
   Point separation(const std::vector<Boid*>&, double, double);
 
   // implements cohesion force on boid. see https://www.red3d.com/cwr/boids/ for
   // more
-  // param 1: vector containing the boids in the cohesion range.
-  // param 2: a coefficent that determines the strength of the force;
+  // Param 1: vector containing the boids in the cohesion range (itself
+  // excluded).
+  // Param 2: a coefficent that determines the strength of the force;
   Point cohesion(const std::vector<Boid*>&, double);
 
   // implements alignment force on boid. see https://www.red3d.com/cwr/boids/
   // for more
-  // param 1: vector containing the boids in the alignment range.
-  // param 2: a coefficent that determines the strength of the force;
+  // Param 1: vector containing the boids in the alignment range (itself
+  // excluded).
+  // Param 2: a coefficent that determines the strength of the force;
   Point alignment(const std::vector<Boid*>&, double);
 
  public:
   using Bird::Bird;
+
+  // updates position of boid. to do this it calls separation, cohesion,
+  // alignment and turn_around methods. if boid exceeds constants::max_velocity
+  // it slows down the boid.
+  // Param 1: delta_t, time step in the equation of motion, affecting the speed
+  // of the object.
+  // Param 2: vector containing the boids in the alignment range (itself
+  // excluded).
+  // Param 3: range to pass as parameter 2 of separation
+  // Param 4: a coefficent to pass as parameter 3 of separation
+  // Param 5: ge to pass as parameter 2 of cohesion
+  // Param 6: ge to pass as parameter 2 of alignment
   void update_boid(double, const std::vector<Boid*>&, double, double, double,
                    double);
+
+  // force that moves the boid away from the specified predator if in range
+  // Param 1: the specified predator
+  // Param 2: the range of the prey
+  // Param 3: coefficent of strenght of the force
   void escape_predator(const Predator&, double, double);
 };
 
