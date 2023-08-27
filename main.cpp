@@ -96,12 +96,12 @@ int main() {
   bool is_mouse_pressed{false};
 
   // declaring boid parameters
-  double separation_coefficent{constants::init_separation_coeff};
-  double cohesion_coefficent{constants::init_cohesion_coeff};
-  double alignment_coefficent{constants::init_alignment_coeff};
-  double range{constants::init_range};
-  double separation_range{constants::init_separation_range};
-  double prey_range{constants::init_prey_range};
+  double separation_coefficent{};
+  double cohesion_coefficent{};
+  double alignment_coefficent{};
+  double range{};
+  double separation_range{};
+  double prey_range{};
 
   // initialize with absurd number so it automatically initializes boids
   int boid_number{-1};
@@ -210,18 +210,11 @@ int main() {
                              alignment_coefficent, separation_coefficent, range,
                              separation_range, prey_range);
 
-    // todo: add color constants
-    // todo: move in gui
-    if (!boid_vector.empty()) {
-      if (display_range)
-        boids::display_circle(window, range, boid_vector[0], sf::Color::Yellow);
-      if (display_separation_range)
-        boids::display_circle(window, separation_range, boid_vector[0],
-                              sf::Color::Blue);
-      if (display_prey_range)
-        boids::display_circle(window, prey_range, boid_vector[0],
-                              sf::Color::Red);
-    }
+    // if corresponding button is pressed, displays the ranges of the first boid
+    // in the vector
+    boids::display_ranges(range, separation_range, prey_range, display_range,
+                          display_separation_range, display_prey_range,
+                          boid_vector, window);
 
     // if the show cells button is pressed the tree object is displayed
     if (display_tree) tree.display(window);

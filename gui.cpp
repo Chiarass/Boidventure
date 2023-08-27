@@ -2,7 +2,9 @@
 
 #include <memory>
 
+#include "boid.hpp"
 #include "constants.hpp"
+#include "sfml.hpp"
 namespace boids {
 Panel::Panel(double p_widget_width, double p_widget_height,
              double p_widget_distance, double p_element_x_position,
@@ -43,9 +45,10 @@ void initialize_panel(tgui::GuiSFML& gui, Panel& panel, bool& display_tree,
   gui.add(cohesion_strength_text);
   panel.insert(cohesion_strength_text, Element_key::cohesion_strength_text);
 
-  tgui::Slider::Ptr cohesion_slider = tgui::Slider::create();
-  gui.add(cohesion_slider);
-  panel.insert(cohesion_slider, Element_key::cohesion_strength_slider);
+  tgui::Slider::Ptr cohesion_strength_slider = tgui::Slider::create();
+  cohesion_strength_slider -> setValue(constants::init_cohesion_coeff);
+  gui.add(cohesion_strength_slider);
+  panel.insert(cohesion_strength_slider, Element_key::cohesion_strength_slider);
 
   tgui::Label::Ptr alignment_strength_text = tgui::Label::create();
   alignment_strength_text->setText(
@@ -54,9 +57,10 @@ void initialize_panel(tgui::GuiSFML& gui, Panel& panel, bool& display_tree,
   gui.add(alignment_strength_text);
   panel.insert(alignment_strength_text, Element_key::alignment_strength_text);
 
-  tgui::Slider::Ptr aligment_slider = tgui::Slider::create();
-  gui.add(aligment_slider);
-  panel.insert(aligment_slider, Element_key::alignment_strength_slider);
+  tgui::Slider::Ptr aligment_strength_slider = tgui::Slider::create();
+  aligment_strength_slider -> setValue(constants::init_alignment_coeff);
+  gui.add(aligment_strength_slider);
+  panel.insert(aligment_strength_slider, Element_key::alignment_strength_slider);
 
   tgui::Label::Ptr separation_strength_text = tgui::Label::create();
   separation_strength_text->setText(
@@ -65,9 +69,10 @@ void initialize_panel(tgui::GuiSFML& gui, Panel& panel, bool& display_tree,
   gui.add(separation_strength_text);
   panel.insert(separation_strength_text, Element_key::separation_strength_text);
 
-  tgui::Slider::Ptr separation_slider = tgui::Slider::create();
-  gui.add(separation_slider);
-  panel.insert(separation_slider, Element_key::separation_strength_slider);
+  tgui::Slider::Ptr separation_strength_slider = tgui::Slider::create();
+  separation_strength_slider -> setValue(constants::init_separation_coeff);
+  gui.add(separation_strength_slider);
+  panel.insert(separation_strength_slider, Element_key::separation_strength_slider);
 
   tgui::Label::Ptr boid_number_text = tgui::Label::create();
   boid_number_text->setText("Number of boids");  // Set the text to display
@@ -77,6 +82,7 @@ void initialize_panel(tgui::GuiSFML& gui, Panel& panel, bool& display_tree,
 
   tgui::Slider::Ptr boid_number_slider = tgui::Slider::create();
   boid_number_slider->setMaximum(constants::max_boid_number);
+  boid_number_slider->setValue(constants::init_boid_number);
   gui.add(boid_number_slider);
   panel.insert(boid_number_slider, Element_key::boid_number_slider);
 
@@ -87,6 +93,7 @@ void initialize_panel(tgui::GuiSFML& gui, Panel& panel, bool& display_tree,
   panel.insert(range_text, Element_key::range_label);
 
   tgui::Slider::Ptr range_slider = tgui::Slider::create();
+  range_slider -> setValue(constants::init_range);
   gui.add(range_slider);
   panel.insert(range_slider, Element_key::range_slider);
 
@@ -104,6 +111,7 @@ void initialize_panel(tgui::GuiSFML& gui, Panel& panel, bool& display_tree,
   panel.insert(separation_range_text, Element_key::separation_range_text);
 
   tgui::Slider::Ptr separation_range_slider = tgui::Slider::create();
+  separation_range_slider -> setValue(constants::init_separation_range);
   gui.add(separation_range_slider);
   panel.insert(separation_range_slider, Element_key::separation_range_slider);
 
@@ -122,6 +130,7 @@ void initialize_panel(tgui::GuiSFML& gui, Panel& panel, bool& display_tree,
   panel.insert(predator_number_text, Element_key::predator_number_text);
 
   tgui::Slider::Ptr predator_number_slider = tgui::Slider::create();
+  predator_number_slider -> setValue(constants::init_predator_number);
   gui.add(predator_number_slider);
   panel.insert(predator_number_slider, Element_key::predator_number_slider);
 
@@ -132,6 +141,7 @@ void initialize_panel(tgui::GuiSFML& gui, Panel& panel, bool& display_tree,
   panel.insert(prey_range_text, Element_key::prey_range_text);
 
   tgui::Slider::Ptr prey_range_slider = tgui::Slider::create();
+  prey_range_slider -> setValue(constants::init_prey_range);
   gui.add(prey_range_slider);
   panel.insert(prey_range_slider, Element_key::prey_range_slider);
 
@@ -143,6 +153,7 @@ void initialize_panel(tgui::GuiSFML& gui, Panel& panel, bool& display_tree,
   panel.insert(separation_prey_button, Element_key::separation_range_button);
 };
 
+// todo: break into multiple functions
 void update_from_panel(Panel& panel, double& fps, double& cohesion_coefficent,
                        double& alignment_coefficent,
                        double& separation_coefficent, double& range,
@@ -177,5 +188,22 @@ void update_from_panel(Panel& panel, double& fps, double& cohesion_coefficent,
                (std::dynamic_pointer_cast<tgui::Slider>(
                     panel.elements[Element_key::prey_range_slider])
                     ->getValue());
+}
+
+void display_ranges(double range,
+                       double separation_range, double prey_range, bool display_range, bool display_separation_range,
+                    bool display_prey_range, std::vector<Boid>& boid_vector,
+                    sf::RenderWindow& window) {
+  // todo: add color constants
+  // if corresponding button is pressed, displays the ranges of the first boid
+  // in the vector;
+  if (!boid_vector.empty()) {
+    if (display_range)
+      display_circle(window, range, boid_vector[0], sf::Color::Yellow);
+    if (display_separation_range)
+      display_circle(window, separation_range, boid_vector[0], sf::Color::Blue);
+    if (display_prey_range)
+      display_circle(window, prey_range, boid_vector[0], sf::Color::Red);
+  }
 }
 }  // namespace boids

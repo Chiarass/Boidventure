@@ -30,12 +30,12 @@ inline constexpr double first_element_position{10.};
 inline constexpr double gui_element_distance{30.};
 inline constexpr int max_boid_number{2500};
 
-inline constexpr double max_cohesion_strength{0.0005};
+inline constexpr double max_cohesion_strength{0.002};
 inline constexpr double max_separation_strength{0.05};
-inline constexpr double max_alignment_strength{0.05};
+inline constexpr double max_alignment_strength{0.02};
 inline constexpr double max_range{4};
-inline constexpr double max_separation_range{2};
-inline constexpr double max_prey_range{4};
+inline constexpr double max_separation_range{1.5};
+inline constexpr double max_prey_range{6};
 
 ///////////////////////////////////////////////////////////
 
@@ -43,7 +43,7 @@ inline constexpr double min_rand_velocity{
     -3};  // minimum velocity component generated randomly
 inline constexpr double max_rand_velocity{
     3};  // maximum velocity component generated randomly
-inline constexpr int init_boid_number{700};
+inline constexpr int init_boid_number{300};
 inline constexpr int init_predator_number{0};
 
 inline constexpr double boid_size{
@@ -51,9 +51,9 @@ inline constexpr double boid_size{
 inline constexpr double predator_size{8};
 // the size of the sfml object representing the predator
 
-inline constexpr double init_separation_coeff{0.05};  // separation coefficent
-inline constexpr double init_cohesion_coeff{0.0005};
-inline constexpr double init_alignment_coeff{0.1};
+inline constexpr double init_separation_coeff{3};  // separation coefficent
+inline constexpr double init_cohesion_coeff{3};
+inline constexpr double init_alignment_coeff{7};
 inline constexpr double turn_coefficent{0.4};
 
 //todo: make slider
@@ -64,9 +64,9 @@ inline constexpr double repel_coefficent{2};
 inline constexpr double repel_range{100};
 
 inline constexpr double init_range{
-    20};  // minimum distance for cohesion and alignmnent
-inline constexpr double init_separation_range{10};
-inline constexpr double init_prey_range{20};
+    6};  // minimum distance for cohesion and alignmnent
+inline constexpr double init_separation_range{6};
+inline constexpr double init_prey_range{5};
 inline constexpr double init_predator_range{1.5*init_prey_range};
 
 // maximum length of velocity vector

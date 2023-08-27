@@ -6,6 +6,9 @@
 #include <map>
 #include <string>
 
+#include "boid.hpp"
+#include "sfml.hpp"
+
 enum class Element_key {
   fps_text,
 
@@ -60,6 +63,8 @@ void initialize_panel(tgui::GuiSFML&, Panel&, bool&, bool&, bool&, bool&);
 
 void update_from_panel(Panel&, double&, double&, double&, double&, double&,
                        double&, double&);
+void display_ranges(double, double, double, bool, bool, bool,
+                      std::vector<Boid>&, sf::RenderWindow&);
 
 }  // namespace boids
 
