@@ -1,6 +1,6 @@
 #include "boid.hpp"
 
-#include <algorithm>  //for for_each
+#include <algorithm>  //for for_each, all_of
 #include <cassert>
 #include <cmath>  //for isnan
 
@@ -39,7 +39,7 @@ void Bird::repel(const Point& click_position) {
 }
 
 // Boid methods
-Point Boid::separation(const std::vector<Boid*>& in_range,
+Point Boid::separation(const std::vector<const Boid*>& in_range,
                        double separation_distance, double separation_coeff) {
   assert(separation_distance >= 0.);
   assert(separation_coeff >= 0.);
@@ -48,7 +48,8 @@ Point Boid::separation(const std::vector<Boid*>& in_range,
 
   std::for_each(
       in_range.begin(), in_range.end(),
-      [&added_velocity, this, separation_distance](Boid* other_boid_ptr) {
+      [&added_velocity, this, separation_distance](const Boid* other_boid_ptr) {
+          assert(other_boid_ptr);
         if ((m_pos - other_boid_ptr->pos()).distance() < separation_distance) {
           added_velocity = added_velocity + (m_pos - other_boid_ptr->pos());
         }
@@ -57,7 +58,7 @@ Point Boid::separation(const std::vector<Boid*>& in_range,
   return (separation_coeff)*added_velocity;
 }
 
-Point Boid::cohesion(const std::vector<Boid*>& in_range,
+Point Boid::cohesion(const std::vector<const Boid*>& in_range,
                      double cohesion_coeff) {
   assert(cohesion_coeff >= 0.);
 
@@ -68,7 +69,8 @@ Point Boid::cohesion(const std::vector<Boid*>& in_range,
   }
 
   std::for_each(in_range.begin(), in_range.end(),
-                [&added_velocity](Boid* other_boid_ptr) {
+                [&added_velocity](const Boid* other_boid_ptr) {
+                  assert(other_boid_ptr);
                   added_velocity = added_velocity + (other_boid_ptr->pos());
                 });
 
@@ -77,7 +79,7 @@ Point Boid::cohesion(const std::vector<Boid*>& in_range,
   return added_velocity;
 }
 
-Point Boid::alignment(const std::vector<Boid*>& in_range,
+Point Boid::alignment(const std::vector<const Boid*>& in_range,
                       double alignment_coeff) {
   assert(alignment_coeff >= 0.);
 
@@ -88,7 +90,8 @@ Point Boid::alignment(const std::vector<Boid*>& in_range,
   }
 
   std::for_each(in_range.begin(), in_range.end(),
-                [&added_velocity](Boid* other_boid_ptr) {
+                [&added_velocity](const Boid* other_boid_ptr) {
+                  assert(other_boid_ptr);
                   added_velocity = added_velocity + (other_boid_ptr->vel());
                 });
 
@@ -97,7 +100,7 @@ Point Boid::alignment(const std::vector<Boid*>& in_range,
   return added_velocity;
 }
 
-void Boid::update_boid(double delta_t, const std::vector<Boid*>& in_range,
+void Boid::update_boid(double delta_t, const std::vector<const Boid*>& in_range,
                        double separation_distance, double separation_coeff,
                        double cohesion_coeff, double alignment_coeff) {
   assert(delta_t >= 0.);

@@ -163,7 +163,7 @@ int main() {
     }
 
     for (auto& boid : boid_vector) {
-      tree.insert(&boid);
+      tree.insert(boid);
     }
 
     // handles boid/predator repulsion
@@ -185,15 +185,15 @@ int main() {
     // todo: replace with algorithm?
     // updates the predator positions
     for (int i = 0; i != static_cast<int>(predator_vector.size()); ++i) {
-      predator_vector[i].update_predator(constants::delta_t_predator, predator_range,
-                                         boid_vector);
+      predator_vector[i].update_predator(constants::delta_t_predator,
+                                         predator_range, boid_vector);
       boids::vertex_update(predator_vertex, predator_vector[i], i,
                            constants::predator_size);
     }
 
     // updates the boid positions
     for (int i = 0; i != static_cast<int>(boid_vector.size()); ++i) {
-      std::vector<boids::Boid*> in_range;
+      std::vector<const boids::Boid*> in_range;
       tree.query(range, boid_vector[i], in_range);
       boid_vector[i].update_boid(constants::delta_t_boid, in_range,
                                  separation_range, separation_coefficent,
@@ -210,13 +210,7 @@ int main() {
     boids::update_from_panel(panel, fps, cohesion_coefficent,
                              alignment_coefficent, separation_coefficent, range,
                              separation_range, prey_range);
-    predator_range = constants::prey_to_predator_coeff*prey_range;
-
-    // if corresponding button is pressed, displays the ranges of the first boid
-    // in the vector
-    boids::display_ranges(range, separation_range, prey_range, display_range,
-                          display_separation_range, display_prey_range,
-                          boid_vector, window);
+    predator_range = constants::prey_to_predator_coeff * prey_range;
 
     // if the show cells button is pressed the tree object is displayed
     if (display_tree) tree.display(window);
@@ -227,7 +221,24 @@ int main() {
     window.draw(boid_vertex);
     window.draw(predator_vertex);
 
+    // if corresponding button is pressed, displays the ranges of the first boid
+    // in the vector
+    boids::display_ranges(range, separation_range, prey_range, display_range,
+                          display_separation_range, display_prey_range,
+                          boid_vector, window);
+
     gui.draw();
+
+    // todo: delete
+    // todo: explain why it doesn't suck all the resources from the heap
+    boids::Rectangle unit_square{100., 100., 20, 20};
+    boids::Boid boid1{boids::Point{100., 100.}};
+    boids::Boid boid2{boids::Point{100.0000000000001, 100.000000000001}};
+    boids::Quad_tree tree2{1, unit_square};
+    tree2.insert(boid1);
+    tree2.insert(boid2);
+
+    tree2.display(window);
 
     window.display();
   }

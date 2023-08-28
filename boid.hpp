@@ -20,7 +20,7 @@ class Bird {
   Point turn_around();
 
  public:
-  Bird(const Point& pos, const Point& vel);
+  Bird(const Point& pos = Point{}, const Point& vel = Point{});
 
   // returns m_pos
   Point pos() const;
@@ -57,21 +57,21 @@ class Boid : public Bird {
   // range (itself excluded).
   // Param 2: the separation range
   // Param 3: a coefficent that determines the strength of the force
-  Point separation(const std::vector<Boid*>&, double, double);
+  Point separation(const std::vector<const Boid*>&, double, double);
 
   // implements cohesion force on boid. see https://www.red3d.com/cwr/boids/ for
   // more
   // Param 1: vector containing the boids in the cohesion range (itself
   // excluded).
   // Param 2: a coefficent that determines the strength of the force;
-  Point cohesion(const std::vector<Boid*>&, double);
+  Point cohesion(const std::vector<const Boid*>&, double);
 
   // implements alignment force on boid. see https://www.red3d.com/cwr/boids/
   // for more
   // Param 1: vector containing the boids in the alignment range (itself
   // excluded).
   // Param 2: a coefficent that determines the strength of the force;
-  Point alignment(const std::vector<Boid*>&, double);
+  Point alignment(const std::vector<const Boid*>&, double);
 
  public:
   using Bird::Bird;
@@ -87,7 +87,7 @@ class Boid : public Bird {
   // Param 4: a coefficent to pass as parameter 3 of separation
   // Param 5: ge to pass as parameter 2 of cohesion
   // Param 6: ge to pass as parameter 2 of alignment
-  void update_boid(double, const std::vector<Boid*>&, double, double, double,
+  void update_boid(double, const std::vector<const Boid*>&, double, double, double,
                    double);
 
   // force that moves the boid away from the specified predator if in range
