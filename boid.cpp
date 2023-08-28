@@ -14,15 +14,16 @@ Point Bird::pos() const { return m_pos; }
 Point Bird::vel() const { return m_vel; }
 
 Point Bird::turn_around() {
+  Point added_velocity{0., 0.};
   if (m_pos.x() > constants::window_width - constants::margin_size)
-    return {-constants::turn_coefficent, 0.};
+    added_velocity = added_velocity + Point{-constants::turn_coefficent, 0.};
   if (m_pos.x() < constants::margin_size + constants::controls_width)
-    return {constants::turn_coefficent, 0.};
+    added_velocity = added_velocity + Point{constants::turn_coefficent, 0.};
   if (m_pos.y() > constants::window_height - constants::margin_size)
-    return {0., -constants::turn_coefficent};
+    added_velocity = added_velocity + Point{0., -constants::turn_coefficent};
   if (m_pos.y() < constants::margin_size)
-    return {0., constants::turn_coefficent};
-  return {0., 0.};
+    added_velocity = added_velocity + Point{0., constants::turn_coefficent};
+  return added_velocity;
 }
 
 void Bird::repel(const Point& click_position) {
@@ -99,7 +100,6 @@ Point Boid::alignment(const std::vector<Boid*>& in_range,
 void Boid::update_boid(double delta_t, const std::vector<Boid*>& in_range,
                        double separation_distance, double separation_coeff,
                        double cohesion_coeff, double alignment_coeff) {
-  
   assert(delta_t >= 0.);
 
   if (m_vel.distance() < constants::max_velocity) {
@@ -116,6 +116,9 @@ void Boid::update_boid(double delta_t, const std::vector<Boid*>& in_range,
 
 void Boid::escape_predator(const Predator& predator, double prey_range,
                            double avoidance_coeff) {
+  assert(prey_range >= 0.);
+  assert(avoidance_coeff >= 0.);
+
   if ((pos() - predator.pos()).distance() < prey_range) {
     m_vel = m_vel + avoidance_coeff * (pos() - predator.pos());
   }
