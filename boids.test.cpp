@@ -568,10 +568,7 @@ TEST_CASE("testing Boid::escape_predator") {
 TEST_CASE("testing Rectangle::contains") {
   boids::Rectangle rect{0., 0., 10., 10.};
   boids::Point p1{5., -4.};
-  boids::Point p2{
-      11.,
-      0,
-  };
+  boids::Point p2{11., 0.};
   boids::Point p3{0., 11.};
   boids::Point p4{10., 10.};
   CHECK(rect.contains(p1));
@@ -579,26 +576,119 @@ TEST_CASE("testing Rectangle::contains") {
   CHECK(!rect.contains(-1. * p2));
   CHECK(!rect.contains(p3));
   CHECK(!rect.contains(-1. * p3));
-  CHECK(rect.contains(p4));
+
+  // contains does not include boundaries
+  CHECK(!rect.contains(p4));
 }
 
-TEST_CASE("testing Quad_tree::square_collide and Quad_tree::insert()"){
-  SUBCASE("case of colliding boid"){
-    boids::Rectangle square{0., ., 1., 1.};
-    boids::Quad_tree tree{1., unit_square};
+TEST_CASE("testing Quad_tree::square_collide and Quad_tree::insert") {
+  SUBCASE(
+      "case of boid whose range collides with cell, and other boid is in "
+      "range") {
+    boids::Rectangle square{0., 0., 1., 1.};
+    boids::Quad_tree tree{1, square};
 
-    boids::Boid boid{boids::Point{0.9, 0.9}};
-    tree.insert(boid);
+    boids::Boid boid1{boids::Point{0.9, 0.9}};
+    tree.insert(boid1);
+
+    boids::Boid boid2{boids::Point{0.9, 0.9}};
 
     std::vector<const boids::Boid*> in_range;
 
-    //calls square collision
-    tree.query(1., boid, in_range);
+    // calls square collision
+    tree.query(1., boid2, in_range);
+    CHECK(!in_range.empty());
 
-    CHECK(&in_range[0] == &boid);
+    if (!in_range.empty()) {
+      CHECK(in_range[0] == &boid1);
+    }
+  }
+
+  SUBCASE(
+      "second case of boid whose range collides with cell, and other boid is "
+      "in range") {
+    boids::Rectangle square{0., 0., 1., 1.};
+    boids::Quad_tree tree{1, square};
+
+    boids::Boid boid1{boids::Point{0.9, 0.9}};
+    tree.insert(boid1);
+
+    boids::Boid boid2{boids::Point{2., 2.}};
+
+    std::vector<const boids::Boid*> in_range;
+
+    // square collides and boid is in range
+    tree.query(1.6, boid2, in_range);
+
+    CHECK(!in_range.empty());
+
+    if (!in_range.empty()) {
+      CHECK(in_range[0] == &boid1);
+    }
+  }
+
+  SUBCASE(
+      "case of boid whose range collide with cell, but other boid is not in "
+      "range") {
+    boids::Rectangle square{0., 0., 1., 1.};
+    boids::Quad_tree tree{1, square};
+
+    boids::Boid boid1{boids::Point{0.9, 0.9}};
+    tree.insert(boid1);
+
+    boids::Boid boid2{boids::Point{2., 2.}};
+
+    std::vector<const boids::Boid*> in_range;
+
+    // square collides but boid is not in range
+    tree.query(1., boid2, in_range);
+    CHECK(in_range.empty());
   }
 }
 
+TEST_CASE("testing Quad_tree::query") {
+  SUBCASE("case of boid in cell and boid passed to query being the same boid") {
+    boids::Rectangle square{0., 0., 1., 1.};
+    boids::Quad_tree tree{1, square};
+
+    boids::Boid boid1{boids::Point{0.9, 0.9}};
+    tree.insert(boid1);
+
+    std::vector<const boids::Boid*> in_range;
+
+    // calls square collision
+    tree.query(1., boid1, in_range);
+    CHECK(in_range.empty());
+  }
+}
+
+TEST_CASE("testing Quad_tree::subdivide") {
+  SUBCASE(
+      "if boid is perfectly in between cells, then it is not capture by child "
+      "cells") {
+    boids::Rectangle square{0., 0., 1., 1.};
+    boids::Quad_tree tree{1, square};
+
+    boids::Boid boid1{boids::Point{0.5, 0.5}};
+
+    // is in the middle of subdivided cells
+    boids::Boid boid2{};
+
+    tree.insert(boid1);
+    tree.insert(boid2);
+
+    std::vector<const boids::Boid*> in_range;
+    boids::Boid boid3{};
+
+    tree.query(1., boid3, in_range);
+
+    // both boid1 and boid2 are in the query range of boid3, but only boid1 has
+    // been passed to the in_range vector, because, being in_between the divided
+    // cells, boid2 has been dropped from the quad tree m_boids_ptr with the
+    // subdivision of the cell
+    CHECK(in_range[0] == &boid1);
+  }
+}
 
 // TEST_CASE("Testing the boid class") {
 //   SUBCASE("checking if separation method works") {

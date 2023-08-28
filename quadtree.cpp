@@ -1,6 +1,6 @@
 #include "quadtree.hpp"
 
-#include <algorithm>  //for std::find
+#include <algorithm>  //for std::find, std::for_each
 #include <cassert>
 #include <iostream>
 #include <vector>
@@ -10,7 +10,7 @@
 
 namespace boids {
 bool Rectangle::contains(const Point& p) const {
-  return (p.x() >= x - w && p.x() <= x + w && p.y() <= y + h && p.y() >= y - h);
+  return (p.x() > x - w && p.x() < x + w && p.y() < y + h && p.y() > y - h);
 }
 
 Quad_tree::Quad_tree(int capacity, const Rectangle& boundary)
@@ -93,13 +93,16 @@ void Quad_tree::query(double range, const Boid& boid,
     return;
   }
 
-  for (auto other_boid : m_boids_ptr) {
-    if ((other_boid->pos() - boid.pos()).distance() < range) {
-      if (&boid != other_boid) {
-        in_range.push_back(other_boid);
-      }
-    }
-  }
+  std::for_each(m_boids_ptr.begin(), m_boids_ptr.end(),
+                [range, &boid, &in_range](const Boid* other_boid_ptr) {
+                  assert(other_boid_ptr);
+
+                  if ((other_boid_ptr->pos() - boid.pos()).distance() < range) {
+                    if (&boid != other_boid_ptr) {
+                      in_range.push_back(other_boid_ptr);
+                    }
+                  }
+                });
 
   if (m_divided) {
     northeast->query(range, boid, in_range);
@@ -108,6 +111,7 @@ void Quad_tree::query(double range, const Boid& boid,
     southwest->query(range, boid, in_range);
   }
 }
+
 void Quad_tree::display(sf::RenderWindow& window) {
   sf::RectangleShape rect;
   // todo: color/thickness should be constat
