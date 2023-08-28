@@ -94,7 +94,7 @@ TEST_CASE("Testing Bird::turn_around") {
         constants::margin_size + constants::controls_width, 0.};
     // initializing boid left of left boundary
     boids::Boid boid{0.9 * left_boundary, origin};
-    std::vector<boids::Boid*> in_range;
+    std::vector<const boids::Boid*> in_range;
     // passing empty range, only turn around will update
     boid.update_boid(1., in_range, 0., 0., 0., 0.);
 
@@ -106,7 +106,7 @@ TEST_CASE("Testing Bird::turn_around") {
         constants::margin_size + constants::controls_width, 0.};
     // initializing boid left of left boundary
     boids::Boid boid{1.1 * left_boundary, origin};
-    std::vector<boids::Boid*> in_range;
+    std::vector<const boids::Boid*> in_range;
     // passing empty range, only turn around will update
     boid.update_boid(1., in_range, 0., 0., 0., 0.);
 
@@ -118,7 +118,7 @@ TEST_CASE("Testing Bird::turn_around") {
         constants::window_width + constants::margin_size, 0.};
     // initializing boid left of left boundary
     boids::Boid boid{1.1 * right_boundary, origin};
-    std::vector<boids::Boid*> in_range;
+    std::vector<const boids::Boid*> in_range;
     // passing empty range, only turn around will update
     boid.update_boid(1., in_range, 0., 0., 0., 0.);
     CHECK(boid.vel().x() != doctest::Approx(0.));
@@ -129,7 +129,7 @@ TEST_CASE("Testing Bird::turn_around") {
         constants::window_width + constants::margin_size, 0.};
     // initializing boid left of left boundary
     boids::Boid boid{0.9 * right_boundary, origin};
-    std::vector<boids::Boid*> in_range;
+    std::vector<const boids::Boid*> in_range;
     // passing empty range, only turn around will update
     boid.update_boid(1., in_range, 0., 0., 0., 0.);
     CHECK(boid.vel().x() == doctest::Approx(0.));
@@ -139,7 +139,7 @@ TEST_CASE("Testing Bird::turn_around") {
     boids::Point upper_boundary = {0., constants::margin_size};
     // initializing boid left of left boundary
     boids::Boid boid{0.9 * upper_boundary, origin};
-    std::vector<boids::Boid*> in_range;
+    std::vector<const boids::Boid*> in_range;
     // passing empty range, only turn around will update
     boid.update_boid(1., in_range, 0., 0., 0., 0.);
     CHECK(boid.vel().y() != doctest::Approx(0.));
@@ -149,7 +149,7 @@ TEST_CASE("Testing Bird::turn_around") {
     boids::Point upper_boundary = {0., constants::margin_size};
     // initializing boid left of left boundary
     boids::Boid boid{1.1 * upper_boundary, origin};
-    std::vector<boids::Boid*> in_range;
+    std::vector<const boids::Boid*> in_range;
     // passing empty range, only turn around will update
     boid.update_boid(1., in_range, 0., 0., 0., 0.);
     CHECK(boid.vel().y() == doctest::Approx(0.));
@@ -160,7 +160,7 @@ TEST_CASE("Testing Bird::turn_around") {
         0., constants::window_height - constants::margin_size};
     // initializing boid left of left boundary
     boids::Boid boid{1.1 * upper_boundary, origin};
-    std::vector<boids::Boid*> in_range;
+    std::vector<const boids::Boid*> in_range;
     // passing empty range, only turn around will update
     boid.update_boid(1., in_range, 0., 0., 0., 0.);
     CHECK(boid.vel().y() != doctest::Approx(0.));
@@ -171,7 +171,7 @@ TEST_CASE("Testing Bird::turn_around") {
         0., constants::window_height - constants::margin_size};
     // initializing boid left of left boundary
     boids::Boid boid{0.9 * upper_boundary, origin};
-    std::vector<boids::Boid*> in_range;
+    std::vector<const boids::Boid*> in_range;
     // passing empty range, only turn around will update
     boid.update_boid(1., in_range, 0., 0., 0., 0.);
     CHECK(boid.vel().y() == doctest::Approx(0.));
@@ -185,7 +185,7 @@ TEST_CASE("Testing Bird::turn_around") {
         constants::window_height / 2.};
 
     boids::Boid boid{window_center, origin};
-    std::vector<boids::Boid*> in_range;
+    std::vector<const boids::Boid*> in_range;
     // passing empty range, only turn around will update
     boid.update_boid(1., in_range, 0., 0., 0., 0.);
     CHECK(boid.vel().y() == doctest::Approx(0.));
@@ -319,7 +319,7 @@ TEST_CASE("testing Boid::separation") {
     boids::Boid boid{window_center, origin};
     boids::Boid other_boid{window_center + boids::Point{1., 0.}, origin};
 
-    std::vector<boids::Boid*> in_range{&other_boid};
+    std::vector<const boids::Boid*> in_range{&other_boid};
     boid.update_boid(1., in_range, 2., 1., 0., 0.);
 
     CHECK(boid.vel().x() < 0.);
@@ -344,7 +344,7 @@ TEST_CASE("testing Boid::separation") {
     boids::Boid boid{window_center, origin};
     boids::Boid other_boid{window_center + boids::Point{1., 0.}, origin};
 
-    std::vector<boids::Boid*> in_range{&other_boid};
+    std::vector<const boids::Boid*> in_range{&other_boid};
     boid.update_boid(1., in_range, 0.5, 1., 0., 0.);
 
     CHECK(boid.vel().x() == doctest::Approx(0.));
@@ -355,7 +355,7 @@ TEST_CASE("testing Boid::separation") {
     boids::Boid boid{window_center, origin};
     boids::Boid other_boid{window_center + boids::Point{1., 0.}, origin};
 
-    std::vector<boids::Boid*> in_range{&other_boid};
+    std::vector<const boids::Boid*> in_range{&other_boid};
     boid.update_boid(1., in_range, 2., 0., 0., 0.);
 
     CHECK(boid.vel().x() == doctest::Approx(0.));
@@ -373,7 +373,7 @@ TEST_CASE("testing Boid::cohesion") {
     boids::Boid boid{window_center, origin};
     boids::Boid other_boid{window_center + boids::Point{1., 0.}, origin};
 
-    std::vector<boids::Boid*> in_range{&other_boid};
+    std::vector<const boids::Boid*> in_range{&other_boid};
     boid.update_boid(1., in_range, 0., 0., 1., 0.);
 
     CHECK(boid.vel().x() > 0.);
@@ -398,7 +398,7 @@ TEST_CASE("testing Boid::cohesion") {
     boids::Boid boid{window_center, origin};
     boids::Boid other_boid{window_center + boids::Point{1., 0.}, origin};
 
-    std::vector<boids::Boid*> in_range{&other_boid};
+    std::vector<const boids::Boid*> in_range{&other_boid};
     boid.update_boid(1., in_range, 0., 0., 0., 0.);
 
     CHECK(boid.vel().x() == doctest::Approx(0.));
@@ -414,8 +414,8 @@ TEST_CASE("testing Boid::cohesion") {
     boids::Boid upper_boid{window_center + boids::Point{0., 1.}, origin};
     boids::Boid lower_boid{window_center + boids::Point{0., -1.}, origin};
 
-    std::vector<boids::Boid*> in_range{&left_boid, &right_boid, &upper_boid,
-                                       &lower_boid};
+    std::vector<const boids::Boid*> in_range{&left_boid, &right_boid,
+                                             &upper_boid, &lower_boid};
     boid.update_boid(1., in_range, 0., 0., 1., 0.);
 
     CHECK(boid.vel().x() == doctest::Approx(0.));
@@ -435,7 +435,7 @@ TEST_CASE("testing Boid::alignment") {
     boids::Boid boid{window_center, origin};
     boids::Boid other_boid{window_center, boids::Point{1., 1.}};
 
-    std::vector<boids::Boid*> in_range{&other_boid};
+    std::vector<const boids::Boid*> in_range{&other_boid};
 
     boid.update_boid(1., in_range, 0., 0., 0., 1.);
 
@@ -447,7 +447,7 @@ TEST_CASE("testing Boid::alignment") {
     boids::Boid boid{window_center, origin};
     boids::Boid other_boid{window_center, boids::Point{1., 1.}};
 
-    std::vector<boids::Boid*> in_range{&other_boid};
+    std::vector<const boids::Boid*> in_range{&other_boid};
 
     boid.update_boid(1., in_range, 0., 0., 0., 0.);
 
@@ -465,8 +465,8 @@ TEST_CASE("testing Boid::alignment") {
     boids::Boid upper_boid{origin, boids::Point{0., 1.}};
     boids::Boid lower_boid{origin, boids::Point{0., -1.}};
 
-    std::vector<boids::Boid*> in_range{&left_boid, &right_boid, &upper_boid,
-                                       &lower_boid};
+    std::vector<const boids::Boid*> in_range{&left_boid, &right_boid,
+                                             &upper_boid, &lower_boid};
     boid.update_boid(1., in_range, 0., 0., 0., 1.);
 
     CHECK(boid.vel().x() == doctest::Approx(0.));
@@ -487,8 +487,8 @@ TEST_CASE("testing Boid::alignment") {
     boids::Boid upper_boid{origin, boids::Point{0., 1.} + offest};
     boids::Boid lower_boid{origin, boids::Point{0., -1.} + offest};
 
-    std::vector<boids::Boid*> in_range{&left_boid, &right_boid, &upper_boid,
-                                       &lower_boid};
+    std::vector<const boids::Boid*> in_range{&left_boid, &right_boid,
+                                             &upper_boid, &lower_boid};
     boid.update_boid(1., in_range, 0., 0., 0., 1.);
 
     // checks that the alignment force on the boid is null
@@ -510,7 +510,7 @@ TEST_CASE("testing Boid::update_boid") {
         constants::max_velocity / constants::velocity_reduction_coefficent,
         constants::max_velocity / constants::velocity_reduction_coefficent};
     boids::Boid boid{window_center, exceeding_speed};
-    std::vector<boids::Boid*> in_range;
+    std::vector<const boids::Boid*> in_range;
 
     boid.update_boid(1., in_range, 0., 0., 0., 0.);
     CHECK(boid.vel().x() == doctest::Approx(constants::max_velocity));
@@ -521,31 +521,10 @@ TEST_CASE("testing Boid::update_boid") {
     boids::Point right_boundary = {
         constants::window_width + constants::margin_size, 0.};
     boids::Boid boid{1.1 * right_boundary, origin};
-    std::vector<boids::Boid*> in_range;
+    std::vector<const boids::Boid*> in_range;
 
     boid.update_boid(1., in_range, 0., 0., 0., 0.);
     CHECK(boid.vel().x() < 0.);
-  }
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////
-
-TEST_CASE("Testing the quadtree class") {
-  SUBCASE("checking if contains method works") {
-    boids::Rectangle rect{0., 0., 10., 10.};
-    boids::Point p1{5., -4.};
-    boids::Point p2{
-        11.,
-        0,
-    };
-    boids::Point p3{0., 11.};
-    boids::Point p4{10., 10.};
-    CHECK(rect.contains(p1));
-    CHECK(!rect.contains(p2));
-    CHECK(!rect.contains(-1. * p2));
-    CHECK(!rect.contains(p3));
-    CHECK(!rect.contains(-1. * p3));
-    CHECK(rect.contains(p4));
   }
 }
 
@@ -584,6 +563,42 @@ TEST_CASE("testing Boid::escape_predator") {
     CHECK(boid.vel().y() == 0.);
   }
 }
+////////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("testing Rectangle::contains") {
+  boids::Rectangle rect{0., 0., 10., 10.};
+  boids::Point p1{5., -4.};
+  boids::Point p2{
+      11.,
+      0,
+  };
+  boids::Point p3{0., 11.};
+  boids::Point p4{10., 10.};
+  CHECK(rect.contains(p1));
+  CHECK(!rect.contains(p2));
+  CHECK(!rect.contains(-1. * p2));
+  CHECK(!rect.contains(p3));
+  CHECK(!rect.contains(-1. * p3));
+  CHECK(rect.contains(p4));
+}
+
+TEST_CASE("testing Quad_tree::square_collide and Quad_tree::insert()"){
+  SUBCASE("case of colliding boid"){
+    boids::Rectangle square{0., ., 1., 1.};
+    boids::Quad_tree tree{1., unit_square};
+
+    boids::Boid boid{boids::Point{0.9, 0.9}};
+    tree.insert(boid);
+
+    std::vector<const boids::Boid*> in_range;
+
+    //calls square collision
+    tree.query(1., boid, in_range);
+
+    CHECK(&in_range[0] == &boid);
+  }
+}
+
 
 // TEST_CASE("Testing the boid class") {
 //   SUBCASE("checking if separation method works") {
