@@ -74,10 +74,10 @@ int main() {
   // lock framerate to 60 fps
   window.setFramerateLimit(60);
 
-  tgui::GuiSFML gui{window};
-
   // clock for fps calculation
   sf::Clock clock;
+
+  tgui::GuiSFML gui{window};
 
   // booleans for gui buttons
   bool display_tree{false};
@@ -129,6 +129,12 @@ int main() {
       if (event.type == sf::Event::MouseButtonReleased) {
         is_mouse_pressed = false;
       }
+
+      // update the value of boid parameters based on the slider values
+      boids::update_from_panel(panel, fps, cohesion_coefficent,
+                               alignment_coefficent, separation_coefficent,
+                               range, separation_range, prey_range);
+      predator_range = constants::prey_to_predator_coeff * prey_range;
     }
 
     // makes the window return black
@@ -205,12 +211,6 @@ int main() {
       boids::vertex_update(boid_vertex, boid_vector[i], i,
                            constants::boid_size);
     }
-
-    // update the value of boid parameters based on the slider values
-    boids::update_from_panel(panel, fps, cohesion_coefficent,
-                             alignment_coefficent, separation_coefficent, range,
-                             separation_range, prey_range);
-    predator_range = constants::prey_to_predator_coeff * prey_range;
 
     // if the show cells button is pressed the tree object is displayed
     if (display_tree) tree.display(window);

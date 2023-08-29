@@ -1,7 +1,7 @@
 #include "boid.hpp"
 
-#include <algorithm>  //for for_each, all_of
 #include <cassert>
+#include <algorithm> //for sort
 #include <cmath>  //for isnan
 
 namespace boids {
@@ -46,14 +46,12 @@ Point Boid::separation(const std::vector<const Boid*>& in_range,
 
   Point added_velocity{0., 0.};
 
-  std::for_each(
-      in_range.begin(), in_range.end(),
-      [&added_velocity, this, separation_distance](const Boid* other_boid_ptr) {
-          assert(other_boid_ptr);
-        if ((m_pos - other_boid_ptr->pos()).distance() < separation_distance) {
-          added_velocity = added_velocity + (m_pos - other_boid_ptr->pos());
-        }
-      });
+  for (auto other_boid_ptr : in_range) {
+    assert(other_boid_ptr);
+    if ((m_pos - other_boid_ptr->pos()).distance() < separation_distance) {
+      added_velocity = added_velocity + (m_pos - other_boid_ptr->pos());
+    }
+  }
 
   return (separation_coeff)*added_velocity;
 }
@@ -68,11 +66,10 @@ Point Boid::cohesion(const std::vector<const Boid*>& in_range,
     return added_velocity;
   }
 
-  std::for_each(in_range.begin(), in_range.end(),
-                [&added_velocity](const Boid* other_boid_ptr) {
-                  assert(other_boid_ptr);
-                  added_velocity = added_velocity + (other_boid_ptr->pos());
-                });
+  for (auto other_boid_ptr : in_range) {
+    assert(other_boid_ptr);
+    added_velocity = added_velocity + (other_boid_ptr->pos());
+  }
 
   added_velocity =
       cohesion_coeff * ((1. / in_range.size()) * added_velocity - m_pos);
@@ -89,11 +86,10 @@ Point Boid::alignment(const std::vector<const Boid*>& in_range,
     return added_velocity;
   }
 
-  std::for_each(in_range.begin(), in_range.end(),
-                [&added_velocity](const Boid* other_boid_ptr) {
-                  assert(other_boid_ptr);
-                  added_velocity = added_velocity + (other_boid_ptr->vel());
-                });
+  for (auto other_boid_ptr : in_range) {
+    assert(other_boid_ptr);
+    added_velocity = added_velocity + (other_boid_ptr->vel());
+  }
 
   added_velocity =
       alignment_coeff * ((1. / in_range.size()) * added_velocity - m_vel);
