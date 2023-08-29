@@ -49,7 +49,7 @@ void Quad_tree::subdivide() {
 }
 
 void Quad_tree::insert(const Boid& boid) {
-  // checks for copies of same boid
+  // checks if passing already inserted boid
   assert(std::none_of(
       m_boids_ptr.begin(), m_boids_ptr.end(),
       [&boid](const Boid* boid_ptr) { return &boid == boid_ptr; }));
@@ -57,9 +57,13 @@ void Quad_tree::insert(const Boid& boid) {
   if (m_boundary.contains(boid.pos())) {
     if ((static_cast<int>(m_boids_ptr.size()) < m_capacity && !m_divided)) {
       m_boids_ptr.push_back(&boid);
-    } else {
+    }
+
+    else {
       if (!m_divided) {
         subdivide();
+
+        // transfering boids in m_boids_ptr to children cells
         for (auto& inserted_boids : m_boids_ptr) {
           assert(inserted_boids);
           northeast->insert(*inserted_boids);
@@ -67,8 +71,10 @@ void Quad_tree::insert(const Boid& boid) {
           southeast->insert(*inserted_boids);
           southwest->insert(*inserted_boids);
         }
+
         m_boids_ptr.clear();
       }
+
       northeast->insert(boid);
       northwest->insert(boid);
       southeast->insert(boid);
@@ -84,6 +90,7 @@ bool Quad_tree::square_collide(double range, const Boid& boid) const {
       boid.pos().y() - range > m_boundary.y + m_boundary.h) {
     return false;
   }
+
   return true;
 }
 
@@ -93,16 +100,15 @@ void Quad_tree::query(double range, const Boid& boid,
     return;
   }
 
-  std::for_each(m_boids_ptr.begin(), m_boids_ptr.end(),
-                [range, &boid, &in_range](const Boid* other_boid_ptr) {
-                  assert(other_boid_ptr);
+  for (auto other_boid_ptr : m_boids_ptr) {
+    assert(other_boid_ptr);
 
-                  if ((other_boid_ptr->pos() - boid.pos()).distance() < range) {
-                    if (&boid != other_boid_ptr) {
-                      in_range.push_back(other_boid_ptr);
-                    }
-                  }
-                });
+    if ((other_boid_ptr->pos() - boid.pos()).distance() < range) {
+      if (&boid != other_boid_ptr) {
+        in_range.push_back(other_boid_ptr);
+      }
+    }
+  }
 
   if (m_divided) {
     northeast->query(range, boid, in_range);
@@ -124,6 +130,7 @@ void Quad_tree::display(sf::RenderWindow& window) {
   rect.setPosition(pos);
   rect.setSize(sf::Vector2f(m_boundary.w * 2, m_boundary.h * 2));
   window.draw(rect);
+
   if (m_divided) {
     northwest->display(window);
     northeast->display(window);
@@ -140,6 +147,7 @@ void Quad_tree::delete_tree() {
     northwest->delete_tree();
     southeast->delete_tree();
     southwest->delete_tree();
+
     delete northeast;
     northeast = nullptr;
     delete northwest;
@@ -150,6 +158,7 @@ void Quad_tree::delete_tree() {
     southwest = nullptr;
     m_divided = false;
   }
+
   m_boids_ptr.clear();
 }
 }  // namespace boids
