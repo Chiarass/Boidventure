@@ -48,15 +48,6 @@ int main() {
   std::vector<boids::Boid> boid_vector;
   std::vector<boids::Predator> predator_vector;
 
-  // quad tree object, partitions space improving performance
-  boids::Quad_tree tree{
-      constants::cell_capacity,
-      boids::Rectangle{
-          (constants::window_width + constants::controls_width) / 2.,
-          constants::window_height / 2.,
-          (constants::window_width - constants::controls_width) / 2.,
-          constants::window_height / 2.}};
-
   // array of vertices of triangle of a boid.
   // for each boid three vertices
   sf::VertexArray boid_vertex{sf::Triangles};
@@ -88,7 +79,9 @@ int main() {
   // panel object, it manages the tgui sliders, labels and buttons
   // todo: replace with constants
   boids::Panel panel(constants::widget_width, constants::widget_height,
-                     constants::gui_element_distance, 10., 10.);
+                     constants::gui_element_distance,
+                     constants::first_element_x_position,
+                     constants::first_element_y_position);
   initialize_panel(gui, panel, display_tree, display_range,
                    display_separation_range, display_prey_range);
 
@@ -151,12 +144,6 @@ int main() {
       if (event.type == sf::Event::MouseButtonReleased) {
         is_mouse_pressed = false;
       }
-
-      // update the value of boid parameters based on the slider values
-      boids::update_from_panel(panel, fps, cohesion_coefficent,
-                               alignment_coefficent, separation_coefficent,
-                               range, separation_range, prey_range);
-      predator_range = constants::prey_to_predator_coeff * prey_range;
     }
 
     // makes the window return black
@@ -189,6 +176,15 @@ int main() {
       initialize_boids(predator_vector, predator_vertex, predator_number,
                        constants::predator_color);
     }
+
+     // quad tree object, partitions space improving performance
+  boids::Quad_tree tree{
+      constants::cell_capacity,
+      boids::Rectangle{
+          (constants::window_width + constants::controls_width) / 2.,
+          constants::window_height / 2.,
+          (constants::window_width - constants::controls_width) / 2.,
+          constants::window_height / 2.}};
 
     for (auto& boid : boid_vector) {
       tree.insert(boid);
@@ -237,8 +233,11 @@ int main() {
     // if the show cells button is pressed the tree object is displayed
     if (display_tree) tree.display(window);
 
-    // deletes the dinamically allocated objects in quadtree
-    tree.delete_tree();
+    // update the value of boid parameters based on the slider values
+    boids::update_from_panel(panel, fps, cohesion_coefficent,
+                             alignment_coefficent, separation_coefficent, range,
+                             separation_range, prey_range);
+    predator_range = constants::prey_to_predator_coeff * prey_range;
 
     window.draw(boid_vertex);
     window.draw(predator_vertex);
@@ -250,18 +249,6 @@ int main() {
                           boid_vector, window);
 
     gui.draw();
-
-    // todo: delete
-    // todo: explain why it doesn't suck all the resources from the heap
-    boids::Rectangle unit_square{100., 100., 20, 20};
-    boids::Boid boid1{boids::Point{100., 100.}};
-    boids::Boid boid2{boids::Point{100.0000000000001, 100.000000000001}};
-    boids::Quad_tree tree2{1, unit_square};
-    tree2.insert(boid1);
-    tree2.insert(boid2);
-
-    tree2.display(window);
-
     window.display();
   }
 }

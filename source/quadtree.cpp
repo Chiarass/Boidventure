@@ -4,6 +4,7 @@
 #include <cassert>
 #include <iostream>
 #include <vector>
+#include <memory> //for make_unique
 
 #include "boid.hpp"
 #include "point.hpp"
@@ -18,8 +19,6 @@ Quad_tree::Quad_tree(int capacity, const Rectangle& boundary)
   assert(capacity > 0);
 }
 
-Quad_tree::~Quad_tree() { this->delete_tree(); }
-
 void Quad_tree::subdivide() {
   // ne stands for north east
   // the division by two happens because w and h represent half
@@ -29,22 +28,22 @@ void Quad_tree::subdivide() {
   Rectangle ne = Rectangle{m_boundary.x + m_boundary.w / 2.,
                            m_boundary.y + m_boundary.h / 2., m_boundary.w / 2.,
                            m_boundary.h / 2.};
-  northeast = new Quad_tree{m_capacity, ne};
+  northeast = std::make_unique<Quad_tree>(m_capacity, ne);
 
   Rectangle nw = Rectangle{m_boundary.x - m_boundary.w / 2.,
                            m_boundary.y + m_boundary.h / 2., m_boundary.w / 2.,
                            m_boundary.h / 2.};
-  northwest = new Quad_tree{m_capacity, nw};
+  northwest = std::make_unique<Quad_tree>(m_capacity, nw);
 
   Rectangle se = Rectangle{m_boundary.x + m_boundary.w / 2.,
                            m_boundary.y - m_boundary.h / 2., m_boundary.w / 2.,
                            m_boundary.h / 2.};
-  southeast = new Quad_tree{m_capacity, se};
+  southeast = std::make_unique<Quad_tree>(m_capacity, se);
 
   Rectangle sw = Rectangle{m_boundary.x - m_boundary.w / 2.,
                            m_boundary.y - m_boundary.h / 2., m_boundary.w / 2.,
                            m_boundary.h / 2.};
-  southwest = new Quad_tree{m_capacity, sw};
+  southwest = std::make_unique<Quad_tree>(m_capacity, sw);
   m_divided = true;
 }
 
@@ -138,27 +137,5 @@ void Quad_tree::display(sf::RenderWindow& window) {
     southwest->display(window);
     return;
   }
-}
-
-// todo: test for memory leaks.
-void Quad_tree::delete_tree() {
-  if (m_divided) {
-    northeast->delete_tree();
-    northwest->delete_tree();
-    southeast->delete_tree();
-    southwest->delete_tree();
-
-    delete northeast;
-    northeast = nullptr;
-    delete northwest;
-    northwest = nullptr;
-    delete southeast;
-    southeast = nullptr;
-    delete southwest;
-    southwest = nullptr;
-    m_divided = false;
-  }
-
-  m_boids_ptr.clear();
 }
 }  // namespace boids

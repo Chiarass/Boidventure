@@ -17,7 +17,7 @@ class Point {
   double distance() const;
 
   // implementation of rotation trasformation.
-  // param: angle of rotation (in radians, counterclockwise)
+  // Param: angle of rotation (in radians, counterclockwise)
   void rotate(double);
 };
 

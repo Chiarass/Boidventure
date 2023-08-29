@@ -690,25 +690,48 @@ TEST_CASE("testing Quad_tree::subdivide") {
   }
 }
 
-// TEST_CASE("Testing the boid class") {
-//   SUBCASE("checking if separation method works") {
-//     boids::Point p1{0., 0.};
-//     boids::Point p2{1., 1.};
+// class to test for memory leaks
+class memory_tracker {
+ public:
+  int allocated = 0;
+  int freed = 0;
 
-//     // Create temporary Point objects
-//     boids::Point vel1{1., 0.};
-//     boids::Point vel2{0., 1.};
-//     boids::Point vel3{-1., -1.};
-//     boids::Boid boid1{p1, vel1};
-//     boids::Boid boid2{p2, vel2};
-//     boids::Boid boid3{p2, vel3};
+  int current_usage() { return (allocated - freed); }
 
-//     std::vector<boids::Boid*> boids_in_range = {&boid2, &boid3};
-//     boid1.separation(boids_in_range);
+  void reset() {
+    allocated = 0;
+    freed = 0;
+  }
+};
 
-//     boids::Point expected_velocity =
-//         boid1.vel() - boids::Point{separation_x, separation_y};
-//     CHECK(boid1.vel().x() == doctest::Approx(expected_velocity));
-//     CHECK(boid1.vel().y() == doctest::Approx(expected_velocity));
-//   }
-// }
+inline memory_tracker tracker;
+
+// operator overlad of new
+void* operator new(size_t size) {
+  std::cout << "new is being called" << '\n';
+  tracker.allocated += 1;
+  return malloc(size);
+}
+
+// operator overload of delete
+void operator delete(void* memory) {
+  std::cout << "delete is being called" << '\n';
+  tracker.freed += 1;
+  free(memory);
+}
+
+TEST_CASE("testing quad tree for memory leaks") {
+  {
+    tracker.reset();
+    boids::Rectangle unit_square{100., 100., 20, 20};
+    boids::Quad_tree tree2{1, unit_square};
+
+    boids::Boid boid1{boids::Point{100., 100.}};
+    boids::Boid boid2{boids::Point{100.1, 100.1}};
+
+    tree2.insert(boid1);
+    tree2.insert(boid2);
+  }
+  // new has been called as many times as delete
+  CHECK(tracker.freed == tracker.allocated);
+}
