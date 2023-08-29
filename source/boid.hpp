@@ -51,16 +51,14 @@ class Predator : public Bird {
 
 class Boid : public Bird {
  protected:
-  // implements separation force on boid. see https://www.red3d.com/cwr/boids/
-  // for more
+  // implements separation force on boid.
   // Param 1: vector containing the boids in a range > than the separation
   // range (itself excluded).
   // Param 2: the separation range
   // Param 3: a coefficent that determines the strength of the force
   Point separation(const std::vector<const Boid*>&, double, double);
 
-  // implements cohesion force on boid. see https://www.red3d.com/cwr/boids/ for
-  // more
+  // implements cohesion force on boid.
   // Param 1: vector containing the boids in the cohesion range (itself
   // excluded).
   // Param 2: a coefficent that determines the strength of the force;

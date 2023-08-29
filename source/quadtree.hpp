@@ -5,6 +5,7 @@
 #include <cassert>
 #include <iostream>
 #include <vector>
+#include <memory> //for unique_ptr
 
 #include "boid.hpp"
 #include "point.hpp"
@@ -42,10 +43,10 @@ class Quad_tree {
   std::vector<const Boid*> m_boids_ptr;
 
   // children cells. Dynamically allocated.
-  Quad_tree* northeast;
-  Quad_tree* northwest;
-  Quad_tree* southeast;
-  Quad_tree* southwest;
+  std::unique_ptr<Quad_tree> northeast;
+  std::unique_ptr<Quad_tree> northwest;
+  std::unique_ptr<Quad_tree> southeast;
+  std::unique_ptr<Quad_tree> southwest;
 
  public:
   // Param 1: m_capacity
@@ -53,7 +54,7 @@ class Quad_tree {
   Quad_tree(int, const Rectangle&);
 
   // calls delete_tree to handle heap allocated children cells
-  ~Quad_tree();
+  //~Quad_tree();
 
   // if boid is inside the cell it pushes back the boid pointer to boids_ptr
   // if m_divided = true then it gets passed to children cells
@@ -75,11 +76,6 @@ class Quad_tree {
   // displays the quad tree (children cell included) to the provided window
   // Param 1: the window
   void display(sf::RenderWindow&);
-
-  // todo: add test for memory leaks.
-  // deletes all the children cells and clears boids_ptr. sets m_divided to
-  // false
-  void delete_tree();
 };
 }  // namespace boids
 #endif

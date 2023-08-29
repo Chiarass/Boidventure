@@ -19,7 +19,7 @@ find_package(SFML COMPONENTS graphics REQUIRED)
 #vvvvvv da controllare se giusto vvvvvvv
 find_package(TGUI REQUIRED)
 
-add_executable(boid point.cpp boid.cpp quadtree.cpp statistics.cpp sfml.cpp gui.cpp main.cpp)
+add_executable(boid source/point.cpp source/boid.cpp source/quadtree.cpp source/statistics.cpp source/sfml.cpp source/gui.cpp source/main.cpp)
 
 #vvvvvv da controllare se giusto vvvvvvv
 target_link_libraries(boid PRIVATE sfml-graphics tgui)
@@ -30,7 +30,7 @@ target_link_libraries(boid PRIVATE sfml-graphics tgui)
 if (BUILD_TESTING)
 
   # aggiungi l'eseguibile boids.t
-  add_executable(boids.t point.cpp boid.cpp quadtree.cpp statistics.cpp sfml.cpp boids.test.cpp)
+  add_executable(boids.t source/point.cpp source/boid.cpp source/quadtree.cpp source/statistics.cpp source/sfml.cpp source/boids.test.cpp)
   target_link_libraries(boids.t PRIVATE sfml-graphics)
   # aggiungi l'eseguibile boids.t alla lista dei test
   add_test(NAME boids.t COMMAND boids.t)

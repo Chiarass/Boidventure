@@ -82,7 +82,9 @@ inline constexpr double widget_width{200.};
 inline constexpr double widget_height{25.};
 
 // the position of the first element of the panel
-inline constexpr double first_element_position{10.};
+inline constexpr double first_element_x_position{10.};
+inline constexpr double first_element_y_position{10.};
+
 
 // the distance between panel elements
 inline constexpr double gui_element_distance{30.};
