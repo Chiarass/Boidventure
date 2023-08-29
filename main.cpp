@@ -79,8 +79,6 @@ int main() {
   // clock for fps calculation
   sf::Clock clock;
 
-  tgui::GuiSFML gui{window};
-
   // booleans for gui buttons
   bool display_tree{false};
   bool display_range{false};
