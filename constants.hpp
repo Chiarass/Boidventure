@@ -4,10 +4,6 @@
 #include <SFML/Graphics.hpp>
 
 namespace constants {
-inline constexpr double delta_t_boid{
-    1};  // time increment. higher number, lower speeds.
-inline constexpr double delta_t_predator{
-    1};  // time increment. higher number, lower speeds.
 
 // window constants ///////////////////////////////////////
 inline constexpr double window_height{700};
@@ -36,21 +32,48 @@ inline constexpr double max_range{40};
 inline constexpr double max_separation_range{15};
 inline constexpr double max_prey_range{60};
 
-// the following represents the initial position of the slider, with 0
-// indicating the slider all the way to the left, and 10 indicating the slider
-// all the way to the right.
-inline constexpr double init_separation_coeff{3};
-inline constexpr double init_cohesion_coeff{3};
-inline constexpr double init_alignment_coeff{7};
+// todo: solve predators push boids out of bounds problem
+// coefficent that determines the strngth of the force that gets applied when
+// boid exits boundary
+inline constexpr double turn_coefficent{0.5};
 
-inline constexpr int init_boid_number{300};
-inline constexpr int init_predator_number{0};
+// the strength and range of the repel force
+inline constexpr double repel_coefficent{2};
+inline constexpr double repel_range{100};
 
 // minimum randomly generated velocity component of randomly generated boid
 inline constexpr double min_rand_velocity{-3};
 // maximum randomly generated velocity component of randomly generated boid
 inline constexpr double max_rand_velocity{3};
 
+// strength of force on boid when predator is in prey range
+inline constexpr double predator_avoidance_coeff{0.2};
+// strength of force on predator when boid is in predator range
+inline constexpr double predator_hunting_coeff{0.05};
+
+// the range for the predator objects is the prey range multiplied
+// by this coefficent
+inline constexpr double prey_to_predator_coeff{1.5};
+
+// velocity limit of bird (length of vector limit)
+inline constexpr double max_velocity{3};
+
+// when boid goes velocity exceeds maximum velocity,
+// the velocity vector gets scaled by this coefficent
+inline constexpr double velocity_reduction_coefficent{0.9};
+
+// time increments for update functions t. higher number, lower speeds.
+inline constexpr double delta_t_boid{1};
+inline constexpr double delta_t_predator{1};
+
+// the size of the sfml object representing the boid
+inline constexpr double boid_size{5};
+// the size of the sfml object representing the predator
+inline constexpr double predator_size{8};
+
+// colors of sfml objects representing birds
+inline const sf::Color boid_color{sf::Color::Green};
+inline const sf::Color predator_color{sf::Color::Red};
 ///////////////////////////////////////////////////////////
 
 // gui constants //////////////////////////////////////////
@@ -63,47 +86,47 @@ inline constexpr double first_element_position{10.};
 
 // the distance between panel elements
 inline constexpr double gui_element_distance{30.};
+
+//colors of displayed ranges
+inline const sf::Color range_color{sf::Color::Yellow};
+inline const sf::Color separation_range_color{sf::Color::Blue};
+inline const sf::Color prey_range_color{sf::Color::Red};
 ///////////////////////////////////////////////////////////
 
-inline constexpr double boid_size{
-    5};  // the size of the sfml object representing the boid
-inline constexpr double predator_size{8};
-// the size of the sfml object representing the predator
+// initial values /////////////////////////////////////////
+// the following represents the initial position of the correspoding sliders,
+// with 0 indicating the slider all the way to the left, and 10 indicating the
+// slider all the way to the right.
+inline constexpr double init_separation_strength{3};
+inline constexpr double init_cohesion_strength{3};
+inline constexpr double init_alignment_strength{7};
 
-// todo: solve predators push boids out of bounds problem
-inline constexpr double turn_coefficent{0.5};
-
-// todo: make slider
-inline constexpr double predator_avoidance_coeff{0.2};
-inline constexpr double predator_hunting_coeff{0.05};
-
-inline constexpr double repel_coefficent{2};
-inline constexpr double repel_range{100};
-
-inline constexpr double init_range{
-    6};  // minimum distance for cohesion and alignmnent
+inline constexpr double init_range{6};
 inline constexpr double init_separation_range{6};
 inline constexpr double init_prey_range{5};
 
-// the range for the predator objects is the prey range multiplied
-// by this coefficent
-inline constexpr double prey_to_predator_coeff{1.5};
+// the following represent the initial value of the corresponding constants
+inline constexpr int init_boid_number{300};
+inline constexpr int init_predator_number{0};
+///////////////////////////////////////////////////////////
 
-// maximum length of velocity vector
-inline constexpr double max_velocity{3};
-// when boid goes velocity exceeds maximum velocity,
-// the velocity vector gets scaled by this coefficent
-inline constexpr double velocity_reduction_coefficent{0.9};
-
-inline constexpr double pi = 3.14159265358979;
-inline const sf::Color boid_color{sf::Color::Green};
-inline const sf::Color predator_color{sf::Color::Red};
-
-// capacity of quad_tree cell
-// subdivides if excedeed
+// quad_tree constants ////////////////////////////////////
+// capacity of quad_tree cell, subdivides if excedeed
 inline constexpr int cell_capacity{10};
 
+// color of cells diplayed with display_tree
+inline const sf::Color tree_color{sf::Color::Green};
+///////////////////////////////////////////////////////////
+
+// statisitcs constants ///////////////////////////////////
 // coefficent for sample size in approx distance.
+// todo: delete if unused
 inline constexpr int sample_size_coeff{5};
+///////////////////////////////////////////////////////////
+
+// math constants
+inline constexpr double pi = 3.14159265358979;
+///////////////////////////////////////////////////////////
+
 }  // namespace constants
 #endif
