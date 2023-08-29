@@ -44,7 +44,7 @@ class Predator : public Bird {
   // constants::max_velocity it slows down the predator.
   // Param 1: delta_t, time step in the equation of motion, affecting the speed
   // of the object.
-  // Param 2: the range of the predator's vision. 
+  // Param 2: the range of the predator's vision.
   // Param 3: vector of boids.
   void update_predator(double, double, const std::vector<Boid>&);
 };
@@ -87,8 +87,8 @@ class Boid : public Bird {
   // Param 4: a coefficent to pass as parameter 3 of separation
   // Param 5: ge to pass as parameter 2 of cohesion
   // Param 6: ge to pass as parameter 2 of alignment
-  void update_boid(double, const std::vector<const Boid*>&, double, double, double,
-                   double);
+  void update_boid(double, const std::vector<const Boid*>&, double, double,
+                   double, double);
 
   // force that moves the boid away from the specified predator if in range
   // Param 1: the specified predator
