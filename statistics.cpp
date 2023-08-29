@@ -29,6 +29,28 @@ double calculate_standard_deviation(const std::vector<double> &data,
   return std::sqrt(variance);
 }
 
+double calculate_mean_distance(const std::vector<Boid>& boid_vector) {
+  
+  std::vector<double> distances;
+  std::for_each(boid_vector.begin(), boid_vector.end(), [&](const Boid& boid1) {
+    std::transform(boid_vector.begin(), boid_vector.end(), std::back_inserter(distances), [&](const Boid& boid2) {
+      return (boid1.pos() - boid2.pos()).distance();
+    });
+  });
+
+  double mean_distance = std::accumulate(distances.begin(), distances.end(), 0.0) / distances.size();
+  return mean_distance;
+}
+
+double calculate_mean_speed(const std::vector<Boid>& boid_vector) {
+  std::vector<double> speeds;
+  std::transform(boid_vector.begin(), boid_vector.end(), std::back_inserter(speeds), [](const Boid& boid) {
+    return boid.vel().distance();
+  });
+
+  double mean_speed = std::accumulate(speeds.begin(), speeds.end(), 0.0) / speeds.size();
+  return mean_speed;
+}
 
 double approx_distance(const std::vector<boids::Boid> &boid_vector, int sample_size){
   //todo: assert sample size is > 0

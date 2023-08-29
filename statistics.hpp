@@ -19,6 +19,10 @@ inline std::mt19937 eng{};
 //of the nrange of samples it generates.
 double uniform(double, double);
 
+//write some comments
+double calculate_mean_distance(const std::vector<Boid>& boid_vector);
+double calculate_mean_speed(const std::vector<Boid>& boid_vector);
+
 double calculate_standard_deviation(const std::vector<double> &, double);
 
 // function approximates average distance, using method from Barhum, Goldreich,
