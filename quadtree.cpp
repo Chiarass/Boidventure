@@ -121,7 +121,7 @@ void Quad_tree::query(double range, const Boid& boid,
 void Quad_tree::display(sf::RenderWindow& window) {
   sf::RectangleShape rect;
   // todo: color/thickness should be constat
-  rect.setOutlineColor(sf::Color::Green);
+  rect.setOutlineColor(constants::tree_color);
   rect.setOutlineThickness(1);
   rect.setFillColor(sf::Color(0, 255, 0, 0));
   sf::Vector2f pos;

@@ -45,7 +45,7 @@ void initialize_panel(tgui::GuiSFML& gui, Panel& panel, bool& display_tree,
   panel.insert(cohesion_strength_text, Element_key::cohesion_strength_text);
 
   tgui::Slider::Ptr cohesion_strength_slider = tgui::Slider::create();
-  cohesion_strength_slider->setValue(constants::init_cohesion_coeff);
+  cohesion_strength_slider->setValue(constants::init_cohesion_strength);
   gui.add(cohesion_strength_slider);
   panel.insert(cohesion_strength_slider, Element_key::cohesion_strength_slider);
 
@@ -56,7 +56,7 @@ void initialize_panel(tgui::GuiSFML& gui, Panel& panel, bool& display_tree,
   panel.insert(alignment_strength_text, Element_key::alignment_strength_text);
 
   tgui::Slider::Ptr aligment_strength_slider = tgui::Slider::create();
-  aligment_strength_slider->setValue(constants::init_alignment_coeff);
+  aligment_strength_slider->setValue(constants::init_alignment_strength);
   gui.add(aligment_strength_slider);
   panel.insert(aligment_strength_slider,
                Element_key::alignment_strength_slider);
@@ -68,7 +68,7 @@ void initialize_panel(tgui::GuiSFML& gui, Panel& panel, bool& display_tree,
   panel.insert(separation_strength_text, Element_key::separation_strength_text);
 
   tgui::Slider::Ptr separation_strength_slider = tgui::Slider::create();
-  separation_strength_slider->setValue(constants::init_separation_coeff);
+  separation_strength_slider->setValue(constants::init_separation_strength);
   gui.add(separation_strength_slider);
   panel.insert(separation_strength_slider,
                Element_key::separation_strength_slider);
@@ -179,14 +179,17 @@ void update_from_panel(Panel& panel, double& fps, double& cohesion_coefficent,
       (std::dynamic_pointer_cast<tgui::Slider>(
            panel.elements[Element_key::separation_strength_slider])
            ->getValue());
+
   range = constants::max_range * 0.1 *
           (std::dynamic_pointer_cast<tgui::Slider>(
                panel.elements[Element_key::range_slider])
                ->getValue());
+
   separation_range = constants::max_separation_range * 0.1 *
                      (std::dynamic_pointer_cast<tgui::Slider>(
                           panel.elements[Element_key::separation_range_slider])
                           ->getValue());
+
   prey_range = constants::max_prey_range * 0.1 *
                (std::dynamic_pointer_cast<tgui::Slider>(
                     panel.elements[Element_key::prey_range_slider])
@@ -197,16 +200,19 @@ void display_ranges(double range, double separation_range, double prey_range,
                     bool display_range, bool display_separation_range,
                     bool display_prey_range, std::vector<Boid>& boid_vector,
                     sf::RenderWindow& window) {
-  // todo: add color constants
   // if corresponding button is pressed, displays the ranges of the first boid
   // in the vector;
   if (!boid_vector.empty()) {
     if (display_range)
-      display_circle(window, range, boid_vector[0], sf::Color::Yellow);
+      display_circle(window, range, boid_vector[0], constants::range_color);
+
     if (display_separation_range)
-      display_circle(window, separation_range, boid_vector[0], sf::Color::Blue);
+      display_circle(window, separation_range, boid_vector[0],
+                     constants::separation_range_color);
+
     if (display_prey_range)
-      display_circle(window, prey_range, boid_vector[0], sf::Color::Red);
+      display_circle(window, prey_range, boid_vector[0],
+                     constants::prey_range_color);
   }
 }
 }  // namespace boids
