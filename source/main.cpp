@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <TGUI/TGUI.hpp>
-#include <memory>
+#include <algorithm>  //for for_each
+#include <memory>     //for shared pointer dynamic cast
 #include <random>
 
 #include "boid.hpp"
@@ -12,7 +13,7 @@
 
 // template, to take both predators and boid types
 template <class Bird_type>
-void initialize_boids(std::vector<Bird_type>& bird_vec,
+void initialize_birds(std::vector<Bird_type>& bird_vec,
                       sf::VertexArray& vertices, double swarm_n,
                       sf::Color bird_color) {
   bird_vec.clear();
@@ -67,18 +68,17 @@ int main() {
 
   tgui::GuiSFML gui{window};
 
-  /*loading the font to write
-  sf::Font font;
-  font.loadFromFile("aAreakilometer50.ttf");*/
-
-  // vectores to store distances and speed of the boids
-  std::vector<double> distances;
-  std::vector<double> speeds;
-  // creating the label to display all the stats
-  tgui::Label::Ptr stats_label = tgui::Label::create();
-  stats_label->getRenderer()->setTextColor(sf::Color::Black);
-  stats_label->getRenderer()->setBackgroundColor(tgui::Color::White);
-  gui.add(stats_label);
+  // todo: remove (?)
+  /*
+    // vectores to store distances and speed of the boids
+    std::vector<double> distances;
+    std::vector<double> speeds;
+    // creating the label to display all the stats
+    tgui::Label::Ptr stats_label = tgui::Label::create();
+    stats_label->getRenderer()->setTextColor(sf::Color::Black);
+    stats_label->getRenderer()->setBackgroundColor(tgui::Color::White);
+    gui.add(stats_label);
+  */
 
   // clock for fps calculation
   sf::Clock clock;
@@ -90,13 +90,13 @@ int main() {
   bool display_prey_range{false};
 
   // panel object, it manages the tgui sliders, labels and buttons
-  // todo: replace with constants
   boids::Panel panel(constants::widget_width, constants::widget_height,
                      constants::gui_element_distance,
                      constants::first_element_x_position,
                      constants::first_element_y_position);
-  initialize_panel(gui, panel, display_tree, display_range,
-                   display_separation_range, display_prey_range);
+
+  boids::initialize_panel(gui, panel, display_tree, display_range,
+                          display_separation_range, display_prey_range);
 
   // bool for tracking if moused is pressed, for boid repulsion
   bool is_mouse_pressed{false};
@@ -120,6 +120,8 @@ int main() {
     auto current_time = clock.restart().asSeconds();
     double fps = 1. / (current_time);
 
+    /*
+    //todo: delete?
     for (const auto& boid : boid_vector) {
       distances.push_back(boid.pos().distance());
       speeds.push_back(boid.vel().distance());
@@ -141,8 +143,11 @@ int main() {
     float y_offset = 10;
     stats_label->setPosition(x_offset, y_offset);
 
+    //todo: does this even do anything
     gui.draw();
+    */
     sf::Event event;
+
     while (window.pollEvent(event)) {
       gui.handleEvent(event);
       if (event.type == sf::Event::Closed) window.close();
@@ -159,8 +164,13 @@ int main() {
       }
     }
 
-    // makes the window return black
-    window.clear(sf::Color::Black);
+    // updating game from GUI  /////////////////////////////////////////////////
+
+    // update the value of boid parameters based on the slider values
+    boids::update_from_panel(panel, fps, cohesion_coefficent,
+                             alignment_coefficent, separation_coefficent, range,
+                             separation_range, prey_range);
+    predator_range = constants::prey_to_predator_coeff * prey_range;
 
     // todo: find a way to move to update_from_panel function
 
@@ -173,7 +183,7 @@ int main() {
           static_cast<int>(std::dynamic_pointer_cast<tgui::Slider>(
                                panel.elements[Element_key::boid_number_slider])
                                ->getValue());
-      initialize_boids(boid_vector, boid_vertex, boid_number,
+      initialize_birds(boid_vector, boid_vertex, boid_number,
                        constants::boid_color);
     }
 
@@ -186,18 +196,20 @@ int main() {
           std::dynamic_pointer_cast<tgui::Slider>(
               panel.elements[Element_key::predator_number_slider])
               ->getValue());
-      initialize_boids(predator_vector, predator_vertex, predator_number,
+      initialize_birds(predator_vector, predator_vertex, predator_number,
                        constants::predator_color);
     }
 
-     // quad tree object, partitions space improving performance
-  boids::Quad_tree tree{
-      constants::cell_capacity,
-      boids::Rectangle{
-          (constants::window_width + constants::controls_width) / 2.,
-          constants::window_height / 2.,
-          (constants::window_width - constants::controls_width) / 2.,
-          constants::window_height / 2.}};
+    // updating positions of boids/predators  //////////////////////////////////
+
+    // quad tree object, partitions space improving performance
+    boids::Quad_tree tree{
+        constants::cell_capacity,
+        boids::Rectangle{
+            (constants::window_width + constants::controls_width) / 2.,
+            constants::window_height / 2.,
+            (constants::window_width - constants::controls_width) / 2.,
+            constants::window_height / 2.}};
 
     for (auto& boid : boid_vector) {
       tree.insert(boid);
@@ -209,20 +221,19 @@ int main() {
                                   sf::Mouse::getPosition(window).y);
       for (auto& boid : boid_vector) {
         if ((boid.pos() - mouse_position).distance() < constants::repel_range)
-          boid.repel(mouse_position);
+          boid.repel(mouse_position, constants::repel_range, constants::repel_coefficent);
       }
 
       for (auto& predator : predator_vector) {
         if ((predator.pos() - mouse_position).distance() <
             constants::repel_range)
-          predator.repel(mouse_position);
+          predator.repel(mouse_position, constants::repel_range, constants::repel_coefficent);
       }
     }
 
-    // todo: replace with algorithm?
     // updates the predator positions
     for (int i = 0; i != static_cast<int>(predator_vector.size()); ++i) {
-      predator_vector[i].update_predator(constants::delta_t_predator,
+      predator_vector[i].update(constants::delta_t_predator,
                                          predator_range, boid_vector);
       boids::vertex_update(predator_vertex, predator_vector[i], i,
                            constants::predator_size);
@@ -231,36 +242,41 @@ int main() {
     // updates the boid positions
     for (int i = 0; i != static_cast<int>(boid_vector.size()); ++i) {
       std::vector<const boids::Boid*> in_range;
+
+      // tree builds the vector of in range boids
       tree.query(range, boid_vector[i], in_range);
-      boid_vector[i].update_boid(constants::delta_t_boid, in_range,
+
+      boid_vector[i].update(constants::delta_t_boid, in_range,
                                  separation_range, separation_coefficent,
                                  cohesion_coefficent, alignment_coefficent);
-      for (auto& predator : predator_vector) {
-        boid_vector[i].escape_predator(predator, prey_range,
-                                       constants::predator_avoidance_coeff);
-      }
+
+      // moves away boid from in range predators
+      for_each(predator_vector.begin(), predator_vector.end(),
+               [&, i](boids::Predator& predator) {
+                 boid_vector[i].repel(
+                     predator.pos(), prey_range, constants::predator_avoidance_coeff);
+               });
+
       boids::vertex_update(boid_vertex, boid_vector[i], i,
                            constants::boid_size);
     }
 
-    // if the show cells button is pressed the tree object is displayed
-    if (display_tree) tree.display(window);
+    // drawing objects to window ///////////////////////////////////////////////
 
-    // update the value of boid parameters based on the slider values
-    boids::update_from_panel(panel, fps, cohesion_coefficent,
-                             alignment_coefficent, separation_coefficent, range,
-                             separation_range, prey_range);
-    predator_range = constants::prey_to_predator_coeff * prey_range;
+    // makes the window return black
+    window.clear(sf::Color::Black);
 
     window.draw(boid_vertex);
     window.draw(predator_vertex);
+
+    // if the show cells button is pressed the tree object is displayed
+    if (display_tree) tree.display(window);
 
     // if corresponding button is pressed, displays the ranges of the first boid
     // in the vector
     boids::display_ranges(range, separation_range, prey_range, display_range,
                           display_separation_range, display_prey_range,
                           boid_vector, window);
-
     gui.draw();
     window.display();
   }

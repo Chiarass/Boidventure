@@ -1,7 +1,7 @@
 #include "boid.hpp"
 
+#include <algorithm>  //for sort
 #include <cassert>
-#include <algorithm> //for sort
 #include <cmath>  //for isnan
 
 namespace boids {
@@ -26,12 +26,12 @@ Point Bird::turn_around() {
   return added_velocity;
 }
 
-void Bird::repel(const Point& click_position) {
-  // if handels division by zero (click position = bird position)
-  if (m_pos.x() != click_position.x() || m_pos.y() != click_position.y()) {
-    auto add_vel =
-        (1. / (m_pos - click_position).distance()) * (m_pos - click_position);
-    m_vel = m_vel + constants::repel_coefficent * add_vel;
+void Bird::repel(const Point& point, double repulsion_range,
+                 double repulsion_coeff) {
+  // it handels division by zero (point position = bird position)
+  double distance = (pos() - point).distance();
+  if (distance < repulsion_range && distance != 0.) {
+    m_vel = m_vel + repulsion_coeff * 1./((m_pos - point).distance())* (m_pos - point);
   }
 
   assert(!std::isnan(m_vel.x()));
@@ -96,9 +96,9 @@ Point Boid::alignment(const std::vector<const Boid*>& in_range,
   return added_velocity;
 }
 
-void Boid::update_boid(double delta_t, const std::vector<const Boid*>& in_range,
-                       double separation_distance, double separation_coeff,
-                       double cohesion_coeff, double alignment_coeff) {
+void Boid::update(double delta_t, const std::vector<const Boid*>& in_range,
+                  double separation_distance, double separation_coeff,
+                  double cohesion_coeff, double alignment_coeff) {
   assert(delta_t >= 0.);
 
   if (m_vel.distance() < constants::max_velocity) {
@@ -113,20 +113,10 @@ void Boid::update_boid(double delta_t, const std::vector<const Boid*>& in_range,
   m_pos = delta_t * (m_vel) + (m_pos);
 }
 
-void Boid::escape_predator(const Predator& predator, double prey_range,
-                           double avoidance_coeff) {
-  assert(prey_range >= 0.);
-  assert(avoidance_coeff >= 0.);
-
-  if ((pos() - predator.pos()).distance() < prey_range) {
-    m_vel = m_vel + avoidance_coeff * (pos() - predator.pos());
-  }
-}
-
 // predator methods
 
-void Predator::update_predator(double delta_t, double predator_range,
-                               const std::vector<Boid>& boid_vec) {
+void Predator::update(double delta_t, double predator_range,
+                      const std::vector<Boid>& boid_vec) {
   assert(predator_range >= 0.);
   assert(delta_t >= 0.);
 

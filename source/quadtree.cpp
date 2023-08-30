@@ -3,8 +3,8 @@
 #include <algorithm>  //for std::find, std::for_each
 #include <cassert>
 #include <iostream>
+#include <memory>  //for make_unique
 #include <vector>
-#include <memory> //for make_unique
 
 #include "boid.hpp"
 #include "point.hpp"
@@ -95,6 +95,7 @@ bool Quad_tree::square_collide(double range, const Boid& boid) const {
 
 void Quad_tree::query(double range, const Boid& boid,
                       std::vector<const Boid*>& in_range) const {
+  assert(range >= 0.);  
   if (!square_collide(range, boid)) {
     return;
   }
@@ -119,17 +120,18 @@ void Quad_tree::query(double range, const Boid& boid,
 
 void Quad_tree::display(sf::RenderWindow& window) {
   sf::RectangleShape rect;
-  // todo: color/thickness should be constat
   rect.setOutlineColor(constants::tree_color);
-  rect.setOutlineThickness(1);
+  rect.setOutlineThickness(constants::displayed_cell_thickness);
   rect.setFillColor(sf::Color(0, 255, 0, 0));
   sf::Vector2f pos;
 
   pos = sf::Vector2f(m_boundary.x - m_boundary.w, m_boundary.y - m_boundary.h);
   rect.setPosition(pos);
   rect.setSize(sf::Vector2f(m_boundary.w * 2, m_boundary.h * 2));
+
   window.draw(rect);
 
+  //displaying also child cells
   if (m_divided) {
     northwest->display(window);
     northeast->display(window);
