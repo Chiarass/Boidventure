@@ -20,11 +20,14 @@ double uniform(double a, double b) {
 
 double calculate_standard_deviation(const std::vector<double> &data,
                                     double average) {
-  double sum_squared_differences = 0.0;
-  for (double value : data) {
-    double difference = value - average;
-    sum_squared_differences += difference * difference;
-  }
+  //todo: handle division by zero   
+  //todo: add tests
+  double sum_squared_differences = std::accumulate(data.begin(), data.end(), 0., [=](double sum, double value){
+      double difference = value - average;
+      sum += difference * difference;
+      return sum;
+  });
+
   double variance = sum_squared_differences / data.size();
   return std::sqrt(variance);
 }
@@ -32,6 +35,10 @@ double calculate_standard_deviation(const std::vector<double> &data,
 double calculate_mean_distance(const std::vector<Boid>& boid_vector) {
   
   std::vector<double> distances;
+  //nested for loop, makes program lag
+  //todo: delete, or find a way to approximate
+  /*
+  */
   std::for_each(boid_vector.begin(), boid_vector.end(), [&](const Boid& boid1) {
     std::transform(boid_vector.begin(), boid_vector.end(), std::back_inserter(distances), [&](const Boid& boid2) {
       return (boid1.pos() - boid2.pos()).distance();

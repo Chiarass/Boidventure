@@ -28,9 +28,12 @@ class Bird {
   Point vel() const;
 
   // adds a velocity vector to the boids, pointing radially outward from a
-  // specified point. Param: the point from which the vectors emanate.
+  // specified point, if in range.
+  //Param 1: the point.
+  //Param 2: the range.
+  //Param 3: a coefficent of the force.
   // the size of the vector is determined by constants::repel_coefficent
-  void repel(const Point&);
+  void repel(const Point&, double, double);
 };
 
 class Boid;
@@ -46,7 +49,7 @@ class Predator : public Bird {
   // of the object.
   // Param 2: the range of the predator's vision.
   // Param 3: vector of boids.
-  void update_predator(double, double, const std::vector<Boid>&);
+  void update(double, double, const std::vector<Boid>&);
 };
 
 class Boid : public Bird {
@@ -85,14 +88,8 @@ class Boid : public Bird {
   // Param 4: a coefficent to pass as parameter 3 of separation
   // Param 5: ge to pass as parameter 2 of cohesion
   // Param 6: ge to pass as parameter 2 of alignment
-  void update_boid(double, const std::vector<const Boid*>&, double, double,
+  void update(double, const std::vector<const Boid*>&, double, double,
                    double, double);
-
-  // force that moves the boid away from the specified predator if in range
-  // Param 1: the specified predator
-  // Param 2: the range of the prey
-  // Param 3: coefficent of strenght of the force
-  void escape_predator(const Predator&, double, double);
 };
 
 }  // namespace boids

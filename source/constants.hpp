@@ -47,7 +47,7 @@ inline constexpr double min_rand_velocity{-3};
 inline constexpr double max_rand_velocity{3};
 
 // strength of force on boid when predator is in prey range
-inline constexpr double predator_avoidance_coeff{0.2};
+inline constexpr double predator_avoidance_coeff{4};
 // strength of force on predator when boid is in predator range
 inline constexpr double predator_hunting_coeff{0.05};
 
@@ -117,6 +117,7 @@ inline constexpr int init_predator_number{0};
 inline constexpr int cell_capacity{10};
 
 // color of cells diplayed with display_tree
+inline constexpr double displayed_cell_thickness{1.};
 inline const sf::Color tree_color{sf::Color::Green};
 ////////////////////////////////////////////////////////////////////////////
 
