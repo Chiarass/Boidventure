@@ -1,8 +1,8 @@
 #ifndef BOID_HPP
 #define BOID_HPP
 
-#include <vector>
 
+#include <vector>
 #include "constants.hpp"
 #include "point.hpp"
 

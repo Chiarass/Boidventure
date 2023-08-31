@@ -29,11 +29,23 @@ target_link_libraries(boid PRIVATE sfml-graphics tgui)
 
 if (BUILD_TESTING)
 
-  # aggiungi l'eseguibile boids.t
-  add_executable(boids.t source/point.cpp source/boid.cpp source/quadtree.cpp source/statistics.cpp source/sfml.cpp source/boids.test.cpp)
-  target_link_libraries(boids.t PRIVATE sfml-graphics)
-  # aggiungi l'eseguibile boids.t alla lista dei test
-  add_test(NAME boids.t COMMAND boids.t)
+  # aggiungi l'eseguibile boid.t
+  add_executable(boid.t source/point.cpp source/boid.cpp source/quadtree.cpp source/statistics.cpp source/sfml.cpp source/gui.cpp source/test/boids.test.cpp)
+  target_link_libraries(boid.t PRIVATE sfml-graphics tgui)
+  # aggiungi l'eseguibile boid.t alla lista dei test
+  add_test(NAME boid.t COMMAND boid.t)
 
+
+endif()
+
+# se le statistiche sono abilitate...
+#   per abilitare le statistiche, passare -DBUILD_TESTING=OFF a cmake durante la fase di configurazione
+if (BUILD_STATISTICS)
+
+  # aggiungi l'eseguibile boids.s
+  add_executable(boid.s source/point.cpp source/boid.cpp source/quadtree.cpp source/statistics.cpp source/sfml.cpp source/gui.cpp source/statistics/statistics_main.cpp)
+  target_link_libraries(boid.s PRIVATE sfml-graphics tgui)
+  #todo: not a test, figure out how to create it without making it a test
+  add_test(NAME boid.s COMMAND boid.s)
 
 endif()
