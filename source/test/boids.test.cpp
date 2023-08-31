@@ -3,13 +3,12 @@
 #include <cmath>
 #include <vector>
 
-#include "boid.hpp"
-#include "constants.hpp"
+#include "./../boid.hpp"
 #include "doctest.h"
-#include "point.hpp"
-#include "quadtree.hpp"
-#include "sfml.hpp"
-#include "statistics.hpp"
+#include "./../point.hpp"
+#include "./../quadtree.hpp"
+#include "./../sfml.hpp"
+#include "./../statistics.hpp"
 
 TEST_CASE("Testing the Point class") {
   SUBCASE("checking if x() and y() return m_x, m_y") {

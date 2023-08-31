@@ -125,6 +125,7 @@ inline const sf::Color tree_color{sf::Color::Green};
 // coefficent for sample size in approx distance.
 // todo: delete if unused
 inline constexpr int sample_size_coeff{5};
+inline constexpr int max_statistics_boid_number{300};
 ////////////////////////////////////////////////////////////////////////////
 
 

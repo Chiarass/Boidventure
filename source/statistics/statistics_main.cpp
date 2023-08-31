@@ -1,16 +1,18 @@
+
+
 #include <SFML/Graphics.hpp>
 #include <TGUI/TGUI.hpp>
 #include <algorithm>  //for for_each
 #include <memory>     //for shared pointer dynamic cast
 #include <random>
 
-#include "point.hpp"
-#include "boid.hpp"
-#include "constants.hpp"
-#include "gui.hpp"
-#include "quadtree.hpp"
-#include "sfml.hpp"
-#include "statistics.hpp"
+#include "./../point.hpp"
+#include "./../boid.hpp"
+#include "./../constants.hpp"
+#include "./../gui.hpp"
+#include "./../quadtree.hpp"
+#include "./../sfml.hpp"
+#include "./../statistics.hpp"
 
 // template, to take both predators and boid types
 template <class Bird_type>
@@ -69,6 +71,17 @@ int main() {
 
   tgui::GuiSFML gui{window};
 
+  // todo: remove (?)
+  
+    // vectores to store distances and speed of the boids
+    std::vector<double> distances;
+    std::vector<double> speeds;
+    // creating the label to display all the stats
+    tgui::Label::Ptr stats_label = tgui::Label::create();
+    stats_label->getRenderer()->setTextColor(sf::Color::Black);
+    stats_label->getRenderer()->setBackgroundColor(tgui::Color::White);
+    gui.add(stats_label);
+ 
 
   // clock for fps calculation
   sf::Clock clock;
@@ -87,6 +100,10 @@ int main() {
 
   boids::initialize_panel(gui, panel, display_tree, display_range,
                           display_separation_range, display_prey_range);
+
+  std::dynamic_pointer_cast<tgui::Slider>(
+                             panel.elements[Element_key::boid_number_slider])
+                             ->setMaximum(constants::max_statistics_boid_number);
 
   // bool for tracking if moused is pressed, for boid repulsion
   bool is_mouse_pressed{false};
@@ -110,8 +127,8 @@ int main() {
     auto current_time = clock.restart().asSeconds();
     double fps = 1. / (current_time);
 
-    /*
-    //todo: delete?
+    
+
     for (const auto& boid : boid_vector) {
       distances.push_back(boid.pos().distance());
       speeds.push_back(boid.vel().distance());
@@ -135,7 +152,6 @@ int main() {
 
     //todo: does this even do anything
     gui.draw();
-    */
     sf::Event event;
 
     while (window.pollEvent(event)) {
