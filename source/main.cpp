@@ -1,8 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <TGUI/TGUI.hpp>
 #include <algorithm>  //for for_each
-#include <memory>     //for shared pointer dynamic cast
-#include <random>
+#include <random>     //for marsenne twister and uniform
 
 #include "boid.hpp"
 #include "constants.hpp"
@@ -10,28 +9,34 @@
 #include "point.hpp"
 #include "quadtree.hpp"
 #include "sfml.hpp"
-#include "statistics.hpp"
 
+namespace boids {
+
+// random unifitom distriubution of values, for randomly
+// generating position of boids.
+double uniform(double a, double b, std::mt19937& mt) {
+  std::uniform_real_distribution<double> unif{a, b};
+  return unif(mt);
+}
 // template, to take both predators and boid types
 template <class Bird_type>
-// todo: move in namespace
 void initialize_birds(std::vector<Bird_type>& bird_vec,
                       sf::VertexArray& vertices, double swarm_n,
-                      sf::Color bird_color) {
+                      sf::Color bird_color, std::mt19937& mt) {
   bird_vec.clear();
   vertices.clear();
   for (int i = 0; i < swarm_n; ++i) {
     // initializes boid within a margin from screen border and control panel
     auto boid_position = boids::Point{
         boids::uniform(constants::margin_size + constants::controls_width,
-                       constants::window_width - constants::margin_size),
+                       constants::window_width - constants::margin_size, mt),
         boids::uniform(constants::margin_size,
-                       constants::window_height - constants::margin_size)};
+                       constants::window_height - constants::margin_size, mt)};
     auto boid_velocity =
         boids::Point{boids::uniform(constants::min_rand_velocity,
-                                    constants::max_rand_velocity),
+                                    constants::max_rand_velocity, mt),
                      boids::uniform(constants::min_rand_velocity,
-                                    constants::max_rand_velocity)};
+                                    constants::max_rand_velocity, mt)};
     bird_vec.push_back(Bird_type{boid_position, boid_velocity});
 
     // append each vertex to the boid_vertex array
@@ -46,6 +51,7 @@ void initialize_birds(std::vector<Bird_type>& bird_vec,
     vertices.append(v3);
   }
 }
+}  // namespace boids
 
 int main() {
   std::vector<boids::Boid> boid_vector;
@@ -58,6 +64,9 @@ int main() {
   // array of vertices of triangle of a predator
   // for each predator three vertices
   sf::VertexArray predator_vertex{sf::Triangles};
+
+  // seeded marsenne twister engine, for random positions/velocities of boids
+  std::mt19937 mt{std::random_device{}()};
 
   // makes the window and specifies it's size and title
   sf::RenderWindow window;
@@ -140,13 +149,13 @@ int main() {
     // if the value of the slider is changed, change number of boids
     if (boids::update_boid_number(boid_number, panel)) {
       initialize_birds(boid_vector, boid_vertex, boid_number,
-                       constants::boid_color);
+                       constants::boid_color, mt);
     }
 
     // if the value of the slider is changed, change number of predators
     if (boids::update_predator_number(predator_number, panel)) {
       initialize_birds(predator_vector, predator_vertex, predator_number,
-                       constants::predator_color);
+                       constants::predator_color, mt);
     }
 
     // updating positions of boids/predators  //////////////////////////////////
