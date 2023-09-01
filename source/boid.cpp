@@ -15,6 +15,7 @@ Point Bird::vel() const { return m_vel; }
 
 Point Bird::turn_around() {
   Point added_velocity{0., 0.};
+  // if exiting the margins, force pushes towards center
   if (m_pos.x() > constants::window_width - constants::margin_size)
     added_velocity = added_velocity + Point{-constants::turn_coefficent, 0.};
   if (m_pos.x() < constants::margin_size + constants::controls_width)
@@ -30,6 +31,7 @@ void Bird::repel(const Point& point, double repulsion_range,
                  double repulsion_coeff) {
   // it handels division by zero (point position = bird position)
   double distance = (pos() - point).distance();
+
   if (distance < repulsion_range && distance != 0.) {
     m_vel = m_vel + repulsion_coeff * 1. / ((m_pos - point).distance()) *
                         (m_pos - point);
@@ -49,6 +51,7 @@ Point Boid::separation(const std::vector<const Boid*>& in_range,
 
   for (auto other_boid_ptr : in_range) {
     assert(other_boid_ptr);
+
     if ((m_pos - other_boid_ptr->pos()).distance() < separation_distance) {
       added_velocity = added_velocity + (m_pos - other_boid_ptr->pos());
     }
@@ -69,6 +72,7 @@ Point Boid::cohesion(const std::vector<const Boid*>& in_range,
 
   for (auto other_boid_ptr : in_range) {
     assert(other_boid_ptr);
+
     added_velocity = added_velocity + (other_boid_ptr->pos());
   }
 
@@ -89,6 +93,7 @@ Point Boid::alignment(const std::vector<const Boid*>& in_range,
 
   for (auto other_boid_ptr : in_range) {
     assert(other_boid_ptr);
+
     added_velocity = added_velocity + (other_boid_ptr->vel());
   }
 
@@ -124,7 +129,7 @@ void Predator::update(double delta_t, double predator_range,
   // if max speed is not exceeded, and the predator is within margins:
   // if turn around not zero the other forces must be ignored, otherwise
   // predator may exit the screen while chasing a boid
-  
+
   if (m_vel.distance() < constants::max_velocity &&
       turn_around().distance() == 0.) {
     std::vector<Point> in_range_vector{};

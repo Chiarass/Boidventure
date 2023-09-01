@@ -12,8 +12,10 @@
 
 namespace boids {
 
-// random unifitom distriubution of values, for randomly
+// random uniform distriubution of values, for randomly
 // generating position of boids.
+// Param 1: minimum generated value
+// Param 2: maximum generated value
 double uniform(double a, double b, std::mt19937& mt) {
   std::uniform_real_distribution<double> unif{a, b};
   return unif(mt);
@@ -25,6 +27,7 @@ void initialize_birds(std::vector<T>& bird_vec, sf::VertexArray& vertices,
                       double swarm_n, sf::Color bird_color, std::mt19937& mt) {
   bird_vec.clear();
   vertices.clear();
+
   for (int i = 0; i < swarm_n; ++i) {
     // initializes boid within a margin from screen border and control panel
     auto boid_position = boids::Point{
@@ -46,6 +49,7 @@ void initialize_birds(std::vector<T>& bird_vec, sf::VertexArray& vertices,
                   bird_color);
     sf::Vertex v3(sf::Vector2f(boid_position.x(), boid_position.y()),
                   bird_color);
+
     vertices.append(v1);
     vertices.append(v2);
     vertices.append(v3);
@@ -121,13 +125,14 @@ int main() {
 
     sf::Event event;
 
+    // if some input is given:
     while (window.pollEvent(event)) {
       gui.handleEvent(event);
       if (event.type == sf::Event::Closed) window.close();
 
+      // if gui.handleEvent(event) is true (ex. a button is pressed) no
+      // repulsion occours
       if (event.type == sf::Event::MouseButtonPressed &&
-          // if gui.handleEvent(event) is true (ex. a button is pressed) no
-          // repulsion occours
           !gui.handleEvent(event)) {
         is_mouse_pressed = true;
       }
@@ -138,7 +143,6 @@ int main() {
     }
 
     // updating game from GUI  /////////////////////////////////////////////////
-
     // update the value of boid parameters based on the slider values
     boids::update_from_panel(panel, fps, cohesion_coefficent,
                              alignment_coefficent, separation_coefficent, range,
