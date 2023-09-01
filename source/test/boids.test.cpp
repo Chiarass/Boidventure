@@ -4,11 +4,11 @@
 #include <vector>
 
 #include "./../boid.hpp"
-#include "doctest.h"
+#include "./../gui.hpp"
 #include "./../point.hpp"
 #include "./../quadtree.hpp"
 #include "./../sfml.hpp"
-#include "./../statistics.hpp"
+#include "doctest.h"
 
 TEST_CASE("Testing the Point class") {
   SUBCASE("checking if x() and y() return m_x, m_y") {
@@ -202,7 +202,8 @@ TEST_CASE("Testing Bird::repel method") {
       "right") {
     boids::Bird bird{origin, origin};
     boids::Point upper_right{1., 1.};
-    bird.repel(upper_right, constants::repel_range, constants::repel_coefficent);
+    bird.repel(upper_right, constants::repel_range,
+               constants::repel_coefficent);
     CHECK(bird.vel().y() < 0.);
     CHECK(bird.vel().x() < 0.);
   }
@@ -212,7 +213,8 @@ TEST_CASE("Testing Bird::repel method") {
       "right") {
     boids::Bird bird{origin, origin};
     boids::Point lower_right{1., -1.};
-    bird.repel(lower_right, constants::repel_range, constants::repel_coefficent);
+    bird.repel(lower_right, constants::repel_range,
+               constants::repel_coefficent);
     CHECK(bird.vel().y() > 0.);
     CHECK(bird.vel().x() < 0.);
   }
@@ -243,7 +245,7 @@ TEST_CASE("Testing Bird::repel method") {
     CHECK(!std::isnan(bird.vel().x()));
     CHECK(!std::isnan(bird.vel().y()));
   }
-  
+
   SUBCASE("repel force moves boid away from in range predator") {
     boids::Boid boid{origin, origin};
     boids::Predator predator{boids::Point{1., -1.}, origin};
@@ -705,7 +707,7 @@ inline memory_tracker tracker;
 
 // operator overlad of new
 void* operator new(size_t size) {
-  //todo: delete
+  // todo: delete
   std::cout << "new is being called" << '\n';
   tracker.allocated += 1;
   return malloc(size);
@@ -713,7 +715,7 @@ void* operator new(size_t size) {
 
 // operator overload of delete
 void operator delete(void* memory) {
-  //todo: delete
+  // todo: delete
   std::cout << "delete is being called" << '\n';
   tracker.freed += 1;
   free(memory);
