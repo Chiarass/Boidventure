@@ -25,7 +25,7 @@ inline constexpr double max_cohesion_strength{0.02};
 inline constexpr double max_separation_strength{0.5};
 inline constexpr double max_alignment_strength{0.2};
 
-inline constexpr int max_boid_number{2500};
+inline constexpr int max_boid_number{300};
 inline constexpr int max_predator_number{10};
 
 inline constexpr double max_range{40.};
@@ -111,7 +111,7 @@ inline constexpr double init_separation_range{6.};
 inline constexpr double init_prey_range{5.};
 
 // the following represent the initial value of the corresponding constants
-inline constexpr int init_boid_number{300};
+inline constexpr int init_boid_number{50};
 inline constexpr int init_predator_number{0};
 ////////////////////////////////////////////////////////////////////////////
 

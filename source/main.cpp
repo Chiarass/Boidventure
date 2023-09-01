@@ -9,6 +9,7 @@
 #include "point.hpp"
 #include "quadtree.hpp"
 #include "sfml.hpp"
+#include "statistics.hpp"
 
 namespace boids {
 
@@ -83,6 +84,15 @@ int main() {
 
   tgui::GuiSFML gui{window};
 
+  // vectores to store distances and speed of the boids
+  std::vector<double> distances;
+  std::vector<double> speeds;
+  // creating the label to display all the stats
+  tgui::Label::Ptr stats_label = tgui::Label::create();
+  stats_label->getRenderer()->setTextColor(sf::Color::Black);
+  stats_label->getRenderer()->setBackgroundColor(tgui::Color::White);
+  gui.add(stats_label);
+
   // clock for fps calculation
   sf::Clock clock;
 
@@ -122,6 +132,27 @@ int main() {
     // fps calculation
     auto current_time = clock.restart().asSeconds();
     double fps = 1. / (current_time);
+
+    for (const auto& boid : boid_vector) {
+      distances.push_back(boid.pos().distance());
+      speeds.push_back(boid.vel().distance());
+    }
+    double mean_distance = boids::calculate_mean_distance(boid_vector);
+    double distance_stddev =
+        boids::calculate_standard_deviation(distances, mean_distance);
+    double mean_speed = boids::calculate_mean_speed(boid_vector);
+    double speed_stddev =
+        boids::calculate_standard_deviation(speeds, mean_speed);
+    stats_label->setText(
+        "Mean distance: " + std::to_string(mean_distance) +
+        "\nStd Dev of distances: " + std::to_string(distance_stddev) +
+        "\nMean Velocity: " + std::to_string(mean_speed) +
+        "\nStd Dev of velocities: " + std::to_string(speed_stddev));
+
+    float label_width = stats_label->getSize().x;
+    float x_offset = window.getSize().x - label_width - 10;
+    float y_offset = 10;
+    stats_label->setPosition(x_offset, y_offset);
 
     sf::Event event;
 

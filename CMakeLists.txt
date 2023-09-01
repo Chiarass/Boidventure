@@ -18,7 +18,7 @@ string(APPEND CMAKE_EXE_LINKER_FLAGS_DEBUG " -fsanitize=address,undefined -fno-o
 find_package(SFML COMPONENTS graphics REQUIRED)
 find_package(TGUI REQUIRED)
 
-add_executable(boid source/point.cpp source/boid.cpp source/quadtree.cpp source/sfml.cpp source/gui.cpp source/main.cpp)
+add_executable(boid source/point.cpp source/boid.cpp source/quadtree.cpp source/sfml.cpp source/gui.cpp source/statistics.cpp source/main.cpp)
 
 target_link_libraries(boid PRIVATE sfml-graphics tgui)
 
