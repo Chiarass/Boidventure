@@ -14,7 +14,7 @@ cmake --build build/release
 ```
 to run the program:
 ```
-./build/release/boids
+./build/release/boid
 ```
 to run the test for the program:
 ```
@@ -33,7 +33,7 @@ cmake --build build/debug
 ```
 to run the program:
 ```
-./build/debug/boids
+./build/debug/boid
 ```
 to run the test for the program:
 ```
