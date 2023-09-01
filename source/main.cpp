@@ -4,16 +4,17 @@
 #include <memory>     //for shared pointer dynamic cast
 #include <random>
 
-#include "point.hpp"
 #include "boid.hpp"
 #include "constants.hpp"
 #include "gui.hpp"
+#include "point.hpp"
 #include "quadtree.hpp"
 #include "sfml.hpp"
 #include "statistics.hpp"
 
 // template, to take both predators and boid types
 template <class Bird_type>
+// todo: move in namespace
 void initialize_birds(std::vector<Bird_type>& bird_vec,
                       sf::VertexArray& vertices, double swarm_n,
                       sf::Color bird_color) {
@@ -69,7 +70,6 @@ int main() {
 
   tgui::GuiSFML gui{window};
 
-
   // clock for fps calculation
   sf::Clock clock;
 
@@ -110,32 +110,6 @@ int main() {
     auto current_time = clock.restart().asSeconds();
     double fps = 1. / (current_time);
 
-    /*
-    //todo: delete?
-    for (const auto& boid : boid_vector) {
-      distances.push_back(boid.pos().distance());
-      speeds.push_back(boid.vel().distance());
-    }
-    double mean_distance = boids::calculate_mean_distance(boid_vector);
-    double distance_stddev =
-        boids::calculate_standard_deviation(distances, mean_distance);
-    double mean_speed = boids::calculate_mean_speed(boid_vector);
-    double speed_stddev =
-        boids::calculate_standard_deviation(speeds, mean_speed);
-    stats_label->setText(
-        "Mean distance: " + std::to_string(mean_distance) +
-        "\nStd Dev of distances: " + std::to_string(distance_stddev) +
-        "\nMean Velocity: " + std::to_string(mean_speed) +
-        "\nStd Dev of velocities: " + std::to_string(speed_stddev));
-
-    float label_width = stats_label->getSize().x;
-    float x_offset = window.getSize().x - label_width - 10;
-    float y_offset = 10;
-    stats_label->setPosition(x_offset, y_offset);
-
-    //todo: does this even do anything
-    gui.draw();
-    */
     sf::Event event;
 
     while (window.pollEvent(event)) {
@@ -159,33 +133,18 @@ int main() {
     // update the value of boid parameters based on the slider values
     boids::update_from_panel(panel, fps, cohesion_coefficent,
                              alignment_coefficent, separation_coefficent, range,
-                             separation_range, prey_range);
+                             separation_range, prey_range, boid_number,
+                             predator_number);
     predator_range = constants::prey_to_predator_coeff * prey_range;
 
-    // todo: find a way to move to update_from_panel function
-
     // if the value of the slider is changed, change number of boids
-    // todo: add check (or assert) for dynamic cast does returning null pointer
-    if (static_cast<int>(std::dynamic_pointer_cast<tgui::Slider>(
-                             panel.elements[Element_key::boid_number_slider])
-                             ->getValue()) != boid_number) {
-      boid_number =
-          static_cast<int>(std::dynamic_pointer_cast<tgui::Slider>(
-                               panel.elements[Element_key::boid_number_slider])
-                               ->getValue());
+    if (boids::update_boid_number(boid_number, panel)) {
       initialize_birds(boid_vector, boid_vertex, boid_number,
                        constants::boid_color);
     }
 
     // if the value of the slider is changed, change number of predators
-    if (static_cast<int>(
-            std::dynamic_pointer_cast<tgui::Slider>(
-                panel.elements[Element_key::predator_number_slider])
-                ->getValue()) != predator_number) {
-      predator_number = static_cast<int>(
-          std::dynamic_pointer_cast<tgui::Slider>(
-              panel.elements[Element_key::predator_number_slider])
-              ->getValue());
+    if (boids::update_predator_number(predator_number, panel)) {
       initialize_birds(predator_vector, predator_vertex, predator_number,
                        constants::predator_color);
     }
@@ -211,20 +170,22 @@ int main() {
                                   sf::Mouse::getPosition(window).y);
       for (auto& boid : boid_vector) {
         if ((boid.pos() - mouse_position).distance() < constants::repel_range)
-          boid.repel(mouse_position, constants::repel_range, constants::repel_coefficent);
+          boid.repel(mouse_position, constants::repel_range,
+                     constants::repel_coefficent);
       }
 
       for (auto& predator : predator_vector) {
         if ((predator.pos() - mouse_position).distance() <
             constants::repel_range)
-          predator.repel(mouse_position, constants::repel_range, constants::repel_coefficent);
+          predator.repel(mouse_position, constants::repel_range,
+                         constants::repel_coefficent);
       }
     }
 
     // updates the predator positions
     for (int i = 0; i != static_cast<int>(predator_vector.size()); ++i) {
-      predator_vector[i].update(constants::delta_t_predator,
-                                         predator_range, boid_vector);
+      predator_vector[i].update(constants::delta_t_predator, predator_range,
+                                boid_vector);
       boids::vertex_update(predator_vertex, predator_vector[i], i,
                            constants::predator_size);
     }
@@ -236,15 +197,15 @@ int main() {
       // tree builds the vector of in range boids
       tree.query(range, boid_vector[i], in_range);
 
-      boid_vector[i].update(constants::delta_t_boid, in_range,
-                                 separation_range, separation_coefficent,
-                                 cohesion_coefficent, alignment_coefficent);
+      boid_vector[i].update(constants::delta_t_boid, in_range, separation_range,
+                            separation_coefficent, cohesion_coefficent,
+                            alignment_coefficent);
 
       // moves away boid from in range predators
       for_each(predator_vector.begin(), predator_vector.end(),
                [&, i](boids::Predator& predator) {
-                 boid_vector[i].repel(
-                     predator.pos(), prey_range, constants::predator_avoidance_coeff);
+                 boid_vector[i].repel(predator.pos(), prey_range,
+                                      constants::predator_avoidance_coeff);
                });
 
       boids::vertex_update(boid_vertex, boid_vector[i], i,

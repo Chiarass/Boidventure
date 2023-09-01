@@ -61,8 +61,12 @@ class Panel {
 
 void initialize_panel(tgui::GuiSFML&, Panel&, bool&, bool&, bool&, bool&);
 
+bool update_boid_number(int&, Panel& panel);
+
+bool update_predator_number(int&, Panel& panel);
+
 void update_from_panel(Panel&, double&, double&, double&, double&, double&,
-                       double&, double&);
+                       double&, double&, int&, int&);
 void display_ranges(double, double, double, bool, bool, bool,
                       std::vector<Boid>&, sf::RenderWindow&);
 

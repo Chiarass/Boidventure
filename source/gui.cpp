@@ -39,7 +39,7 @@ void initialize_panel(tgui::GuiSFML& gui, Panel& panel, bool& display_tree,
   panel.insert(cell_button, Element_key::cell_button);
 
   tgui::Label::Ptr cohesion_strength_text = tgui::Label::create();
-  cohesion_strength_text->setText("Cohesion parameter");
+  cohesion_strength_text->setText("Cohesion Parameter");
   cohesion_strength_text->getRenderer()->setTextColor(sf::Color::White);
   gui.add(cohesion_strength_text);
   panel.insert(cohesion_strength_text, Element_key::cohesion_strength_text);
@@ -50,7 +50,7 @@ void initialize_panel(tgui::GuiSFML& gui, Panel& panel, bool& display_tree,
   panel.insert(cohesion_strength_slider, Element_key::cohesion_strength_slider);
 
   tgui::Label::Ptr alignment_strength_text = tgui::Label::create();
-  alignment_strength_text->setText("Alignment parameter");
+  alignment_strength_text->setText("Alignment Parameter");
   alignment_strength_text->getRenderer()->setTextColor(sf::Color::White);
   gui.add(alignment_strength_text);
   panel.insert(alignment_strength_text, Element_key::alignment_strength_text);
@@ -62,7 +62,7 @@ void initialize_panel(tgui::GuiSFML& gui, Panel& panel, bool& display_tree,
                Element_key::alignment_strength_slider);
 
   tgui::Label::Ptr separation_strength_text = tgui::Label::create();
-  separation_strength_text->setText("Separation parameter");
+  separation_strength_text->setText("Separation Parameter");
   separation_strength_text->getRenderer()->setTextColor(sf::Color::White);
   gui.add(separation_strength_text);
   panel.insert(separation_strength_text, Element_key::separation_strength_text);
@@ -74,7 +74,7 @@ void initialize_panel(tgui::GuiSFML& gui, Panel& panel, bool& display_tree,
                Element_key::separation_strength_slider);
 
   tgui::Label::Ptr boid_number_text = tgui::Label::create();
-  boid_number_text->setText("Number of boids");
+  boid_number_text->setText("Number of Boids");
   boid_number_text->getRenderer()->setTextColor(sf::Color::White);
   gui.add(boid_number_text);
   panel.insert(boid_number_text, Element_key::boid_number_text);
@@ -103,7 +103,7 @@ void initialize_panel(tgui::GuiSFML& gui, Panel& panel, bool& display_tree,
   panel.insert(range_button, Element_key::range_button);
 
   tgui::Label::Ptr separation_range_text = tgui::Label::create();
-  separation_range_text->setText("separation range");
+  separation_range_text->setText("Separation Range");
   separation_range_text->getRenderer()->setTextColor(sf::Color::White);
   gui.add(separation_range_text);
   panel.insert(separation_range_text, Element_key::separation_range_text);
@@ -122,7 +122,7 @@ void initialize_panel(tgui::GuiSFML& gui, Panel& panel, bool& display_tree,
   panel.insert(separation_range_button, Element_key::separation_range_button);
 
   tgui::Label::Ptr predator_number_text = tgui::Label::create();
-  predator_number_text->setText("predator number");
+  predator_number_text->setText("Number of Predators");
   predator_number_text->getRenderer()->setTextColor(sf::Color::White);
   gui.add(predator_number_text);
   panel.insert(predator_number_text, Element_key::predator_number_text);
@@ -134,7 +134,7 @@ void initialize_panel(tgui::GuiSFML& gui, Panel& panel, bool& display_tree,
   panel.insert(predator_number_slider, Element_key::predator_number_slider);
 
   tgui::Label::Ptr prey_range_text = tgui::Label::create();
-  prey_range_text->setText("prey range");
+  prey_range_text->setText("Range of Prey");
   prey_range_text->getRenderer()->setTextColor(sf::Color::White);
   gui.add(prey_range_text);
   panel.insert(prey_range_text, Element_key::prey_range_text);
@@ -152,11 +152,38 @@ void initialize_panel(tgui::GuiSFML& gui, Panel& panel, bool& display_tree,
   panel.insert(separation_prey_button, Element_key::separation_range_button);
 };
 
+bool update_boid_number(int& boid_number, Panel& panel) {
+  if (static_cast<int>(std::dynamic_pointer_cast<tgui::Slider>(
+                           panel.elements[Element_key::boid_number_slider])
+                           ->getValue()) != boid_number) {
+    boid_number =
+        static_cast<int>(std::dynamic_pointer_cast<tgui::Slider>(
+                             panel.elements[Element_key::boid_number_slider])
+                             ->getValue());
+    return true;
+  }
+  return false;
+}
+
+bool update_predator_number(int& predator_number, Panel& panel) {
+  if (static_cast<int>(std::dynamic_pointer_cast<tgui::Slider>(
+                           panel.elements[Element_key::predator_number_slider])
+                           ->getValue()) != predator_number) {
+    predator_number = static_cast<int>(
+        std::dynamic_pointer_cast<tgui::Slider>(
+            panel.elements[Element_key::predator_number_slider])
+            ->getValue());
+    return true;
+  }
+  return false;
+}
+
 // todo: break into multiple functions
 void update_from_panel(Panel& panel, double& fps, double& cohesion_coefficent,
                        double& alignment_coefficent,
                        double& separation_coefficent, double& range,
-                       double& separation_range, double& prey_range) {
+                       double& separation_range, double& prey_range,
+                       int& boid_number, int& predator_number) {
   std::dynamic_pointer_cast<tgui::Label>(panel.elements[Element_key::fps_text])
       ->setText("fps: " + std::to_string(fps));
 
@@ -194,6 +221,25 @@ void update_from_panel(Panel& panel, double& fps, double& cohesion_coefficent,
                (std::dynamic_pointer_cast<tgui::Slider>(
                     panel.elements[Element_key::prey_range_slider])
                     ->getValue());
+
+  // if the value of the slider is changed, change number of boids
+  // if (static_cast<int>(std::dynamic_pointer_cast<tgui::Slider>(
+  //                          panel.elements[Element_key::boid_number_slider])
+  //                          ->getValue()) != boid_number) {
+  //   boid_number =
+  //       static_cast<int>(std::dynamic_pointer_cast<tgui::Slider>(
+  //                            panel.elements[Element_key::boid_number_slider])
+  //                            ->getValue());
+  //   initialize_birds(boid_vector, boid_vertex, boid_number,
+  //                    constants::boid_color);
+  // }
+
+  std::dynamic_pointer_cast<tgui::Label>(
+      panel.elements[Element_key::boid_number_text])
+      ->setText("Number of Boids: " + std::to_string(boid_number));
+  std::dynamic_pointer_cast<tgui::Label>(
+      panel.elements[Element_key::predator_number_text])
+      ->setText("Number of Predators: " + std::to_string(predator_number));
 }
 
 void display_ranges(double range, double separation_range, double prey_range,
