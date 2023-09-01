@@ -1,5 +1,7 @@
 # Boidventure
+
 Boid project for unibo's physics course. 
+-----
 to build in release mode, as is advised for better performance:
 
 ```
@@ -18,7 +20,7 @@ to run the test for the program:
 ```
 ./build/release/boids.t
 ```
-
+-----
 To build in debug mode use instead:
 ```
 cmake -S ./ -B build/debug -DBUILD_TESTING=True -DCMAKE_BUILD_TYPE=Debug
@@ -37,7 +39,7 @@ to run the test for the program:
 ```
 ./build/debug/boids.t
 ```
-
+-----
 one can also set 
 ```
 -DBUILD_TESTING=True
