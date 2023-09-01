@@ -19,7 +19,7 @@ find_package(SFML COMPONENTS graphics REQUIRED)
 #vvvvvv da controllare se giusto vvvvvvv
 find_package(TGUI REQUIRED)
 
-add_executable(boid source/point.cpp source/boid.cpp source/quadtree.cpp source/statistics.cpp source/sfml.cpp source/gui.cpp source/main.cpp)
+add_executable(boid source/point.cpp source/boid.cpp source/quadtree.cpp source/sfml.cpp source/gui.cpp source/main.cpp)
 
 #vvvvvv da controllare se giusto vvvvvvv
 target_link_libraries(boid PRIVATE sfml-graphics tgui)
