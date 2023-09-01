@@ -52,6 +52,6 @@ void vertex_update(sf::VertexArray& swarm_vertex, const T& bird, int index,
 // Param 2: the radious of the circle
 // Param 3: the boid
 // Param 4: the color of the circle
-void display_circle(sf::RenderWindow&, double, Boid&, sf::Color color);
+void display_circle(sf::RenderWindow&, double, Boid&, const sf::Color& color);
 }  // namespace boids
 #endif

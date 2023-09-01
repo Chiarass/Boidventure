@@ -1,6 +1,6 @@
 #include "gui.hpp"
 
-#include <memory>
+#include <string>
 
 #include "boid.hpp"
 #include "constants.hpp"
@@ -18,7 +18,6 @@ Panel::Panel(double p_widget_width, double p_widget_height,
 void Panel::insert(tgui::Widget::Ptr widget, widget_key key) {
   assert(widget);
   widget->setPosition(widget_x_position, widget_y_position);
-  // todo: replace with constants
   widget->setSize(widget_width, widget_height);
   widget_y_position += widget_distance;
   widgets[key] = widget;

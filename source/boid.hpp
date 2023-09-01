@@ -1,8 +1,8 @@
 #ifndef BOID_HPP
 #define BOID_HPP
 
-
 #include <vector>
+
 #include "constants.hpp"
 #include "point.hpp"
 
@@ -29,9 +29,9 @@ class Bird {
 
   // adds a velocity vector to the boids, pointing radially outward from a
   // specified point, if in range.
-  //Param 1: the point.
-  //Param 2: the range.
-  //Param 3: a coefficent of the force.
+  // Param 1: the point.
+  // Param 2: the range.
+  // Param 3: a coefficent of the force.
   // the size of the vector is determined by constants::repel_coefficent
   void repel(const Point&, double, double);
 };
@@ -67,8 +67,7 @@ class Boid : public Bird {
   // Param 2: a coefficent that determines the strength of the force;
   Point cohesion(const std::vector<const Boid*>&, double);
 
-  // implements alignment force on boid. see https://www.red3d.com/cwr/boids/
-  // for more
+  // implements alignment force on boid.
   // Param 1: vector containing the boids in the alignment range (itself
   // excluded).
   // Param 2: a coefficent that determines the strength of the force;
@@ -88,8 +87,8 @@ class Boid : public Bird {
   // Param 4: a coefficent to pass as parameter 3 of separation
   // Param 5: ge to pass as parameter 2 of cohesion
   // Param 6: ge to pass as parameter 2 of alignment
-  void update(double, const std::vector<const Boid*>&, double, double,
-                   double, double);
+  void update(double, const std::vector<const Boid*>&, double, double, double,
+              double);
 };
 
 }  // namespace boids

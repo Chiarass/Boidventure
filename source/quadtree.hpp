@@ -2,10 +2,8 @@
 #ifndef QUADTREE_HPP
 #define QUADTREE_HPP
 
-#include <cassert>
-#include <iostream>
+#include <memory>  //for unique_ptr
 #include <vector>
-#include <memory> //for unique_ptr
 
 #include "boid.hpp"
 #include "point.hpp"
@@ -53,9 +51,6 @@ class Quad_tree {
   // Param 2: m_boundary
   Quad_tree(int, const Rectangle&);
 
-  // calls delete_tree to handle heap allocated children cells
-  //~Quad_tree();
-
   // if boid is inside the cell it pushes back the boid pointer to boids_ptr
   // if m_divided = true then it gets passed to children cells
   // Param 1: the boid to insert
@@ -75,7 +70,7 @@ class Quad_tree {
 
   // displays the quad tree (children cell included) to the provided window
   // Param 1: the window
-  void display(sf::RenderWindow&);
+  void display(sf::RenderWindow&) const;
 };
 }  // namespace boids
 #endif
