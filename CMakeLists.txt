@@ -28,7 +28,7 @@ target_link_libraries(boid PRIVATE sfml-graphics tgui)
 if (BUILD_TESTING)
 
   # aggiungi l'eseguibile boid.t
-  add_executable(boid.t source/point.cpp source/boid.cpp source/quadtree.cpp source/statistics.cpp source/sfml.cpp source/gui.cpp source/test/boids.test.cpp)
+  add_executable(boid.t source/point.cpp source/boid.cpp source/quadtree.cpp source/sfml.cpp source/gui.cpp source/test/boids.test.cpp)
   target_link_libraries(boid.t PRIVATE sfml-graphics tgui)
   # aggiungi l'eseguibile boid.t alla lista dei test
   add_test(NAME boid.t COMMAND boid.t)
