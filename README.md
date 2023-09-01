@@ -1,18 +1,39 @@
-#Final project: boids
+#Boidventure
 Boid project for unibo's physics course. 
-to compile:
+to build in release mode, as is advised for better performance:
 
 ```
-cmake -S . -B build/debug -DCMAKE_BUILD_TYPE=Release
+cmake -S ./ -B build/release -DBUILD_TESTING=True -DCMAKE_BUILD_TYPE=Release
 ```
-you can also put Debug in place of Release.
+and then 
 
-then:
+```
+cmake --build build/release
+```
+to run the program:
+```
+./build/release/boids
+```
+to run the test for the program:
+```
+./build/release/boids.t
+```
+
+To build in debug mode use instead:
+```
+cmake -S ./ -B build/debug -DBUILD_TESTING=True -DCMAKE_BUILD_TYPE=Debug
+```
+
+and then 
 
 ```
 cmake --build build/debug
 ```
-and to run the code:
+to run the program:
 ```
-./build/debug/nomefile
+./build/debug/boids
+```
+to run the test for the program:
+```
+./build/debug/boids.t
 ```
