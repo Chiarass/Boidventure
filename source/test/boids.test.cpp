@@ -711,9 +711,16 @@ void* operator new(size_t size) {
 }
 
 // operator overload of delete
-void operator delete(void* memory) {
-  tracker.freed += 1;
-  free(memory);
+void operator delete(void* memory) noexcept {
+  if (memory) {
+    tracker.freed += 1;
+    free(memory);
+  }
+}
+
+void operator delete(void* memory, std::size_t size) noexcept {
+  (void)size;
+  operator delete(memory);
 }
 
 TEST_CASE("testing quad tree for memory leaks") {
