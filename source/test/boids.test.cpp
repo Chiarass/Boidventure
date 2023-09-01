@@ -689,7 +689,6 @@ TEST_CASE("testing Quad_tree::subdivide") {
 }
 
 // class to test for memory leaks
-
 class memory_tracker {
  public:
   int allocated = 0;
@@ -705,7 +704,7 @@ class memory_tracker {
 
 inline memory_tracker tracker;
 
-// operator overlad of new
+// operator overload of new
 void* operator new(size_t size) {
   tracker.allocated += 1;
   return malloc(size);
