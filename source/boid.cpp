@@ -31,7 +31,8 @@ void Bird::repel(const Point& point, double repulsion_range,
   // it handels division by zero (point position = bird position)
   double distance = (pos() - point).distance();
   if (distance < repulsion_range && distance != 0.) {
-    m_vel = m_vel + repulsion_coeff * 1./((m_pos - point).distance())* (m_pos - point);
+    m_vel = m_vel + repulsion_coeff * 1. / ((m_pos - point).distance()) *
+                        (m_pos - point);
   }
 
   assert(!std::isnan(m_vel.x()));
@@ -120,8 +121,12 @@ void Predator::update(double delta_t, double predator_range,
   assert(predator_range >= 0.);
   assert(delta_t >= 0.);
 
-  if (m_vel.distance() < constants::max_velocity) {
-    // todo: check if boids remain const
+  // if max speed is not exceeded, and the predator is within margins:
+  // if turn around not zero the other forces must be ignored, otherwise
+  // predator may exit the screen while chasing a boid
+  
+  if (m_vel.distance() < constants::max_velocity &&
+      turn_around().distance() == 0.) {
     std::vector<Point> in_range_vector{};
 
     // finding boids in range
@@ -143,14 +148,14 @@ void Predator::update(double delta_t, double predator_range,
               constants::predator_hunting_coeff * (in_range_vector[0] - m_pos);
     }
 
-    m_vel = m_vel + turn_around();
-
   }
 
   else {
     m_vel = Point{constants::velocity_reduction_coefficent * (m_vel.x()),
                   constants::velocity_reduction_coefficent * (m_vel.y())};
   }
+
+  m_vel = m_vel + turn_around();
   m_pos = delta_t * (m_vel) + (m_pos);
 }
 }  // namespace boids
