@@ -42,6 +42,6 @@ to run the test for the program:
 -----
 one can also set 
 ```
--DBUILD_TESTING=True
+-DBUILD_TESTING=False
 ```
 to not build the tests
