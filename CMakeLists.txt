@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(swarm VERSION 0.1.0)
+project(boid VERSION 0.1.0)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -15,13 +15,23 @@ string(APPEND CMAKE_CXX_FLAGS " -Wall -Wextra")
 string(APPEND CMAKE_CXX_FLAGS_DEBUG " -fsanitize=address,undefined -fno-omit-frame-pointer")
 string(APPEND CMAKE_EXE_LINKER_FLAGS_DEBUG " -fsanitize=address,undefined -fno-omit-frame-pointer")
 
-# richiede SFML?
 find_package(SFML COMPONENTS graphics REQUIRED)
+find_package(TGUI REQUIRED)
 
-add_executable(swarm swarm.cpp main.cpp )
+add_executable(boid source/point.cpp source/boid.cpp source/quadtree.cpp source/sfml.cpp source/gui.cpp source/main.cpp)
 
-#aggiunge sfml?
-target_link_libraries(swarm PRIVATE sfml-graphics)
+target_link_libraries(boid PRIVATE sfml-graphics tgui)
+
+# se il testing e' abilitato...
+#   per disabilitare il testing, passare -DBUILD_TESTING=OFF a cmake durante la fase di configurazione
+
+if (BUILD_TESTING)
+
+  # aggiungi l'eseguibile boid.t
+  add_executable(boid.t source/point.cpp source/boid.cpp source/quadtree.cpp source/statistics.cpp source/sfml.cpp source/gui.cpp source/test/boids.test.cpp)
+  target_link_libraries(boid.t PRIVATE sfml-graphics tgui)
+  # aggiungi l'eseguibile boid.t alla lista dei test
+  add_test(NAME boid.t COMMAND boid.t)
 
 
-
+endif()
