@@ -32,7 +32,6 @@ inline constexpr double max_range{40.};
 inline constexpr double max_separation_range{15.};
 inline constexpr double max_prey_range{60.};
 
-// todo: solve predators push boids out of bounds problem
 // coefficent that determines the strngth of the force that gets applied when
 // boid exits boundary
 inline constexpr double turn_coefficent{0.5};
@@ -42,7 +41,7 @@ inline constexpr double repel_coefficent{2.};
 inline constexpr double repel_range{100.};
 
 // minimum randomly generated velocity component of randomly generated boid
-inline constexpr double min_rand_velocity{-3.}; //todo: put three back
+inline constexpr double min_rand_velocity{-3.};
 // maximum randomly generated velocity component of randomly generated boid
 inline constexpr double max_rand_velocity{3.};
 
@@ -85,7 +84,6 @@ inline constexpr double widget_height{25.};
 inline constexpr double first_element_x_position{10.};
 inline constexpr double first_element_y_position{10.};
 
-
 // the distance between panel elements
 inline constexpr double gui_element_distance{30.};
 
@@ -95,7 +93,7 @@ inline const sf::Color separation_range_color{sf::Color::Blue};
 inline const sf::Color prey_range_color{sf::Color::Red};
 
 // thickness of displayed ranges
-inline const double range_thickness{1.}; 
+inline const double range_thickness{1.};
 ////////////////////////////////////////////////////////////////////////////
 
 // initial values //////////////////////////////////////////////////////////
@@ -123,13 +121,6 @@ inline constexpr int cell_capacity{10};
 inline constexpr double displayed_cell_thickness{1.};
 inline const sf::Color tree_color{sf::Color::Green};
 ////////////////////////////////////////////////////////////////////////////
-
-// statisitcs constants ////////////////////////////////////////////////////
-// coefficent for sample size in approx distance.
-// todo: delete if unused
-inline constexpr int max_statistics_boid_number{300};
-////////////////////////////////////////////////////////////////////////////
-
 
 // math constants //////////////////////////////////////////////////////////
 inline constexpr double pi = 3.14159265358979;

@@ -1,8 +1,6 @@
 #include "quadtree.hpp"
 
-#include <algorithm>  //for std::find, std::for_each
 #include <cassert>
-#include <iostream>
 #include <memory>  //for make_unique
 #include <vector>
 
@@ -95,7 +93,7 @@ bool Quad_tree::square_collide(double range, const Boid& boid) const {
 
 void Quad_tree::query(double range, const Boid& boid,
                       std::vector<const Boid*>& in_range) const {
-  assert(range >= 0.);  
+  assert(range >= 0.);
   if (!square_collide(range, boid)) {
     return;
   }
@@ -118,7 +116,7 @@ void Quad_tree::query(double range, const Boid& boid,
   }
 }
 
-void Quad_tree::display(sf::RenderWindow& window) {
+void Quad_tree::display(sf::RenderWindow& window) const {
   sf::RectangleShape rect;
   rect.setOutlineColor(constants::tree_color);
   rect.setOutlineThickness(constants::displayed_cell_thickness);
@@ -131,7 +129,7 @@ void Quad_tree::display(sf::RenderWindow& window) {
 
   window.draw(rect);
 
-  //displaying also child cells
+  // displaying also child cells
   if (m_divided) {
     northwest->display(window);
     northeast->display(window);

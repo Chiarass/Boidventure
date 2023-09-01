@@ -1,12 +1,13 @@
 #include "sfml.hpp"
 
 #include <SFML/Graphics.hpp>
+#include <cassert>
 
 #include "constants.hpp"
 
 namespace boids {
 void display_circle(sf::RenderWindow& window, double radius, Boid& boid,
-                    sf::Color color) {
+                    const sf::Color& color) {
   assert(radius >= 0.);
   sf::CircleShape circle(radius);
   circle.setOutlineColor(color);

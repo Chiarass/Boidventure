@@ -29,6 +29,8 @@ Point Bird::turn_around() {
 
 void Bird::repel(const Point& point, double repulsion_range,
                  double repulsion_coeff) {
+  assert(repulsion_range >= 0);
+
   // it handels division by zero (point position = bird position)
   double distance = (pos() - point).distance();
 

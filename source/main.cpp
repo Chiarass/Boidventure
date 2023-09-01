@@ -2,6 +2,7 @@
 #include <TGUI/TGUI.hpp>
 #include <algorithm>  //for for_each
 #include <random>     //for marsenne twister and uniform
+#include <string>
 
 #include "boid.hpp"
 #include "constants.hpp"
@@ -92,6 +93,9 @@ int main() {
   bool display_separation_range{false};
   bool display_prey_range{false};
 
+  // bool for tracking if moused is pressed, for boid repulsion
+  bool is_mouse_pressed{false};
+
   // panel object, it manages the tgui sliders, labels and buttons
   boids::Panel panel(constants::widget_width, constants::widget_height,
                      constants::gui_element_distance,
@@ -100,9 +104,6 @@ int main() {
 
   boids::initialize_panel(gui, panel, display_tree, display_range,
                           display_separation_range, display_prey_range);
-
-  // bool for tracking if moused is pressed, for boid repulsion
-  bool is_mouse_pressed{false};
 
   // declaring boid parameters
   double separation_coefficent{};
@@ -142,7 +143,7 @@ int main() {
       }
     }
 
-    // updating game from GUI  /////////////////////////////////////////////////
+    // updating values from GUI  ///////////////////////////////////////////////
     // update the value of boid parameters based on the slider values
     boids::update_from_panel(panel, fps, cohesion_coefficent,
                              alignment_coefficent, separation_coefficent, range,
@@ -162,7 +163,6 @@ int main() {
     }
 
     // updating positions of boids/predators  //////////////////////////////////
-
     // quad tree object, partitions space improving performance
     boids::Quad_tree tree{
         constants::cell_capacity,
@@ -180,12 +180,15 @@ int main() {
     if (is_mouse_pressed) {
       boids::Point mouse_position(sf::Mouse::getPosition(window).x,
                                   sf::Mouse::getPosition(window).y);
+
+      // if in a certain range, calls repulsion on boid
       for (auto& boid : boid_vector) {
         if ((boid.pos() - mouse_position).distance() < constants::repel_range)
           boid.repel(mouse_position, constants::repel_range,
                      constants::repel_coefficent);
       }
 
+      // if in a certain range, calls repulsion on boid
       for (auto& predator : predator_vector) {
         if ((predator.pos() - mouse_position).distance() <
             constants::repel_range)
@@ -195,7 +198,7 @@ int main() {
     }
 
     // updates the predator positions
-    for (int i = 0; i != static_cast<int>(predator_vector.size()); ++i) {
+    for (int i = 0; i < static_cast<int>(predator_vector.size()); ++i) {
       predator_vector[i].update(constants::delta_t_predator, predator_range,
                                 boid_vector);
       boids::vertex_update(predator_vertex, predator_vector[i], i,
@@ -203,15 +206,11 @@ int main() {
     }
 
     // updates the boid positions
-    for (int i = 0; i != static_cast<int>(boid_vector.size()); ++i) {
+    for (int i = 0; i < static_cast<int>(boid_vector.size()); ++i) {
       std::vector<const boids::Boid*> in_range;
 
       // tree builds the vector of in range boids
       tree.query(range, boid_vector[i], in_range);
-
-      boid_vector[i].update(constants::delta_t_boid, in_range, separation_range,
-                            separation_coefficent, cohesion_coefficent,
-                            alignment_coefficent);
 
       // moves away boid from in range predators
       for_each(predator_vector.begin(), predator_vector.end(),
@@ -219,6 +218,10 @@ int main() {
                  boid_vector[i].repel(predator.pos(), prey_range,
                                       constants::predator_avoidance_coeff);
                });
+
+      boid_vector[i].update(constants::delta_t_boid, in_range, separation_range,
+                            separation_coefficent, cohesion_coefficent,
+                            alignment_coefficent);
 
       boids::vertex_update(boid_vertex, boid_vector[i], i,
                            constants::boid_size);
