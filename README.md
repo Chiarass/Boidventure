@@ -1,4 +1,4 @@
-#Boidventure
+# Boidventure
 Boid project for unibo's physics course. 
 to build in release mode, as is advised for better performance:
 
