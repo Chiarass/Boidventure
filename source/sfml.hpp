@@ -3,23 +3,29 @@
 #ifndef SFML_HPP_118
 #define SFML_HPP_118
 #include <SFML/Graphics.hpp>
-#include <TGUI/TGUI.hpp>
 #include <string>
 #include <vector>
 
 #include "boid.hpp"
-#include "gui.hpp"
 #include "point.hpp"
 
-// todo: check if implementation of template is correct
 namespace boids {
-template <class Bird_type>
-void vertex_update(sf::VertexArray& swarm_vertex, const Bird_type& bird,
-                   int index, double size) {
-  // should convert implicitly to double anyway, so no
-  // need to static cast it i think.
+// template function, so it can handle both boids and predators
+// updates the position and orientation of the triangle representing the
+// provided boid
+// Param 1: vertex array of boids/predators
+// Param 2: the boid/predator
+// Param 3: the position of the first vertex of the boid/predator in the vertex
+// array
+// Param 4: the size of the boid/predator
+
+template <class T>
+void vertex_update(sf::VertexArray& swarm_vertex, const T& bird, int index,
+                   double size) {
   Point forward_vertex{0., 0.};
-  if ((bird.vel()).distance() != 0)
+
+  // to prevent division by zero.
+  if ((bird.vel()).distance() != 0.)
     forward_vertex = (size / bird.vel().distance()) * (bird.vel());
 
   swarm_vertex[3 * index].position =
@@ -40,6 +46,12 @@ void vertex_update(sf::VertexArray& swarm_vertex, const Bird_type& bird,
       (bird.pos() + forward_vertex).x(), (bird.pos() + forward_vertex).y());
 }
 
+// displays a circle of provided radius, centered on the position of a provided
+// boid.
+// Param 1: the window object on which to draw the circle
+// Param 2: the radious of the circle
+// Param 3: the boid
+// Param 4: the color of the circle
 void display_circle(sf::RenderWindow&, double, Boid&, sf::Color color);
 }  // namespace boids
 #endif

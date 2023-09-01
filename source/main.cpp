@@ -18,11 +18,11 @@ double uniform(double a, double b, std::mt19937& mt) {
   std::uniform_real_distribution<double> unif{a, b};
   return unif(mt);
 }
+
 // template, to take both predators and boid types
-template <class Bird_type>
-void initialize_birds(std::vector<Bird_type>& bird_vec,
-                      sf::VertexArray& vertices, double swarm_n,
-                      sf::Color bird_color, std::mt19937& mt) {
+template <class T>
+void initialize_birds(std::vector<T>& bird_vec, sf::VertexArray& vertices,
+                      double swarm_n, sf::Color bird_color, std::mt19937& mt) {
   bird_vec.clear();
   vertices.clear();
   for (int i = 0; i < swarm_n; ++i) {
@@ -37,7 +37,7 @@ void initialize_birds(std::vector<Bird_type>& bird_vec,
                                     constants::max_rand_velocity, mt),
                      boids::uniform(constants::min_rand_velocity,
                                     constants::max_rand_velocity, mt)};
-    bird_vec.push_back(Bird_type{boid_position, boid_velocity});
+    bird_vec.push_back(T{boid_position, boid_velocity});
 
     // append each vertex to the boid_vertex array
     sf::Vertex v1(sf::Vector2f(boid_position.x(), boid_position.y()),
@@ -142,8 +142,7 @@ int main() {
     // update the value of boid parameters based on the slider values
     boids::update_from_panel(panel, fps, cohesion_coefficent,
                              alignment_coefficent, separation_coefficent, range,
-                             separation_range, prey_range, boid_number,
-                             predator_number);
+                             separation_range, prey_range);
     predator_range = constants::prey_to_predator_coeff * prey_range;
 
     // if the value of the slider is changed, change number of boids
