@@ -37,3 +37,9 @@ to run the test for the program:
 ```
 ./build/debug/boids.t
 ```
+
+one can also set 
+```
+-DBUILD_TESTING=True
+```
+to not build the tests
