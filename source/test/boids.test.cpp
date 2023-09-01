@@ -707,16 +707,12 @@ inline memory_tracker tracker;
 
 // operator overlad of new
 void* operator new(size_t size) {
-  // todo: delete
-  std::cout << "new is being called" << '\n';
   tracker.allocated += 1;
   return malloc(size);
 }
 
 // operator overload of delete
 void operator delete(void* memory) {
-  // todo: delete
-  std::cout << "delete is being called" << '\n';
   tracker.freed += 1;
   free(memory);
 }
