@@ -18,7 +18,7 @@ to run the program:
 ```
 to run the test for the program:
 ```
-./build/release/boids.t
+./build/release/boid.t
 ```
 -----
 To build in debug mode use instead:
@@ -37,7 +37,7 @@ to run the program:
 ```
 to run the test for the program:
 ```
-./build/debug/boids.t
+./build/debug/boid.t
 ```
 -----
 one can also set 
